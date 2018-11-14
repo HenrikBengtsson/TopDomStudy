@@ -78,8 +78,6 @@ Try <- function(fcn) function(...) try(fcn(...), silent = TRUE)
 #' @export
 #' @importFrom digest digest
 #' @export
-## https://github.com/eddelbuettel/digest/issues/84
 crc32 <- function(x) digest(x, algo = "crc32")
-
 
 	

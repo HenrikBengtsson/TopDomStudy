@@ -12,6 +12,8 @@
 #' @param known_chrs (character vector) The names of the L chromosomes
 #' to bin over.
 #' 
+#' @param progress (logical) If `TRUE`, progress is displayed.
+#'
 #' @return
 #' If `intra_only = FALSE`, an L-by-L list matrix where each element \eqn{(i, j)} in turn
 #' holds an integer matrix of binned counts for chromosome pair \eqn{(i, j)}.

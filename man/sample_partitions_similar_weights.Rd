@@ -23,6 +23,9 @@ of the partion (i.e. \code{sum(w[partition])}.  If \emph{all} partions are
 within the tolerance, the sample is accepted, otherwise rejected.}
 
 \item{max_rejections}{The maximum number of rejections before giving up.}
+
+\item{warn}{If \code{TRUE}, a warning is produced if the partitions produced
+are not of equal size.}
 }
 \value{
 A list of random non-overlapping (disjoint) partitions where each

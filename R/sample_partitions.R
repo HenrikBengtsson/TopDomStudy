@@ -77,6 +77,9 @@ sample_partitions <- local({
 #'
 #' @param max_rejections The maximum number of rejections before giving up.
 #'
+#' @param warn If `TRUE`, a warning is produced if the partitions produced
+#'             are not of equal size.
+#'
 #' @return A list of random non-overlapping (disjoint) partitions where each
 #' element holds indices in {1, 2, ..., n} and where the union of all
 #' partitions is {1, 2, ..., n}.  Attribute `weights` gives the total
