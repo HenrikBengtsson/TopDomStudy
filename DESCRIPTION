@@ -10,7 +10,7 @@ Depends:
     R (>= 3.5.0),
     TopDom (>= 0.5.0)
 Imports:
-    digest,
+    digest (>= 0.6.18),
     listenv,
     future,
     matrixStats,

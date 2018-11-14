@@ -26,7 +26,15 @@
 ## See https://github.com/HenrikBengtsson/r-ideas/issues/74
 
 
-## Faster than stopifnot()
+#' Asserts the Truth of R Expressions
+#'
+#' @param \dots Zero or more \R expressions to be asserted to be TRUE.
+#'
+#' @return Nothing.
+#'
+#' @details
+#' A bare bone, faster version of [base::stopifnot].
+#'
 #' @export
 stop_if_not <- function(...) {
   res <- list(...)
@@ -40,29 +48,38 @@ stop_if_not <- function(...) {
              call. = FALSE, domain = NA)
     }
   }
-  
-  NULL
+  invisible()
 }
 
 
-## https://github.com/HenrikBengtsson/r-ideas/issues/75
+#' Tweaks a Function to be Evaluted using try()
+#'
+#' @param fcn A function.
+#'
+#' @return A function that calls `try(fcn(...), silent = TRUE)`.
+#'
+#' @details
+#' The function  [base::stopifnot].
+#'
 #' @export
+## https://github.com/HenrikBengtsson/r-ideas/issues/75
 Try <- function(fcn) function(...) try(fcn(...), silent = TRUE)
 
 
-## https://github.com/eddelbuettel/digest/issues/84
+#' CRC32 Checksum of an Object
+#'
+#' @param x An \R object.
+#'
+#' @return An eight-character string.
+#'
+#' @details
+#' The function  [base::stopifnot].
+#'
+#' @export
 #' @importFrom digest digest
 #' @export
-crc32 <- local({
-  digest <- digest::digest
-  
-  function(x) {
-    s <- digest(x, algo = "crc32")
-    npad <- 8L - nchar(s)
-    if (npad > 0L) s <- paste(c(rep("0", npad), s), collapse = "")
-    s
-  }
-})
+## https://github.com/eddelbuettel/digest/issues/84
+crc32 <- function(x) digest(x, algo = "crc32")
 
 
 	
