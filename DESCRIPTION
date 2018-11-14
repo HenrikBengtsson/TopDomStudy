@@ -1,0 +1,22 @@
+Package: TopDomStudy
+Version: 0.0.0-9000
+Title: TopDom Study by Segal et al.
+Description: Utility functions for the TopDom-related study by Segal et al. (2017).
+Authors@R: c(
+   person("Henrik", "Bengtsson", role=c("aut", "cre", "cph"),
+          email = "henrikb@braju.com"))
+License: GPL (>= 3)
+Depends:
+    R (>= 3.5.0),
+    TopDom (>= 0.5.0)
+Imports:
+    digest,
+    listenv,
+    future,
+    matrixStats,
+    parallel,
+    utils
+Remotes:
+    github::HenrikBengtsson/TopDom
+RoxygenNote: 6.1.1
+Roxygen: list(markdown = TRUE)

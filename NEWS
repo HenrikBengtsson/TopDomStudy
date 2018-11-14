@@ -1,0 +1,8 @@
+TopDomStudy
+===========
+
+Version: 0.0.0-9000 [2018-11-14]
+
+SIGNIFICANT CHANGES:
+
+ o Packages existing scripts and functions into an R package.

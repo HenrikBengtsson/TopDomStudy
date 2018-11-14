@@ -1,0 +1,5 @@
+^README[.]md$
+^.(git|svn)
+^([.]travis|appveyor)[.]yml$
+^incl/
+
