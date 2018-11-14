@@ -14,7 +14,7 @@ Weights are normalized such that \code{sum(w)} equals one.}
 \item{fraction}{A numeric in (0,1] specifying the size of each partition
 relative to \code{n}.  If \code{NULL}, argument \code{size} is used.}
 
-\item{size}{An integer in {1, 2, ..., n} specifying the size of each
+\item{size}{An integer in \eqn{{1, 2, ..., n}} specifying the size of each
 partition.  If \code{NULL}, argument \code{fraction} is used.}
 
 \item{w_tolerance}{Maximum allowed difference between target weight of
@@ -29,8 +29,8 @@ are not of equal size.}
 }
 \value{
 A list of random non-overlapping (disjoint) partitions where each
-element holds indices in {1, 2, ..., n} and where the union of all
-partitions is {1, 2, ..., n}.  Attribute \code{weights} gives the total
+element holds indices in \eqn{{1, 2, ..., n}} and where the union of all
+partitions is \eqn{{1, 2, ..., n}}.  Attribute \code{weights} gives the total
 normalized weight of each partition.  Attribute \code{count} gives the number
 of internal samples produced before arriving at an accepted sample.
 If no accepted sample was found, the \code{NA} is returned

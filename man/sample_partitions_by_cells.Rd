@@ -13,8 +13,8 @@ sample_partitions_by_cells(reads, ...)
 }
 \value{
 A list of random non-overlapping (disjoint) partitions where each
-element holds indices in {1, 2, ..., n} and where the union of all
-partitions is {1, 2, ..., n}.
+element holds indices in \eqn{{1, 2, ..., n}} and where the union of all
+partitions is \eqn{{1, 2, ..., n}}.
 }
 \description{
 Generate Random, Non-Overlapping Partitions of Cells

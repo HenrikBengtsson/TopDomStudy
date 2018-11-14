@@ -12,7 +12,7 @@ sample_partitions(n, fraction = NULL, size = NULL, warn = TRUE)
 \item{fraction}{A numeric in (0,1] specifying the size of each partition
 relative to \code{n}.  If \code{NULL}, argument \code{size} is used.}
 
-\item{size}{An integer in {1, 2, ..., n} specifying the size of each
+\item{size}{An integer in \eqn{{1, 2, ..., n}} specifying the size of each
 partition.  If \code{NULL}, argument \code{fraction} is used.}
 
 \item{warn}{If \code{TRUE}, a warning is produced if the partitions produced
@@ -20,8 +20,8 @@ are not of equal size.}
 }
 \value{
 A list of random non-overlapping (disjoint) partitions where each
-element holds indices in {1, 2, ..., n} and where the union of all
-partitions is {1, 2, ..., n}.
+element holds indices in \eqn{{1, 2, ..., n}} and where the union of all
+partitions is \eqn{{1, 2, ..., n}}.
 }
 \description{
 Generate Random, Non-Overlapping Partitions of Indices
