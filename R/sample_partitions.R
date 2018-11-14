@@ -156,6 +156,16 @@ sample_partitions_similar_weights <- local({
 
 
 
+#' Generate Random, Non-Overlapping Partitions of Cells
+#'
+#' @param reads A data.frame of reads.
+#'
+#' @param \dots Argument passed to [sample_partitions_similar_weights].
+#'
+#' @return A list of random non-overlapping (disjoint) partitions where each
+#' element holds indices in {1, 2, ..., n} and where the union of all
+#' partitions is {1, 2, ..., n}.
+#'
 #' @references
 #' https://github.com/HenrikBengtsson/SegalM_2017-FISH/issues/16
 #'
