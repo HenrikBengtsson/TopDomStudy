@@ -26,8 +26,7 @@
 #' @importFrom future %<-% %label%
 #' @importFrom utils txtProgressBar setTxtProgressBar
 #' @export
-hic_bin <- local({
-  function(data, bin_size, intra_only = FALSE, known_chrs = c(1:22, "X", "Y", "M"), progress = TRUE) {
+hic_bin <- function(data, bin_size, intra_only = FALSE, known_chrs = c(1:22, "X", "Y", "M"), progress = TRUE) {
   stop_if_not(
     all(c("chr_a", "start_a", "end_a", "chr_b", "start_b",  "end_b")
         %in% colnames(data))
@@ -165,7 +164,7 @@ hic_bin <- local({
   if (intra_only) counts <- diag(counts)
   
   counts
-}})
+}
 
 
 
@@ -173,8 +172,7 @@ hic_bin <- local({
 #' @importFrom listenv listenv
 #' @importFrom matrixStats binCounts
 #' @importFrom utils txtProgressBar setTxtProgressBar
-hic_bin_20180603 <- local({
-  function(data, bin_size, intra_only = FALSE, known_chrs = c(1:22, "X", "Y", "M"), progress = TRUE) {
+hic_bin_20180603 <- function(data, bin_size, intra_only = FALSE, known_chrs = c(1:22, "X", "Y", "M"), progress = TRUE) {
   stopifnot(
     all(c("chr_a", "start_a", "end_a", "chr_b", "start_b",  "end_b")
         %in% colnames(data))
@@ -271,4 +269,5 @@ hic_bin_20180603 <- local({
   if (intra_only) counts <- diag(counts)
   
   counts
-}})
+}
+

@@ -17,8 +17,7 @@
 #'
 #' @importFrom parallel splitIndices
 #' @export
-sample_partitions <- local({
-  function(n, fraction = NULL, size = NULL, warn = TRUE) {
+sample_partitions <- function(n, fraction = NULL, size = NULL, warn = TRUE) {
   stop_if_not(is.numeric(n), length(n) == 1L, !is.na(n), n > 0)
   stop_if_not(!is.null(fraction) || !is.null(size))
 
@@ -54,8 +53,6 @@ sample_partitions <- local({
   
   partitions
 }
-})
-
 
 
 
@@ -90,8 +87,7 @@ sample_partitions <- local({
 #'
 #' @importFrom parallel splitIndices
 #' @export
-sample_partitions_similar_weights <- local({
-  function(w, fraction = NULL, size = NULL, w_tolerance = 0.01, max_rejections = 100L, warn = TRUE) {
+sample_partitions_similar_weights <- function(w, fraction = NULL, size = NULL, w_tolerance = 0.01, max_rejections = 100L, warn = TRUE) {
   stop_if_not(is.numeric(w), length(w) > 0, !anyNA(w), all(w > 0))
   stop_if_not(is.numeric(w_tolerance), length(w_tolerance) == 1L,
               !is.na(w_tolerance), w_tolerance >= 0, w_tolerance <= 1)
@@ -152,8 +148,6 @@ sample_partitions_similar_weights <- local({
   
   partitions
 }
-})
-
 
 
 #' Generate Random, Non-Overlapping Partitions of Cells
@@ -192,78 +186,4 @@ sample_partitions_by_cells <- function(reads, ...) {
   stop_if_not(length(idxs) == nrow(reads), !any(duplicated(idxs)))
   
   read_partitions
-}
-
-
-#' Generate Random, Non-Overlapping Partitions of Indices with Reference and Sequence of Partitions
-#'
-#' @param n Number of elements to partition.
-#'
-#' @param fraction A numeric in (0,1] specifying the size of each partition
-#'                 relative to `n`.  If `NULL`, argument `size` is used.
-#'
-#' @param size An integer in \eqn{{1, 2, ..., n}} specifying the size of each
-#'             partition.  If `NULL`, argument `fraction` is used.
-#'
-#' @param seq A sequence of fractions (if `fraction` is specified) or
-#' a sequence of sizes (if `size` is specified)
-#'
-#' @return A list of random non-overlapping partitions where each
-#' element holds indices in \eqn{{1, 2, ..., n}}.
-#' The first element holds the `reference` partition \eqn{P_r} with \eqn{|P_r|}
-#' indices and the remaining elements holds partitions with indices in
-#' \eqn{{1, 2, ..., n} \ P_r} where the size of the partitions corresponds
-#' to the sizes specified by `seq`.
-#' The reference partition and the "remaining" partitions are always disjoint,
-#' but the "remaining" partitions maybe be overlapping.
-#'
-#' @importFrom parallel splitIndices
-#' @export
-sample_partitions_ref_vs_seq <- function(n, fraction = NULL, size = NULL, seq) {
-  stop_if_not(is.numeric(n), length(n) == 1L, !is.na(n), n > 0)
-  stop_if_not(!is.null(fraction) || !is.null(size))
-  stop_if_not(is.numeric(seq), length(seq) >= 1L, !anyNA(seq), all(seq > 0))
-
-  ## Number of partitions
-  if (!is.null(fraction)) {
-    stop_if_not(is.numeric(fraction), length(fraction) == 1L, !is.na(fraction),
-                fraction > 0, fraction <= 1)
-    size <- round(fraction * n)
-    stop_if_not(all(seq <= 1 - fraction))
-    seq_labels <- sprintf("fraction=%g", seq)
-    seq_sizes <- round(seq * n)
-  } else if (!is.null(size)) {
-    stop_if_not(is.numeric(size), length(size) == 1L, !is.na(size),
-                size >= 1, size <= n)
-    size <- round(size)
-    stop_if_not(all(seq <= n - size))
-    seq_sizes <- round(seq)
-    seq_labels <- sprintf("size=%g", seq_sizes)
-  }
-  
-  ## Sanity checks
-  stop_if_not(is.numeric(size), length(size) == 1L, !is.na(size),
-              size >= 1, size <= n)
-  stop_if_not(is.numeric(seq_sizes), length(seq_sizes) >= 1L, !anyNA(seq_sizes),
-              all(seq_sizes >= 1), all(seq_sizes <= n - size))
-
-  ## Produce shuffled indices in 1:n
-  idxs <- sample.int(n, size = n, replace = FALSE)
-
-  partitions <- vector("list", length = 1L + length(seq_sizes))
-  names(partitions) <- c("reference", seq_labels)
-
-  ## Reference partition
-  partitions$reference <- idxs[1:size]
-
-  ## Remaining indices to subsample from
-  idxs <- idxs[(size+1):n]
-  nidxs <- length(idxs)
-
-  for (kk in seq_along(seq_sizes)) {
-    idxs_kk <- sample(nidxs, size = seq_sizes[kk])
-    partitions[[kk + 1L]] <- idxs[idxs_kk]
-  }
-
-  partitions
 }
