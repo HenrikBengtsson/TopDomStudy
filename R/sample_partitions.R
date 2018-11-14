@@ -148,6 +148,8 @@ sample_partitions_similar_weights <- function(w, fraction = NULL, size = NULL, w
   
   partitions
 }
+})
+
 
 
 #' Generate Random, Non-Overlapping Partitions of Cells
