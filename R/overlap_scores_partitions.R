@@ -234,11 +234,12 @@ overlap_scores_partitions <- function(reads, dataset, cell_ids, bin_size, partit
             ## Used to be Try(TopDom), cf. https://github.com/HenrikBengtsson/TopDom/issues/4 
             tds <- future_lapply(counts, FUN = TopDom, window.size = 5L)
             stopifnot(is.list(tds), length(tds) == 1L, all(names(tds) == chr))
-            counts <- NULL ## Not needed anymore
             
             tds_chr <- tds[[chr]]
             if (save_topdom) attr(tds_chr, "counts") <- counts
-            
+
+            counts <- NULL ## Not needed anymore
+
             tds_chr
           })
   
