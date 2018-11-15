@@ -42,7 +42,7 @@ overlap_scores_partitions <- function(reads, dataset, cell_ids, bin_size, partit
   ## To please R CMD check
   cell_id <- chr_a <- NULL; rm(list = c("cell_id", "chr_a"))
   
-  stop_if_not(is.data.frame(reads) || inherits(reads, "Future"))
+  stop_if_not(is.data.frame(reads) || is.function(reads))
   stop_if_not(is.numeric(bin_size), length(bin_size) == 1L, !is.na(bin_size), bin_size > 0, is.finite(bin_size))
   partition_by <- match.arg(partition_by, choices = c("reads", "cells"))
   stopifnot(length(min_cell_size) == 1L, is.numeric(min_cell_size),
@@ -124,9 +124,9 @@ overlap_scores_partitions <- function(reads, dataset, cell_ids, bin_size, partit
   
     if (verbose) mprintf(" - Number of (remaining) samples to process for chromosome %s (%s): %d", chr, chr_tag, length(sample_idxs))
 
-    if (inherits(reads, "Future")) reads <- value(reads)
+    res[[chr]] %<-% {
+      if (is.function(reads)) reads <- reads()
 
-    res[[chr]] %<-% {      
       ## Subset by minimum (whole-genome) cell size?
       if (min_cell_size > 1L) {
         cell_sizes <- table(as.character(reads$cell_id))
