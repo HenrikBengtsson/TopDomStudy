@@ -80,4 +80,5 @@ Try <- function(fcn) function(...) try(fcn(...), silent = TRUE)
 #' @export
 crc32 <- function(x) digest(x, algo = "crc32")
 
-	
+
+mprintf <- function(...) message(sprintf(...))

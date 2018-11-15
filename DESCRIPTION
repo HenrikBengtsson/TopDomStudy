@@ -13,6 +13,7 @@ Imports:
     digest (>= 0.6.18),
     listenv,
     future,
+    future.apply,
     matrixStats,
     parallel,
     utils
