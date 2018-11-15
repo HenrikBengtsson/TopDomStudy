@@ -279,10 +279,13 @@ sample_partitions_similar_weights_ref_vs_seq <- function(w, fraction = NULL, siz
   if (!is.null(fraction)) {
     stop_if_not(is.numeric(fraction), length(fraction) == 1L, !is.na(fraction),
                 fraction > 0, fraction <= 1)
-    size <- round(fraction * n)
     stop_if_not(all(seq <= 1 - fraction))
+    size <- round(fraction * n)
     seq_labels <- sprintf("fraction=%g", seq)
     seq_sizes <- round(seq * n)
+    ## Correct for rounding errors
+    too_big <- (seq_sizes > n - size)
+    seq_sizes[too_big] <- seq_sizes[too_big] - 1L
   } else if (!is.null(size)) {
     stop_if_not(is.numeric(size), length(size) == 1L, !is.na(size),
                 size >= 1, size <= n)

@@ -14,6 +14,8 @@
 #'
 #' @param rho ...
 #'
+#' @param seq ...
+#'
 #' @param nsamples = 100L ...
 #'
 #' @param chrs ...
@@ -38,7 +40,7 @@
 #' @importFrom utils file_test str
 #' @importFrom TopDom overlapScores TopDom
 #' @export
-overlap_scores_partitions <- function(reads, dataset, cell_ids, bin_size, partition_by, min_cell_size, rho, nsamples = 100L, chrs, path_out = ".", save_topdom = TRUE, seed = TRUE, mainseed, force = FALSE, verbose = FALSE) {
+overlap_scores_partitions <- function(reads, dataset, cell_ids, bin_size, partition_by, min_cell_size, rho, seq = NULL, nsamples = 100L, chrs, path_out = ".", save_topdom = TRUE, seed = TRUE, mainseed, force = FALSE, verbose = FALSE) {
   ## To please R CMD check
   cell_id <- chr_a <- NULL; rm(list = c("cell_id", "chr_a"))
   
@@ -48,6 +50,10 @@ overlap_scores_partitions <- function(reads, dataset, cell_ids, bin_size, partit
   stopifnot(length(min_cell_size) == 1L, is.numeric(min_cell_size),
             !is.na(min_cell_size), min_cell_size >= 1L)
   stop_if_not(is.numeric(rho), length(rho) == 1L, !is.na(rho), rho > 0.0, rho <= 0.5)
+  if (!is.null(seq)) {
+    stop_if_not(is.numeric(seq), length(seq) >= 1L, !anyNA(seq), all(seq > 0.0), all(seq <= 1 - rho))
+    seq <- sort(unique(seq))
+  }
   stop_if_not(is.numeric(nsamples), length(nsamples) == 1L,
               !is.na(nsamples), nsamples >= 1L)
   stop_if_not(is.character(chrs), length(chrs) > 1L, !anyNA(chrs))
@@ -68,7 +74,12 @@ overlap_scores_partitions <- function(reads, dataset, cell_ids, bin_size, partit
     min_cell_size_tag <- NULL
   }
   rho_tag <- sprintf("fraction=%.3f", rho)
-
+  if (!is.null(seq)) {
+    seq_tag <- sprintf("seq=%s", paste(sprintf("%.3f", seq), collapse = "_"))
+  } else {
+    seq_tag <- NULL
+  }
+  if (verbose) message(sprintf("seq_tag: %s", sQuote(seq_tag)))
   ## Random seeds (use the same for all chromosomes, i.e. invariant to chromosome)
   ## FIXME: Export make_rng_seeds()
   if (is.list(seed)) {
@@ -82,7 +93,7 @@ overlap_scores_partitions <- function(reads, dataset, cell_ids, bin_size, partit
   stop_if_not(mainseed == 0xBEEF)
   mainseed_tag <- "mainseed=0xBEEF"
 
-  dataset_out <- paste(c(dataset, cell_ids_tag, bin_size_tag, partition_by_tag, min_cell_size_tag, rho_tag, mainseed_tag), collapse = ",")
+  dataset_out <- paste(c(dataset, cell_ids_tag, bin_size_tag, partition_by_tag, min_cell_size_tag, rho_tag, seq_tag, mainseed_tag), collapse = ",")
   path_out <- file.path("overlapScoreData", dataset_out)
   dir.create(path_out, recursive = TRUE, showWarnings = FALSE)
   stop_if_not(file_test("-d", path_out))
@@ -101,7 +112,7 @@ overlap_scores_partitions <- function(reads, dataset, cell_ids, bin_size, partit
 
     ## Find all input files for this chromosome
     pathnames <- file.path(path_out, sapply(1:nsamples, function(bb) {
-      tags <- c(cell_ids_tag, chr_tag, bin_size_tag, partition_by_tag, min_cell_size_tag, rho_tag, seed_tags[bb])
+      tags <- c(cell_ids_tag, chr_tag, bin_size_tag, partition_by_tag, min_cell_size_tag, rho_tag, seq_tag, seed_tags[bb])
       name <- paste(c(dataset, tags), collapse = ",")
       sprintf("%s.rds", name)
     }))
@@ -189,11 +200,19 @@ overlap_scores_partitions <- function(reads, dataset, cell_ids, bin_size, partit
         
         res_kk[[bb]] %<-% {
           if (verbose) mprintf(" - Random, disjoint partitioning of %s", partition_by)
-  	if (partition_by == "reads") {
-            reads_partitions <- sample_partitions(nrow(reads), fraction = rho)
-  	} else if (partition_by == "cells") {
-            reads_partitions <- sample_partitions_by_cells(reads, fraction = rho)
-  	}
+          if (partition_by == "reads") {
+            if (is.null(seq)) {
+              reads_partitions <- sample_partitions(nrow(reads), fraction = rho)
+            } else {
+              reads_partitions <- sample_partitions_ref_vs_seq(nrow(reads), fraction = rho, seq = seq)
+            }
+          } else if (partition_by == "cells") {
+            if (is.null(seq)) {
+              reads_partitions <- sample_partitions_by_cells(reads, fraction = rho)
+            } else {
+              reads_partitions <- sample_partitions_by_cells_ref_vs_seq(reads, fraction = rho, seq = seq)
+            }
+          }
           reads_partitions <- lapply(reads_partitions, FUN = function(partition) reads[partition, ])
           str(reads_partitions)
   
@@ -215,8 +234,8 @@ overlap_scores_partitions <- function(reads, dataset, cell_ids, bin_size, partit
             
             tds_chr <- tds[[chr]]
             if (save_topdom) attr(tds_chr, "counts") <- counts
-	    
-	    tds_chr
+            
+            tds_chr
           })
   
           read_partitions <- NULL ## Not needed anymore
@@ -236,18 +255,22 @@ overlap_scores_partitions <- function(reads, dataset, cell_ids, bin_size, partit
             attr(tt, "reference_partition") <- ref
             attr(tt, "seed") <- seed
             attr(tt, "reference") <- ref
+            attr(tt, "partition_by") <- partition_by
+            attr(tt, "seq") <- seq
             pathname2 <- sprintf("%s,topdom.rds", tools::file_path_sans_ext(pathname))
             saveRDS(tt, file = pathname2)
             tt <- NULL
           }
-  	
+ 
           overlaps <- lapply(tds, FUN = function(td) Try(overlapScores)(td, td_ref))
           stopifnot(is.list(overlaps), length(overlaps) == length(tds))
           tds <- NULL ## Not needed anymore
           attr(overlaps, "bin_size") <- bin_size
           attr(overlaps, "chromosome") <- chr
           attr(overlaps, "min_cell_size") <- min_cell_size
+          attr(overlaps, "partition_by") <- partition_by
           attr(overlaps, "reference_partition") <- ref
+          attr(overlaps, "seq") <- seq
           attr(overlaps, "seed") <- seed
           
           saveRDS(overlaps, file = pathname)
