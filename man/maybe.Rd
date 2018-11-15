@@ -4,7 +4,7 @@
 \alias{maybe}
 \title{An R Expression that Maybe Evaluated Later}
 \usage{
-maybe(expr, substitute = TRUE, envir = parent.frame)
+maybe(expr, substitute = TRUE, envir = parent.frame())
 }
 \arguments{
 \item{expr, substitute}{An \R expression (substituted by default).}

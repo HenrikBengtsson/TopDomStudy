@@ -9,8 +9,9 @@
 #'
 #' @importFrom future sequential
 #' @export
-maybe <- function(expr, substitute = TRUE, envir = parent.frame) {
+maybe <- function(expr, substitute = TRUE, envir = parent.frame()) {
   if (substitute) expr <- substitute(expr)
   f <- sequential(expr, substitute = FALSE, envir = envir, lazy = TRUE)
   class(f) <- c("MaybeFuture", class(f))
+  f
 }
