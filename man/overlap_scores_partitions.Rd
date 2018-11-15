@@ -5,8 +5,8 @@
 \title{Calculates TopDom Overlap Scores Across Partitions}
 \usage{
 overlap_scores_partitions(reads, dataset, cell_ids, bin_size, partition_by,
-  min_cell_size, rho, seed_tags, nsamples = 100L, chrs, path_out = ".",
-  save_topdom = TRUE, seed = TRUE, verbose = FALSE)
+  min_cell_size, rho, nsamples = 100L, chrs, path_out = ".",
+  save_topdom = TRUE, seed = TRUE, mainseed, verbose = FALSE)
 }
 \arguments{
 \item{reads}{...}
@@ -23,8 +23,6 @@ overlap_scores_partitions(reads, dataset, cell_ids, bin_size, partition_by,
 
 \item{rho}{...}
 
-\item{seed_tags}{...}
-
 \item{nsamples}{= 100L ...}
 
 \item{chrs}{...}
@@ -34,6 +32,8 @@ overlap_scores_partitions(reads, dataset, cell_ids, bin_size, partition_by,
 \item{save_topdom}{...}
 
 \item{seed}{...}
+
+\item{mainseed}{...}
 
 \item{verbose}{...}
 }

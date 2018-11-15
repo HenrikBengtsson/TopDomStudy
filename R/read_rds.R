@@ -8,8 +8,12 @@
 #' Uses [base::readRDS] internally but gives a more informative error message
 #' on failure.
 #'
+#' @importFrom utils file_test
 #' @export
 read_rds <- function(pathname) {
+  if (!file_test("-f", pathname)) {
+    stop(sprintf("No such file: %s", sQuote(pathname)))
+  }
   tryCatch({
     readRDS(pathname)
   }, error = function(ex) {

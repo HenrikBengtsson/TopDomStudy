@@ -14,8 +14,6 @@
 #'
 #' @param rho ...
 #'
-#' @param seed_tags ...
-#'
 #' @param nsamples = 100L ...
 #'
 #' @param chrs ...
@@ -25,6 +23,8 @@
 #' @param save_topdom ...
 #'
 #' @param seed ...
+#'
+#' @param mainseed ...
 #'
 #' @param verbose ...
 #'
@@ -36,19 +36,20 @@
 #' @importFrom utils file_test str
 #' @importFrom TopDom overlapScores TopDom
 #' @export
-overlap_scores_partitions <- function(reads, dataset, cell_ids, bin_size, partition_by, min_cell_size, rho, seed_tags, nsamples = 100L, chrs, path_out = ".", save_topdom = TRUE, seed = TRUE, verbose = FALSE) {
+overlap_scores_partitions <- function(reads, dataset, cell_ids, bin_size, partition_by, min_cell_size, rho, nsamples = 100L, chrs, path_out = ".", save_topdom = TRUE, seed = TRUE, mainseed, verbose = FALSE) {
   ## To please R CMD check
   cell_id <- chr_a <- NULL; rm(list = c("cell_id", "chr_a"))
   
   stop_if_not(is.data.frame(reads) || inherits(reads, "Future"))
   stop_if_not(is.numeric(bin_size), length(bin_size) == 1L, !is.na(bin_size), bin_size > 0, is.finite(bin_size))
-  stop_if_not(is.numeric(nsamples), length(nsamples) == 1L,
-              !is.na(nsamples), nsamples >= 1L)
+  partition_by <- match.arg(partition_by, choices = c("reads", "cells"))
   stopifnot(length(min_cell_size) == 1L, is.numeric(min_cell_size),
             !is.na(min_cell_size), min_cell_size >= 1L)
   stop_if_not(is.numeric(rho), length(rho) == 1L, !is.na(rho), rho > 0.0, rho <= 0.5)
-  stop_if_not(is.character(seed_tags), !anyNA(seed_tags))
-  stop_if_not(file_test("-d", path_out))
+  stop_if_not(is.numeric(nsamples), length(nsamples) == 1L,
+              !is.na(nsamples), nsamples >= 1L)
+  stop_if_not(is.character(chrs), length(chrs) > 1L, !anyNA(chrs))
+  chrs <- sort(unique(chrs))
 
   ## Argument tags
   if (!is.null(cell_ids)) {
@@ -75,6 +76,14 @@ overlap_scores_partitions <- function(reads, dataset, cell_ids, bin_size, partit
     seeds <- future.apply:::make_rng_seeds(nsamples, seed = seed)
   }
   seed_tags <- sprintf("seed=%s", sapply(seeds, FUN = crc32))
+
+  stop_if_not(mainseed == 0xBEEF)
+  mainseed_tag <- "mainseed=0xBEEF"
+
+  dataset_out <- paste(c(dataset, cell_ids_tag, bin_size_tag, partition_by_tag, min_cell_size_tag, rho_tag, mainseed_tag), collapse = ",")
+  path_out <- file.path("overlapScoreData", dataset_out)
+  dir.create(path_out, recursive = TRUE, showWarnings = FALSE)
+  stop_if_not(file_test("-d", path_out))
 
   if (verbose) message("Output path: ", path_out)
   
