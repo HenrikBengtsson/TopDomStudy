@@ -20,25 +20,17 @@ sample_partitions_by_half <- function(n, fraction, warn = TRUE) {
   stop_if_not(is.numeric(n), length(n) == 1L, !is.na(n), n > 0)
   stop_if_not(is.numeric(fraction), length(fraction) == 1L, !is.na(fraction),
               fraction > 0, fraction <= 1/2)
-
-  parts <- sample_partitions(n = n, fraction = 1/2)
-
-  partitions <- list(reference = parts[[1]])
-  idxs <- parts[[2]]
-  parts <- sample_partitions(n = length(idxs), fraction = 2 * fraction, warn = warn)
-  parts <- lapply(parts, FUN = function(i) idxs[i])
-  idxs <- NULL
-  partitions <- c(partitions, parts)
-  names(partitions)[1] <- "reference"
-  parts <- NULL
-
-  ## Sanity checks
-  idxs <- unlist(partitions, use.names = FALSE)
-  stop_if_not(length(idxs) == n)
-  idxs <- sort(unique(idxs))
-  stop_if_not(length(idxs) == n, all(idxs == seq_len(n)))
   
-  partitions
+  parts <- sample_partitions(n = n, fraction = 1/2)
+  idxs <- parts[[2]]
+  nidxs <- length(idxs)
+  size <- min(round(fraction * n), nidxs)
+  parts[[2]] <- idxs[sample.int(nidxs, size = size)]
+  names(parts) <- c("reference", sprintf("fraction=%g", fraction))
+  attr(parts, "fraction") <- fraction
+  attr(parts, "n") <- n
+  
+  parts
 }
 
 
@@ -87,25 +79,13 @@ sample_partitions_similar_weights_by_half <- function(w, fraction = NULL, w_tole
   parts <- sample_partitions_similar_weights(w = w, fraction = 1/2, w_tolerance = w_tolerance, max_rejections = max_rejections, warn = warn)
   if (!is.list(parts) && is.na(parts)) return(parts)
 
-  partitions <- list(reference = parts[[1]])
   idxs <- parts[[2]]
-  w <- w[idxs]
+  nidxs <- length(idxs)
+  size <- min(round(fraction * n), nidxs)
+  parts[[2]] <- idxs[sample.int(nidxs, size = size)]
+  names(parts) <- c("reference", sprintf("fraction=%g", fraction))
+  attr(parts, "fraction") <- fraction
+  attr(parts, "n") <- n
   
-  parts <- sample_partitions_similar_weights(w = w, fraction = 2 * fraction, w_tolerance = w_tolerance, max_rejections = max_rejections, warn = warn)
-  if (!is.list(parts) && is.na(parts)) return(parts)
-  
-  parts <- lapply(parts, FUN = function(i) idxs[i])
-  idxs <- NULL
-  partitions <- c(partitions, parts)
-  attributes(partitions) <- attributes(parts)
-  names(partitions)[1] <- "reference"
-  parts <- NULL
-
-  ## Sanity checks
-  idxs <- unlist(partitions, use.names = FALSE)
-  stop_if_not(length(idxs) == n)
-  idxs <- sort(unique(idxs))
-  stop_if_not(length(idxs) == n, all(idxs == seq_len(n)))
-  
-  partitions
+  parts
 }

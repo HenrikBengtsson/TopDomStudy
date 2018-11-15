@@ -26,7 +26,7 @@ stopifnot(identical(idxs, seq_len(n)))
 set.seed(0x42)
 n <- 1000L
 w <- runif(n)
-parts <- sample_partitions_similar_weights_by_half(w, fraction = 0.2, w_tolerance = 0.01)
+parts <- sample_partitions_similar_weights_by_half(w, fraction = 0.4, w_tolerance = 0.01)
 str(parts)
 idxs <- sort(unlist(parts))
 #stopifnot(identical(idxs, seq_len(n)))
