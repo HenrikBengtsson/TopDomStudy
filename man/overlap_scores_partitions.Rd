@@ -6,7 +6,8 @@
 \usage{
 overlap_scores_partitions(reads, dataset, cell_ids, bin_size, partition_by,
   min_cell_size, rho, nsamples = 100L, chrs, path_out = ".",
-  save_topdom = TRUE, seed = TRUE, mainseed, verbose = FALSE)
+  save_topdom = TRUE, seed = TRUE, mainseed, force = FALSE,
+  verbose = FALSE)
 }
 \arguments{
 \item{reads}{...}
@@ -34,6 +35,8 @@ overlap_scores_partitions(reads, dataset, cell_ids, bin_size, partition_by,
 \item{seed}{...}
 
 \item{mainseed}{...}
+
+\item{force}{...}
 
 \item{verbose}{...}
 }

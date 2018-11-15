@@ -26,6 +26,8 @@
 #'
 #' @param mainseed ...
 #'
+#' @param force ...
+#'
 #' @param verbose ...
 #'
 #' @return A named list of length `length(chrs)`.
@@ -36,7 +38,7 @@
 #' @importFrom utils file_test str
 #' @importFrom TopDom overlapScores TopDom
 #' @export
-overlap_scores_partitions <- function(reads, dataset, cell_ids, bin_size, partition_by, min_cell_size, rho, nsamples = 100L, chrs, path_out = ".", save_topdom = TRUE, seed = TRUE, mainseed, verbose = FALSE) {
+overlap_scores_partitions <- function(reads, dataset, cell_ids, bin_size, partition_by, min_cell_size, rho, nsamples = 100L, chrs, path_out = ".", save_topdom = TRUE, seed = TRUE, mainseed, force = FALSE, verbose = FALSE) {
   ## To please R CMD check
   cell_id <- chr_a <- NULL; rm(list = c("cell_id", "chr_a"))
   
@@ -107,7 +109,11 @@ overlap_scores_partitions <- function(reads, dataset, cell_ids, bin_size, partit
     res[[chr]] <- pathnames
   
     ## Identify samples to be done
-    sample_idxs <- which(!file_test("-f", pathnames))
+    if (force) {
+      sample_idxs <- seq_along(pathnames)
+    } else {
+      sample_idxs <- which(!file_test("-f", pathnames))
+    }
     
     ## Already done?
     if (length(sample_idxs) == 0L) {
@@ -169,7 +175,7 @@ overlap_scores_partitions <- function(reads, dataset, cell_ids, bin_size, partit
         if (verbose) mprintf("Sample #%d (%s) of %d ...", kk, seed_tags[bb], length(sample_idxs))
     
         ## Already done? (should not happen, but just in case)
-        if (file_test("-f", pathname)) {
+        if (!force && file_test("-f", pathname)) {
           if (verbose) mprintf("Sample #%d (%s) of %d ... ALREADY DONE", kk, seed_tags[bb], length(sample_idxs))
           next
         }
@@ -207,7 +213,10 @@ overlap_scores_partitions <- function(reads, dataset, cell_ids, bin_size, partit
             stopifnot(is.list(tds), length(tds) == 1L, all(names(tds) == chr))
             counts <- NULL ## Not needed anymore
             
-            tds[[chr]]
+            tds_chr <- tds[[chr]]
+            if (save_topdom) attr(tds_chr, "counts") <- counts
+	    
+	    tds_chr
           })
   
           read_partitions <- NULL ## Not needed anymore
@@ -220,17 +229,17 @@ overlap_scores_partitions <- function(reads, dataset, cell_ids, bin_size, partit
           td_ref <- tds[[ref]]
   
           if (save_topdom) {
-  	  tt <- tds
+            tt <- tds
             attr(tt, "bin_size") <- bin_size
             attr(tt, "chromosome") <- chr
             attr(tt, "min_cell_size") <- min_cell_size
             attr(tt, "reference_partition") <- ref
             attr(tt, "seed") <- seed
-  	  attr(tt, "reference") <- ref
-  	  pathname2 <- sprintf("%s,topdom.rds", tools::file_path_sans_ext(pathname))
-  	  saveRDS(tt, file = pathname2)
-  	  tt <- NULL
-  	}
+            attr(tt, "reference") <- ref
+            pathname2 <- sprintf("%s,topdom.rds", tools::file_path_sans_ext(pathname))
+            saveRDS(tt, file = pathname2)
+            tt <- NULL
+          }
   	
           overlaps <- lapply(tds, FUN = function(td) Try(overlapScores)(td, td_ref))
           stopifnot(is.list(overlaps), length(overlaps) == length(tds))
