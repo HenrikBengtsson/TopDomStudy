@@ -46,7 +46,7 @@ overlap_scores_partitions <- function(reads, dataset, cell_ids, bin_size, partit
   
   stop_if_not(is.data.frame(reads) || is.function(reads))
   stop_if_not(is.numeric(bin_size), length(bin_size) == 1L, !is.na(bin_size), bin_size > 0, is.finite(bin_size))
-  partition_by <- match.arg(partition_by, choices = c("reads", "cells"))
+  partition_by <- match.arg(partition_by, choices = c("reads", "cells", "reads_by_half", "cells_by_half"))
   stopifnot(length(min_cell_size) == 1L, is.numeric(min_cell_size),
             !is.na(min_cell_size), min_cell_size >= 1L)
   stop_if_not(is.numeric(rho), length(rho) == 1L, !is.na(rho), rho > 0.0, rho <= 0.5)
@@ -212,6 +212,10 @@ overlap_scores_partitions <- function(reads, dataset, cell_ids, bin_size, partit
             } else {
               reads_partitions <- sample_partitions_by_cells_ref_vs_seq(reads, fraction = rho, seq = seq)
             }
+          } else if (partition_by == "reads_by_half") {
+            reads_partitions <- sample_partitions_by_half(nrow(reads), fraction = rho)
+          } else if (partition_by == "cells_by_half") {
+            reads_partitions <- sample_partitions_by_cells_by_half(reads, fraction = rho)
           }
           reads_partitions <- lapply(reads_partitions, FUN = function(partition) reads[partition, ])
           str(reads_partitions)
@@ -239,12 +243,16 @@ overlap_scores_partitions <- function(reads, dataset, cell_ids, bin_size, partit
           })
   
           read_partitions <- NULL ## Not needed anymore
+
+          if (partition_by %in% c("reads_by_half", "cells_by_half")) {
+	    ref <- 1L
+	  } else {
+            ## Find first TopDom fit that didn't produce an error
+            ok <- unlist(lapply(tds, FUN = function(td) !inherits(td, "try-error")))
+            stopifnot(length(ok) == length(tds))
+            ref <- which(ok)[1]
+	  }
   
-          ## Find first TopDom fit that didn't produce an error
-          ok <- unlist(lapply(tds, FUN = function(td) !inherits(td, "try-error")))
-          stopifnot(length(ok) == length(tds))
-  
-          ref <- which(ok)[1]
           td_ref <- tds[[ref]]
   
           if (save_topdom) {
