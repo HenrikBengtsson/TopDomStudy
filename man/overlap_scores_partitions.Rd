@@ -5,46 +5,56 @@
 \title{Calculates TopDom Overlap Scores Across Partitions}
 \usage{
 overlap_scores_partitions(reads, dataset, cell_ids = NULL, bin_size,
-  partition_by, min_cell_size, rho, seq = NULL, nsamples = 100L, chrs,
-  path_out = ".", save_topdom = TRUE, seed = TRUE, mainseed,
-  force = FALSE, verbose = FALSE)
+  partition_by, min_cell_size = 1L, rho, seq = NULL, nsamples = 100L,
+  chrs, path_out = ".", save_topdom = TRUE, seed = TRUE,
+  mainseed = 48879, force = FALSE, verbose = FALSE)
 }
 \arguments{
-\item{reads}{...}
+\item{reads}{A \link[base:data.frame]{base::data.frame}.}
 
 \item{dataset}{...}
 
 \item{cell_ids}{...}
 
-\item{bin_size}{...}
+\item{bin_size}{A positive numeric.}
 
-\item{partition_by}{...}
+\item{partition_by}{A string specifying how to partition;
+one of \code{"reads"}, \code{"cells"}, \code{"reads_by_half"}, or \code{"cells_by_half"}.}
 
-\item{min_cell_size}{...}
+\item{min_cell_size}{The minimum number of reads for a cell to be included.
+Cells with less reads are dropped.}
 
-\item{rho}{...}
+\item{rho}{A numeric in \eqn{(0,1/2]} specifying the relative size of the partions.}
 
 \item{seq}{...}
 
-\item{nsamples}{= 100L ...}
+\item{nsamples}{Number of random samples.}
 
-\item{chrs}{...}
+\item{chrs}{Names of chromosomes to iterate over.}
 
-\item{path_out}{...}
+\item{path_out}{The root folder that will contain the \code{overlapScoreData/} folder
+to which RDS files are written.}
 
 \item{save_topdom}{...}
 
-\item{seed}{...}
+\item{seed}{Random seed for reproducible (parallel) random number generation (RNG).}
 
 \item{mainseed}{...}
 
-\item{force}{...}
+\item{force}{If \code{FALSE}, already processed partitions are skipped, otherwise not.}
 
-\item{verbose}{...}
+\item{verbose}{If \code{TRUE}, verbose message are produced, otherwise not.}
 }
 \value{
-A named list of length \code{length(chrs)}.
+A named list of length \code{length(chrs)} with names as \code{chrs}.
+Each list elements contains \code{nsamples} pathnames of RDS files.
 }
 \description{
 Calculates TopDom Overlap Scores Across Partitions
 }
+\section{Parallel processing}{
+
+Internally, \link[future.apply:future_lapply]{future.apply::future_lapply} is used to parallelize
+over \link[TopDom:TopDom]{TopDom::TopDom}.
+}
+

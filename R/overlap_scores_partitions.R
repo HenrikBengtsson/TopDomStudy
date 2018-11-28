@@ -1,38 +1,46 @@
 #' Calculates TopDom Overlap Scores Across Partitions
 #'
-#' @param reads ...
+#' @param reads A [base::data.frame].
 #'
 #' @param dataset ...
 #'
 #' @param cell_ids ...
 #'
-#' @param bin_size ...
+#' @param bin_size A positive numeric.
 #'
-#' @param partition_by ...
+#' @param partition_by A string specifying how to partition;
+#'        one of `"reads"`, `"cells"`, `"reads_by_half"`, or `"cells_by_half"`.
 #'
-#' @param min_cell_size ...
+#' @param min_cell_size The minimum number of reads for a cell to be included.
+#'        Cells with less reads are dropped.
 #'
-#' @param rho ...
+#' @param rho A numeric in \eqn{(0,1/2]} specifying the relative size of the partions.
 #'
 #' @param seq ...
 #'
-#' @param nsamples = 100L ...
+#' @param nsamples Number of random samples.
 #'
-#' @param chrs ...
+#' @param chrs Names of chromosomes to iterate over.
 #'
-#' @param path_out ...
+#' @param path_out The root folder that will contain the `overlapScoreData/` folder
+#'        to which RDS files are written.
 #'
 #' @param save_topdom ...
 #'
-#' @param seed ...
+#' @param seed Random seed for reproducible (parallel) random number generation (RNG).
 #'
 #' @param mainseed ...
 #'
-#' @param force ...
+#' @param force If `FALSE`, already processed partitions are skipped, otherwise not.
 #'
-#' @param verbose ...
+#' @param verbose If `TRUE`, verbose message are produced, otherwise not.
 #'
-#' @return A named list of length `length(chrs)`.
+#' @return A named list of length `length(chrs)` with names as `chrs`.
+#' Each list elements contains `nsamples` pathnames of RDS files.
+#'
+#' @section Parallel processing:
+#' Internally, [future.apply::future_lapply] is used to parallelize
+#' over [TopDom::TopDom].
 #'
 #' @importFrom future value %<-% %label% %seed%
 #' @importFrom future.apply future_lapply
@@ -40,7 +48,7 @@
 #' @importFrom utils file_test str
 #' @importFrom TopDom overlapScores TopDom
 #' @export
-overlap_scores_partitions <- function(reads, dataset, cell_ids = NULL, bin_size, partition_by, min_cell_size, rho, seq = NULL, nsamples = 100L, chrs, path_out = ".", save_topdom = TRUE, seed = TRUE, mainseed, force = FALSE, verbose = FALSE) {
+overlap_scores_partitions <- function(reads, dataset, cell_ids = NULL, bin_size, partition_by, min_cell_size = 1L, rho, seq = NULL, nsamples = 100L, chrs, path_out = ".", save_topdom = TRUE, seed = TRUE, mainseed = 0xBEEF, force = FALSE, verbose = FALSE) {
   ## To please R CMD check
   cell_id <- chr_a <- NULL; rm(list = c("cell_id", "chr_a"))
   
