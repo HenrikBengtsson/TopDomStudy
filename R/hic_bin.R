@@ -20,6 +20,8 @@
 #' If `intra_only = TRUE`, an L list where each element \eqn{i} in turn
 #' holds an integer matrix of binned counts for intra-chromosome pair \eqn{(i, i)}.
 #'
+#' @example incl/hic_bin.R
+#'
 #' @author Henrik Bengtsson adopted from a script by Adam Olshen.
 #'
 #' @importFrom listenv listenv
@@ -270,4 +272,3 @@ hic_bin_20180603 <- function(data, bin_size, intra_only = FALSE, known_chrs = c(
   
   counts
 }
-

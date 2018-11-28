@@ -31,6 +31,18 @@ holds an integer matrix of binned counts for intra-chromosome pair \eqn{(i, i)}.
 \description{
 Bins HiC Reads in a Data Frame into Chromosome-Pair Count Matrices
 }
+\examples{
+pathname <- system.file("compiledData", "human,HAP1,unique,chr=22.rds", package = "TopDomStudy")
+data <- read_rds(pathname)
+print(data)
+
+binned <- hic_bin(data, bin_size = 100000, intra_only = TRUE)
+str(binned)
+
+image(log2(binned[[1]]), axes = FALSE)
+box()
+
+}
 \author{
 Henrik Bengtsson adopted from a script by Adam Olshen.
 }
