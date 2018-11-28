@@ -72,9 +72,6 @@ Try <- function(fcn) function(...) try(fcn(...), silent = TRUE)
 #'
 #' @return An eight-character string.
 #'
-#' @details
-#' The function  [base::stopifnot].
-#'
 #' @export
 #' @importFrom digest digest
 #' @export

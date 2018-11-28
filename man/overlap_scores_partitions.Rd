@@ -6,9 +6,8 @@
 \usage{
 overlap_scores_partitions(reads, bin_size, partition_by, rho,
   nsamples = 100L, seed = TRUE, chrs = NULL, min_cell_size = 1L,
-  seq = NULL, dataset, cell_ids = NULL, path_out = ".",
-  save_topdom = TRUE, mainseed = 48879, force = FALSE,
-  verbose = FALSE)
+  dataset, cell_ids = NULL, path_out = ".", save_topdom = TRUE,
+  mainseed = 48879, force = FALSE, verbose = FALSE)
 }
 \arguments{
 \item{reads}{A \link[base:data.frame]{base::data.frame}.}
@@ -29,8 +28,6 @@ Defaults to the chromsomes in \code{reads$chr_a}.}
 
 \item{min_cell_size}{(optional, filter) The minimum number of reads for a cell to
 be included. Cells with less reads are dropped.}
-
-\item{seq}{(optional) ...}
 
 \item{dataset}{(optional) ...}
 

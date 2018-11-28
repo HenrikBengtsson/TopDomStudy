@@ -15,6 +15,3 @@ An eight-character string.
 \description{
 CRC32 Checksum of an Object
 }
-\details{
-The function  \link[base:stopifnot]{base::stopifnot}.
-}
