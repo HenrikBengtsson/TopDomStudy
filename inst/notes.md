@@ -2,7 +2,7 @@ The files within here, was created using:
 
 ```sh
 data <- readRDS("compiledData/human,HAP1,unique.rds")
-data22 <- subset(data, chr_a == 22, chr_b = chr_a)
+data22 <- subset(data, chr_a == 22 && chr_b == chr_a)
 saveRDS(data22, "human,HAP1,unique,chr=22.rds")
 ```
 
