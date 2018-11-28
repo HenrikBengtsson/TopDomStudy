@@ -40,7 +40,7 @@
 #' @importFrom utils file_test str
 #' @importFrom TopDom overlapScores TopDom
 #' @export
-overlap_scores_partitions <- function(reads, dataset, cell_ids, bin_size, partition_by, min_cell_size, rho, seq = NULL, nsamples = 100L, chrs, path_out = ".", save_topdom = TRUE, seed = TRUE, mainseed, force = FALSE, verbose = FALSE) {
+overlap_scores_partitions <- function(reads, dataset, cell_ids = NULL, bin_size, partition_by, min_cell_size, rho, seq = NULL, nsamples = 100L, chrs, path_out = ".", save_topdom = TRUE, seed = TRUE, mainseed, force = FALSE, verbose = FALSE) {
   ## To please R CMD check
   cell_id <- chr_a <- NULL; rm(list = c("cell_id", "chr_a"))
   

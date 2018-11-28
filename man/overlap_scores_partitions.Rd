@@ -4,8 +4,8 @@
 \alias{overlap_scores_partitions}
 \title{Calculates TopDom Overlap Scores Across Partitions}
 \usage{
-overlap_scores_partitions(reads, dataset, cell_ids, bin_size, partition_by,
-  min_cell_size, rho, seq = NULL, nsamples = 100L, chrs,
+overlap_scores_partitions(reads, dataset, cell_ids = NULL, bin_size,
+  partition_by, min_cell_size, rho, seq = NULL, nsamples = 100L, chrs,
   path_out = ".", save_topdom = TRUE, seed = TRUE, mainseed,
   force = FALSE, verbose = FALSE)
 }
