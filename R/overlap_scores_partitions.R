@@ -56,7 +56,7 @@ overlap_scores_partitions <- function(reads, dataset, cell_ids, bin_size, partit
   }
   stop_if_not(is.numeric(nsamples), length(nsamples) == 1L,
               !is.na(nsamples), nsamples >= 1L)
-  stop_if_not(is.character(chrs), length(chrs) > 1L, !anyNA(chrs))
+  stop_if_not(is.character(chrs), length(chrs) >= 1L, !anyNA(chrs))
   chrs <- sort(unique(chrs))
 
   ## Argument tags
