@@ -3,4 +3,4 @@
 ^([.]travis|appveyor)[.]yml$
 ^incl/
 ^.local/
-
+^overlapScoreData/
