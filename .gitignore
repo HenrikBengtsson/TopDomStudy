@@ -1,6 +1,7 @@
 .Rhistory
 *~
 **/*~
+.local
 .check
 .test
 .o
