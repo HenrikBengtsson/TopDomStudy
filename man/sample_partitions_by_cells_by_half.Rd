@@ -9,7 +9,7 @@ sample_partitions_by_cells_by_half(reads, ...)
 \arguments{
 \item{reads}{A data.frame of reads.}
 
-\item{\dots}{Argument passed to \link{sample_partitions_similar_weights_ref_vs_seq}.}
+\item{\dots}{Argument passed to \link{sample_partitions_similar_weights_by_half}.}
 }
 \value{
 A list of random non-overlapping (disjoint) partitions where each
