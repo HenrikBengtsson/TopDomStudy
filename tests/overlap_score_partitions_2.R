@@ -4,7 +4,7 @@ pathname <- system.file("compiledData", "human,HAP1,unique,chr=22.rds", package 
 reads <- read_rds(pathname)
 print(reads)
 
-dt <- system.time(res <- overlap_scores_partitions(reads = reads, dataset = "human,HAP1,unique", bin_size = 100000, partition_by = "cells_by_half", min_cell_size = 1L, rho = 1/4, nsamples = 100L, chrs = "22", seed = TRUE, mainseed = 0xBEEF))
+dt <- system.time(res <- overlap_scores_partitions(reads = reads, dataset = "human,HAP1,unique", bin_size = 100000, partition_by = "cells_by_half", min_cell_size = 2L, rho = 1/4, nsamples = 100L, chrs = "22", seed = TRUE, mainseed = 0xBEEF))
 print(dt)
 
 pathname <- res[["22"]][1]
