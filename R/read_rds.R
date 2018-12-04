@@ -21,6 +21,6 @@ read_rds <- function(pathname) {
     msg <- sprintf("readRDS() failed to read file %s (%.0f bytes). The reason was: %s",
                    sQuote(pathname), file.size(pathname), msg)
     ex$message <- msg
-    signalCondition(ex)
+    stop(ex)
   })
 }
