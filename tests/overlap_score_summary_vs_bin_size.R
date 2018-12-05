@@ -5,7 +5,7 @@ plan(multiprocess, workers = 3/4 * availableCores())
 dataset <- "human,HAP1"
 chromosome <- "22"
 nsamples <- 30L
-bin_size <- 100000
+rho <- 0.25
 
 filename <- sprintf("%s,unique,chr=%s.rds", dataset, chromosome)
 pathname <- system.file("compiledData", filename, package = "TopDomStudy", mustWork = TRUE)
@@ -14,8 +14,8 @@ print(reads)
 
 ## Overlap scores per partition
 summary <- NULL
-rhos <- c(0.01, 0.02, 0.04, 0.05, 0.06, 0.08, 0.10, 0.20, 0.30, 0.40, 0.50)
-summary <- future_lapply(rhos, FUN = function(rho) {
+bin_sizes <- c(5e3, 6e3, 8e3, 10e3, 12e3, 15e3, 20e3, 40e3, 60e3, 80e3, 100e3)
+summary <- future_lapply(bin_sizes, FUN = function(bin_size) {
   res <- overlap_scores_partitions(reads = reads, dataset = "human,HAP1,unique", bin_size = bin_size, partition_by = "cells_by_half", min_cell_size = 2L, rho = rho, nsamples = nsamples, chrs = chromosome, seed = 0xBEEF, mainseed = 0xBEEF)
   
   ## Overlap-score summaries
@@ -29,16 +29,15 @@ summary <- future_lapply(rhos, FUN = function(rho) {
   summary_kk
 })
 summary <- do.call(rbind, summary)
-
 print(summary)
 
 if (require("ggplot2")) {
-  dw <- diff(range(rhos)) / length(rhos)
-  gg <- ggplot(summary, aes(x = fraction, y = mean))
+  dw <- diff(range(bin_sizes)) / length(bin_sizes)
+  gg <- ggplot(summary, aes(x = bin_size, y = mean))
   
-  gg <- gg + geom_boxplot(aes(group = as.factor(fraction)), width = 0.2*dw)
+  gg <- gg + geom_boxplot(aes(group = as.factor(bin_size)), width = 0.2*dw)
   gg <- gg + geom_jitter(height = 0, width = 0.05*dw, size = 0.7, colour = "darkgray")
-  
+
   gg <- gg + stat_summary(aes(y = mean, group = 1L),
                           fun.y = function(x) mean(x, trim = 0.10),
                           geom = "line", size = 2L, group = 1L)
@@ -46,7 +45,7 @@ if (require("ggplot2")) {
   gg <- gg + ggtitle(dataset,
           subtitle = sprintf("chromosome %s (%d partitions)",
                              chromosome, nsamples))
-  gg <- gg + xlab("fraction") + ylab("average overlap score")
+  gg <- gg + xlab("bin size (bps)") + ylab("average overlap score")
   gg <- gg + ylim(0,1)
   print(gg)
 }
