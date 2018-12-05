@@ -8,16 +8,6 @@ print(reads)
 dt <- system.time(res <- overlap_scores_partitions(reads = reads, dataset = "human,HAP1,unique", bin_size = 100000, partition_by = "cells_by_half", min_cell_size = 2L, rho = 1/4, nsamples = 10L, chrs = "22", seed = 0xBEEF, mainseed = 0xBEEF))
 print(dt)
 
-## Overlap-score summaries
-summaries <- lapply(res[["22"]], FUN = function(pathname) {
-  oss <- read_rds(pathname)
-  overlap_score_summary(oss)
-})
-summaries <- do.call(rbind, summaries)
-rownames(summaries) <- NULL
-print(summaries)
-
-
 ## TopDom data
 pathname_oss <- res[["22"]][1]
 oss <- read_rds(pathname_oss)

@@ -224,7 +224,6 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by, rho, nsampl
             reads_partitions <- sample_partitions_by_cells_by_half(reads, fraction = rho)
           }
           reads_partitions <- lapply(reads_partitions, FUN = function(partition) reads[partition, ])
-          str(reads_partitions)
   
           ## TopDom on each partition
           tds <- lapply(reads_partitions, FUN = function(reads_pp) {
@@ -234,7 +233,6 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by, rho, nsampl
               counts <- as_TopDomData(counts)
               counts
             }
-            str(counts, nchar.max = 60L)
             stopifnot(is.list(counts), length(counts) == length(chr), all(names(counts) == chr))
   
             ## Used to be Try(TopDom), cf. https://github.com/HenrikBengtsson/TopDom/issues/4 
