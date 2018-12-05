@@ -178,18 +178,16 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by, rho, nsampl
         cell_sizes <- table(as.character(reads$cell_id))
         stopifnot(min(cell_sizes) >= min_cell_size)
         cell_sizes <- cells_keep <- reads_keep <- NULL ## Not needed anymore
-        print(reads)
       }
   
       ## Subset by cell ids?
       if (!is.null(cell_ids)) {
         reads <- subset(reads, cell_id %in% cell_ids)
-        print(reads)
       }
   
       ## Subset by chromosome
       reads <- subset(reads, chr_a %in% chr)
-      print(reads)
+      if (verbose) print(reads)
   
       res_kk <- listenv()
   
@@ -285,7 +283,7 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by, rho, nsampl
           attr(overlaps, "seed") <- seed
           
           saveRDS(overlaps, file = pathname)
-          print(overlaps)
+          if (verbose) print(overlaps)
   
           pathname
         } %seed% seed %label% paste(c(chr_tag, sprintf("sample=%d", kk)), collapse = "-")

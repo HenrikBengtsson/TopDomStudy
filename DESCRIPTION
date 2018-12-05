@@ -17,6 +17,8 @@ Imports:
     parallel,
     stats,
     utils
+Suggests:
+    ggplot2
 Remotes:
     github::HenrikBengtsson/TopDom
 RoxygenNote: 6.1.1
