@@ -7,7 +7,8 @@
 overlap_scores_partitions(reads, bin_size, partition_by, rho,
   nsamples = 100L, seed = TRUE, chrs = NULL, min_cell_size = 1L,
   dataset, cell_ids = NULL, path_out = ".", save_topdom = TRUE,
-  mainseed = 48879, force = FALSE, verbose = FALSE)
+  mainseed = 48879, force = FALSE, as = c("pathname", "value"),
+  verbose = FALSE)
 }
 \arguments{
 \item{reads}{A \link[base:data.frame]{base::data.frame}.}
@@ -41,6 +42,8 @@ to which RDS files are written.}
 \item{mainseed}{...}
 
 \item{force}{If \code{FALSE}, already processed partitions are skipped, otherwise not.}
+
+\item{as}{Should values or pathnames be returned?}
 
 \item{verbose}{If \code{TRUE}, verbose message are produced, otherwise not.}
 }

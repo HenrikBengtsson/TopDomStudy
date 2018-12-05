@@ -14,8 +14,8 @@ Imports:
     listenv,
     future,
     future.apply,
-    matrixStats,
     parallel,
+    stats,
     utils
 Remotes:
     github::HenrikBengtsson/TopDom

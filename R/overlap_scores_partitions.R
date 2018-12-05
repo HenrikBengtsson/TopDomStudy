@@ -30,6 +30,8 @@
 #'
 #' @param mainseed ...
 #'
+#' @param as Should values or pathnames be returned?
+#'
 #' @param force If `FALSE`, already processed partitions are skipped, otherwise not.
 #'
 #' @param verbose If `TRUE`, verbose message are produced, otherwise not.
@@ -50,6 +52,7 @@
 overlap_scores_partitions <- function(reads, bin_size, partition_by, rho, nsamples = 100L, seed = TRUE,
                                       chrs = NULL, min_cell_size = 1L, dataset, cell_ids = NULL,
 				      path_out = ".", save_topdom = TRUE, mainseed = 0xBEEF, force = FALSE,
+				      as = c("pathname", "value"),
 				      verbose = FALSE) {
   ## To please R CMD check
   cell_id <- chr_a <- NULL; rm(list = c("cell_id", "chr_a"))
@@ -98,6 +101,8 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by, rho, nsampl
   stop_if_not(mainseed == 0xBEEF)
   mainseed_tag <- "mainseed=0xBEEF"
 
+  as <- match.arg(as)
+
   dataset_out <- paste(c(dataset, cell_ids_tag, bin_size_tag, partition_by_tag, min_cell_size_tag, rho_tag, mainseed_tag), collapse = ",")
   path_out <- file.path("overlapScoreData", dataset_out)
   dir.create(path_out, recursive = TRUE, showWarnings = FALSE)
@@ -128,7 +133,11 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by, rho, nsampl
     if (force) {
       sample_idxs <- seq_along(pathnames)
     } else {
-      sample_idxs <- which(!file_test("-f", pathnames))
+      done <- file_test("-f", pathnames)
+      sample_idxs <- which(!done)
+      if (as == "value") {
+        res[[chr]][done] <- lapply(pathnames[done], FUN = read_rds)
+      }
     }
     
     ## Already done?
@@ -290,8 +299,12 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by, rho, nsampl
   
       ## Resolve all samples for current chromosome
       res__kk <- unlist(res_kk)
-  
-      pathnames
+
+      if (as == "value") {
+        lapply(pathnames, FUN = read_rds)
+      } else {
+        pathnames
+      }	
     } %label% chr_tag
   
     if (verbose) mprintf("Chromosome #%d (%s) of %d ... DONE", cc, chr_tag, length(chrs))
@@ -301,6 +314,6 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by, rho, nsampl
   res <- as.list(res)
   
   if (verbose) print(res)
-  
+
   res
 } ## overlap_scores_partitions()
