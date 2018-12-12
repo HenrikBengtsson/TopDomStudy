@@ -2,8 +2,11 @@ The files within here, was created using:
 
 ```sh
 data <- readRDS("compiledData/human,HAP1,unique.rds")
-data22 <- subset(data, chr_a == 22 && chr_b == chr_a)
-saveRDS(data22, "human,HAP1,unique,chr=22.rds")
+
+for (chr in c(22, 1, 12)) {
+  data_chr <- subset(data, chr_a == chr & chr_b == chr_a)
+  saveRDS(data_chr, sprintf("human,HAP1,unique,chr=%d.rds", chr))
+}
 ```
 
 ```sh
