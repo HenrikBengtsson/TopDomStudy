@@ -3,7 +3,7 @@ library(future.apply)
 plan(multiprocess, workers = 3/4 * availableCores())
 
 dataset <- "human,HAP1"
-chromosome <- "22"
+chromosome <- "16"
 nsamples <- 30L
 bin_size <- 100000
 
@@ -21,6 +21,12 @@ summary <- future_lapply(rhos, FUN = function(rho) {
   ## Overlap-score summaries
   summary_kk <- lapply(res[[chromosome]], FUN = function(pathname) {
     oss <- read_rds(pathname)
+    ## Drop failed TopDom fits and possibly skip this sample?
+    failed <- unlist(lapply(oss, FUN = inherits, "try-error"))
+    if (any(failed)) {
+      oss <- oss[!failed]
+      if (length(oss) < 2) return(NULL)
+    }
     overlap_score_summary(oss)
   })
   summary_kk <- do.call(rbind, summary_kk)
@@ -49,4 +55,6 @@ if (require("ggplot2")) {
   gg <- gg + xlab("fraction") + ylab("average overlap score")
   gg <- gg + ylim(0,1)
   print(gg)
+
+  ggsave(gg, filename=sprintf("%s,chr=%s,%s,avg_score-vs-fraction,nsamples=%d.png", dataset, chromosome, "cells_by_half", nsamples))
 }

@@ -1,11 +1,14 @@
 library(TopDomStudy)
 library(future.apply)
-plan(multiprocess, workers = 3/4 * availableCores())
+plan(multiprocess, workers = 1/2 * availableCores())
 
 dataset <- "human,HAP1"
-chromosome <- "22"
+chromosome <- "16"
 nsamples <- 30L
 rho <- 0.25
+
+if (chromosome == "12") options(future.globals.maxSize = 3*1024^3)
+if (chromosome == "16") options(future.globals.maxSize = 1*1024^3)
 
 filename <- sprintf("%s,unique,chr=%s.rds", dataset, chromosome)
 pathname <- system.file("compiledData", filename, package = "TopDomStudy", mustWork = TRUE)
@@ -17,10 +20,15 @@ summary <- NULL
 bin_sizes <- c(5e3, 6e3, 8e3, 10e3, 12e3, 15e3, 20e3, 40e3, 60e3, 80e3, 100e3)
 summary <- future_lapply(bin_sizes, FUN = function(bin_size) {
   res <- overlap_scores_partitions(reads = reads, dataset = "human,HAP1,unique", bin_size = bin_size, partition_by = "cells_by_half", min_cell_size = 2L, rho = rho, nsamples = nsamples, chrs = chromosome, seed = 0xBEEF, mainseed = 0xBEEF)
-  
   ## Overlap-score summaries
   summary_kk <- lapply(res[[chromosome]], FUN = function(pathname) {
     oss <- read_rds(pathname)
+    ## Drop failed TopDom fits and possibly skip this sample?
+    failed <- unlist(lapply(oss, FUN = inherits, "try-error"))
+    if (any(failed)) {
+      oss <- oss[!failed]
+      if (length(oss) < 2) return(NULL)
+    }
     overlap_score_summary(oss)
   })
   summary_kk <- do.call(rbind, summary_kk)
@@ -48,4 +56,6 @@ if (require("ggplot2")) {
   gg <- gg + xlab("bin size (bps)") + ylab("average overlap score")
   gg <- gg + ylim(0,1)
   print(gg)
+
+  ggsave(gg, filename=sprintf("%s,chr=%s,%s,avg_score-vs-bin_size,nsamples=%d.png", dataset, chromosome, "cells_by_half", nsamples))
 }
