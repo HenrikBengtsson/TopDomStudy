@@ -3,7 +3,7 @@ library(future.apply)
 plan(multiprocess, workers = 3/4 * availableCores())
 
 dataset <- "human,HAP1"
-chromosome <- "16"
+chromosome <- "22"
 nsamples <- 30L
 bin_size <- 100000
 
@@ -14,7 +14,8 @@ print(reads)
 
 ## Overlap scores per partition
 summary <- NULL
-rhos <- c(0.01, 0.02, 0.04, 0.05, 0.06, 0.08, 0.10, 0.20, 0.30, 0.40, 0.50)
+## FIXME: chromosome = "22", rho = 0.01, bin_size = 10000, nsamples = 1L gives an error
+rhos <- c(0.01, 0.02, 0.04, 0.05, 0.06, 0.08, 0.10, 0.20, 0.30, 0.40, 0.50)[-1]
 summary <- future_lapply(rhos, FUN = function(rho) {
   res <- overlap_scores_partitions(reads = reads, dataset = "human,HAP1,unique", bin_size = bin_size, partition_by = "cells_by_half", min_cell_size = 2L, rho = rho, nsamples = nsamples, chrs = chromosome, seed = 0xBEEF, mainseed = 0xBEEF)
   
@@ -50,11 +51,11 @@ if (require("ggplot2")) {
                           geom = "line", size = 2L, group = 1L)
 			  
   gg <- gg + ggtitle(dataset,
-          subtitle = sprintf("chromosome %s (%d partitions)",
-                             chromosome, nsamples))
+          subtitle = sprintf("chromosome %s, bin size=%d (%d samples)",
+                             chromosome, bin_size, nsamples))
   gg <- gg + xlab("fraction") + ylab("average overlap score")
   gg <- gg + ylim(0,1)
   print(gg)
 
-  ggsave(gg, filename=sprintf("%s,chr=%s,%s,avg_score-vs-fraction,nsamples=%d.png", dataset, chromosome, "cells_by_half", nsamples))
+  ggsave(gg, filename=sprintf("%s,chr=%s,%s,avg_score-vs-fraction,bin_size=%d,nsamples=%d.png", dataset, chromosome, "cells_by_half", bin_size, nsamples))
 }

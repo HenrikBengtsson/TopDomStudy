@@ -3,12 +3,12 @@ library(future.apply)
 plan(multiprocess, workers = 1/2 * availableCores())
 
 dataset <- "human,HAP1"
-chromosome <- "16"
+chromosome <- "22"
 nsamples <- 30L
 rho <- 0.25
 
 if (chromosome == "12") options(future.globals.maxSize = 3*1024^3)
-if (chromosome == "16") options(future.globals.maxSize = 1*1024^3)
+if (chromosome == "16") options(future.globals.maxSize = 1.5*1024^3)
 
 filename <- sprintf("%s,unique,chr=%s.rds", dataset, chromosome)
 pathname <- system.file("compiledData", filename, package = "TopDomStudy", mustWork = TRUE)
@@ -51,11 +51,11 @@ if (require("ggplot2")) {
                           geom = "line", size = 2L, group = 1L)
 			  
   gg <- gg + ggtitle(dataset,
-          subtitle = sprintf("chromosome %s (%d partitions)",
-                             chromosome, nsamples))
+          subtitle = sprintf("chromosome %s, fraction=%.3f (%d samples)",
+                             chromosome, rho, nsamples))
   gg <- gg + xlab("bin size (bps)") + ylab("average overlap score")
   gg <- gg + ylim(0,1)
   print(gg)
 
-  ggsave(gg, filename=sprintf("%s,chr=%s,%s,avg_score-vs-bin_size,nsamples=%d.png", dataset, chromosome, "cells_by_half", nsamples))
+  ggsave(gg, filename=sprintf("%s,chr=%s,%s,avg_score-vs-bin_size,fraction=%.3f,nsamples=%d.png", dataset, chromosome, "cells_by_half", rho, nsamples))
 }
