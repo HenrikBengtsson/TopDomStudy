@@ -19,6 +19,8 @@ stopifnot(length(tds) == length(oss))
 
 for (kk in seq_along(tds)) {
   td <- tds[[kk]]
+  print(td$domain)
+  
   os <- oss[[kk]]
   
   print(os)

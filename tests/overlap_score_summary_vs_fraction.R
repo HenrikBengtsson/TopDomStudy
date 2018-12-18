@@ -4,7 +4,7 @@ plan(multiprocess, workers = 3/4 * availableCores())
 
 dataset <- "human,HAP1"
 chromosome <- "22"
-nsamples <- 30L
+nsamples <- 10L
 bin_size <- 100000
 
 filename <- sprintf("%s,unique,chr=%s.rds", dataset, chromosome)
@@ -15,7 +15,7 @@ print(reads)
 ## Overlap scores per partition
 summary <- NULL
 ## FIXME: chromosome = "22", rho = 0.01, bin_size = 10000, nsamples = 1L gives an error
-rhos <- c(0.01, 0.02, 0.04, 0.05, 0.06, 0.08, 0.10, 0.20, 0.30, 0.40, 0.50)[-1]
+rhos <- c(0.05, 0.20, 0.50)
 summary <- future_lapply(rhos, FUN = function(rho) {
   res <- overlap_scores_partitions(reads = reads, dataset = "human,HAP1,unique", bin_size = bin_size, partition_by = "cells_by_half", min_cell_size = 2L, rho = rho, nsamples = nsamples, chrs = chromosome, seed = 0xBEEF, mainseed = 0xBEEF)
   

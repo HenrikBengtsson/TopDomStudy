@@ -4,11 +4,8 @@ plan(multiprocess, workers = 1/2 * availableCores())
 
 dataset <- "human,HAP1"
 chromosome <- "22"
-nsamples <- 30L
+nsamples <- 10L
 rho <- 0.25
-
-if (chromosome == "12") options(future.globals.maxSize = 3*1024^3)
-if (chromosome == "16") options(future.globals.maxSize = 1.5*1024^3)
 
 filename <- sprintf("%s,unique,chr=%s.rds", dataset, chromosome)
 pathname <- system.file("compiledData", filename, package = "TopDomStudy", mustWork = TRUE)
@@ -17,7 +14,7 @@ print(reads)
 
 ## Overlap scores per partition
 summary <- NULL
-bin_sizes <- c(5e3, 6e3, 8e3, 10e3, 12e3, 15e3, 20e3, 40e3, 60e3, 80e3, 100e3)
+bin_sizes <- c(10e3, 50e3, 100e3)
 summary <- future_lapply(bin_sizes, FUN = function(bin_size) {
   res <- overlap_scores_partitions(reads = reads, dataset = "human,HAP1,unique", bin_size = bin_size, partition_by = "cells_by_half", min_cell_size = 2L, rho = rho, nsamples = nsamples, chrs = chromosome, seed = 0xBEEF, mainseed = 0xBEEF)
   ## Overlap-score summaries
