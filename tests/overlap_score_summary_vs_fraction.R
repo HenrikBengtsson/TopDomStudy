@@ -17,7 +17,7 @@ summary <- NULL
 ## FIXME: chromosome = "22", rho = 0.01, bin_size = 10000, nsamples = 1L gives an error
 rhos <- c(0.05, 0.20, 0.50)
 summary <- future_lapply(rhos, FUN = function(rho) {
-  res <- overlap_scores_partitions(reads = reads, dataset = "human,HAP1,unique", bin_size = bin_size, partition_by = "cells_by_half", min_cell_size = 2L, rho = rho, nsamples = nsamples, chrs = chromosome, seed = 0xBEEF, mainseed = 0xBEEF)
+  res <- overlap_scores_partitions(reads = reads, dataset = "human,HAP1,unique", bin_size = bin_size, partition_by = "cells_by_half", min_cell_size = 2L, rho = rho, nsamples = nsamples, chrs = chromosome, seed = 0xBEEF, mainseed = 0xBEEF, force = TRUE)
   
   ## Overlap-score summaries
   summary_kk <- lapply(res[[chromosome]], FUN = function(pathname) {

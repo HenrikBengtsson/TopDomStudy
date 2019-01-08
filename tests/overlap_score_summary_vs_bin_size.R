@@ -16,7 +16,7 @@ print(reads)
 summary <- NULL
 bin_sizes <- c(10e3, 50e3, 100e3)
 summary <- future_lapply(bin_sizes, FUN = function(bin_size) {
-  res <- overlap_scores_partitions(reads = reads, dataset = "human,HAP1,unique", bin_size = bin_size, partition_by = "cells_by_half", min_cell_size = 2L, rho = rho, nsamples = nsamples, chrs = chromosome, seed = 0xBEEF, mainseed = 0xBEEF)
+  res <- overlap_scores_partitions(reads = reads, dataset = "human,HAP1,unique", bin_size = bin_size, partition_by = "cells_by_half", min_cell_size = 2L, rho = rho, nsamples = nsamples, chrs = chromosome, seed = 0xBEEF, mainseed = 0xBEEF, force = TRUE)
   ## Overlap-score summaries
   summary_kk <- lapply(res[[chromosome]], FUN = function(pathname) {
     oss <- read_rds(pathname)
