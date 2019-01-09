@@ -17,15 +17,18 @@ print(tds)
 
 stopifnot(length(tds) == length(oss))
 
+## The reference partition
+td_ref <- tds[[attributes(tds)$reference_partition]]
+
 for (kk in seq_along(tds)) {
   td <- tds[[kk]]
   print(td$domain)
   
   os <- oss[[kk]]
-  
   print(os)
+  
   scores <- os[["22"]]$best_scores
   print(scores)
   
-  stopifnot(length(scores) == nrow(td$domain))
+  stopifnot(length(scores) == nrow(td_ref$domain))
 }

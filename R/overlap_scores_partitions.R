@@ -272,7 +272,7 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by, rho, nsampl
             tt <- NULL
           }
  
-          overlaps <- lapply(tds, FUN = function(td) Try(overlapScores)(td, td_ref))
+          overlaps <- lapply(tds, FUN = function(td) Try(overlapScores)(td, reference = td_ref))
           stopifnot(is.list(overlaps), length(overlaps) == length(tds))
           tds <- NULL ## Not needed anymore
           attr(overlaps, "bin_size") <- bin_size
