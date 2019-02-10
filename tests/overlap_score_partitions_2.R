@@ -27,7 +27,7 @@ for (kk in seq_along(tds)) {
   os <- oss[[kk]]
   print(os)
   
-  scores <- os[["22"]]$best_scores
+  scores <- os[["22"]]$best_score
   print(scores)
   
   stopifnot(length(scores) == nrow(td_ref$domain))

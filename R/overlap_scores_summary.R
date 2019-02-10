@@ -40,7 +40,7 @@ overlap_score_summary <- function(fit, drop_reference = TRUE) {
   scores <- lapply(fit, FUN = function(x) {
     if (!inherits(x, "TopDomOverlapScores")) return(double(0L))
     y <- x[[chr]]
-    y[["best_scores"]]
+    y[["best_score"]]
   })
 
   summary <- lapply(scores, FUN = function(x) {

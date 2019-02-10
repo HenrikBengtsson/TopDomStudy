@@ -1,7 +1,7 @@
 ^README[.]md$
 ^.(git|svn)
 ^([.]travis|appveyor)[.]yml$
-^incl/
-^.local/
-^overlapScoreData/
+^incl
+^.local
+^overlapScoreData
 [.]png$
