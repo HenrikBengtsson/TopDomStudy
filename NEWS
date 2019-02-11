@@ -1,6 +1,13 @@
 TopDomStudy
 ===========
 
+Version: 0.0.0-9001 [2019-02-10]
+
+NEW FEATURES:
+
+ o Add support for weighted estimates for overlap_score_summary().
+
+
 Version: 0.0.0-9000 [2018-12-18]
 
 SIGNIFICANT CHANGES:

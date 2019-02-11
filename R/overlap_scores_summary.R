@@ -2,15 +2,22 @@
 #'
 #' @param fit A [base::list] of K `TopDomOverlapScores` objects
 #'
+#' @param weights A character string specifying how overlap scores across
+#' domains should be weighted.
+#'
 #' @param drop_reference If TRUE, then the reference partition is dropped.
 #'
 #' @return A [base::data.frame] with (K-1) rows.
 #'
 #' @importFrom stats mad quantile sd
+#' @importFrom matrixStats weightedMean weightedSd weightedMad
+#' @importFrom Hmisc wtd.quantile
 #' @export
-overlap_score_summary <- function(fit, drop_reference = TRUE) {
+overlap_score_summary <- function(fit, weights = c("uniform", "by_length"), drop_reference = TRUE) {
   stopifnot(is.list(fit))
   lapply(fit, FUN = function(x) stopifnot(inherits(x, "TopDomOverlapScores"), length(x) == 1L))
+  weights <- match.arg(weights, choices = c("uniform", "by_length"))
+  
   n <- length(fit)
   stopifnot(n >= 2L)
 
@@ -37,22 +44,55 @@ overlap_score_summary <- function(fit, drop_reference = TRUE) {
 
   if (drop_reference) fit <- fit[-ref]
   
-  scores <- lapply(fit, FUN = function(x) {
-    if (!inherits(x, "TopDomOverlapScores")) return(double(0L))
+  data <- lapply(fit, FUN = function(x) {
+    if (!inherits(x, "TopDomOverlapScores")) return(data.frame(best_score = double(0L), best_length = integer(0L)))
     y <- x[[chr]]
-    y[["best_score"]]
+    y[c("best_score", "best_length")]
   })
 
-  summary <- lapply(scores, FUN = function(x) {
-    x <- unlist(x, use.names = FALSE)
-    count <- length(x)
-    x <- x[!is.na(x)]
-    n <- length(x)
-    data.frame(chromosome = chr, min_cell_size = min_cell_size, bin_size = bin_size, mean = mean(x), as.list(quantile(x)), sd = sd(x), mad = mad(x), count = count, n = n, check.names = FALSE)
+  summary <- lapply(data, FUN = function(xy) {
+    stopifnot(is.data.frame(xy))
+    count <- nrow(xy)
+    score <- xy[["best_score"]]
+    length <- xy[["best_length"]]
+
+    ## Drop missing values
+    keep <- !is.na(score) & !is.na(length) & length > 0L
+    score <- score[keep]
+    length <- length[keep]
+    n <- length(score)
+
+    if (weights == "uniform") {
+      mean_hat <- mean(score)
+      quantile_hat <- quantile(score)
+      sd_hat <- sd(score)
+      mad_hat <- mad(score)
+    } else if (weights == "by_length") {
+      mean_hat <- weightedMean(score, w = length)
+      quantile_hat <- wtd.quantile(score, weights = length)
+      ## Make names consistent with stats::quantile() names
+      names(quantile_hat) <- gsub("^[ ]+", "", names(quantile_hat))
+      sd_hat <- weightedSd(score, w = length) 
+      mad_hat <- weightedMad(score, w = length)
+    }
+    
+    data.frame(
+      chromosome = chr,
+      min_cell_size = min_cell_size,
+      bin_size = bin_size,
+      mean = mean_hat,
+      as.list(quantile_hat),
+      sd = sd_hat,
+      mad = mad_hat,
+      count = count,
+      n = n,
+      check.names = FALSE
+    )
   })
   
   summary <- do.call(rbind, summary)
 
+  attr(summary, "weights") <- weights
   attr(summary, "partition_by") <- partition_by
   if (!drop_reference) attr(summary, "reference_partition") <- ref
   attr(summary, "seed") <- attrs[["seed"]]
