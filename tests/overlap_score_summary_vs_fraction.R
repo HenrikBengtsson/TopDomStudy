@@ -30,7 +30,26 @@ for (weights in c("uniform", "by_length")) {
         oss <- oss[!failed]
         if (length(oss) < 2) return(NULL)
       }
-      overlap_score_summary(oss, weights = weights)
+      z <- overlap_score_summary(oss, weights = weights)
+      oss <- failed <- NULL
+      
+      pathname_td <- gsub("[.]rds$", ",topdom.rds", pathname)
+      td <- read_rds(pathname_td)
+
+      ref <- which(names(td) == "reference")
+      sizes <- td[[ref]]$domain$size
+      probs <- c(0.00, 0.05, 0.25, 0.50, 0.75, 0.95, 1.00)
+      qsizes <- quantile(sizes, probs = probs, na.rm = TRUE)
+      names(qsizes) <- sprintf("ref_len_q%0.2f", probs)
+      z <- cbind(z, as.list(qsizes))
+
+      sizes <- td[-ref][[1]]$domain$size
+      probs <- c(0.00, 0.05, 0.25, 0.50, 0.75, 0.95, 1.00)
+      qsizes <- quantile(sizes, probs = probs, na.rm = TRUE)
+      names(qsizes) <- sprintf("test_len_q%0.2f", probs)
+      z <- cbind(z, as.list(qsizes))
+
+      z
     })
     summary_kk <- do.call(rbind, summary_kk)
     rownames(summary_kk) <- NULL
@@ -44,7 +63,16 @@ for (weights in c("uniform", "by_length")) {
   if (require("ggplot2")) {
     dw <- diff(range(rhos)) / length(rhos)
     
-    signals <- c(mean = "mean", median = "`50%`")
+    length_signals <- c(
+      "reference Q25 length"    = "ref_len_q0.25",
+      "reference median length" = "ref_len_q0.50",
+      "reference Q75 length"    = "ref_len_q0.75",
+      "test Q25 length"         = "test_len_q0.25",
+      "test median length"      = "test_len_q0.50",
+      "test Q75 length"         = "test_len_q0.75"
+    )
+    signals <- c(mean = "mean", median = "`50%`", length_signals)
+    
     for (signal_label in names(signals)) {
       signal <- signals[[signal_label]]
    
@@ -56,13 +84,24 @@ for (weights in c("uniform", "by_length")) {
       gg <- gg + stat_summary(aes_string(y = signal, group = 1L),
                               fun.y = function(x) mean(x, trim = 0.10),
                               geom = "line", size = 2L, group = 1L)
+
   
-      gg <- gg + ggtitle(dataset, subtitle = sprintf("chromosome %s, bin_size=%d (%d samples) [estimator: %s; weights = %s]", chromosome, bin_size, nsamples, signal_label, weights))
-      gg <- gg + xlab("fraction") + ylab("average overlap score")
-      gg <- gg + ylim(0,1)
+      gg <- gg + ggtitle(dataset,
+            subtitle = sprintf("chromosome %s, bin_size=%d (%d samples) [estimator: %s; weights = %s]", chromosome, bin_size, nsamples, signal_label, weights))
+
+      gg <- gg + xlab("fraction")
+      if (signal_label %in% names(length_signals)) {
+        gg <- gg + ylab("domain length (bps)")
+        gg <- gg + ylim(0, 2e6)
+      } else {
+        gg <- gg + ylab("average overlap score")
+        gg <- gg + ylim(0, 1)
+      }
+
       print(gg)
     
-      filename <- sprintf("%s,chr=%s,%s,avg_score-vs-fraction,bin_size=%d,nsamples=%d,signal=%s,weights=%s.png", dataset, chromosome, "cells_by_half", bin_size, nsamples, signal_label, weights)
+      signal <- gsub("`50%`", "median", signal)
+      filename <- sprintf("%s,chr=%s,%s,avg_score-vs-fraction,bin_size=%d,nsamples=%d,signal=%s,weights=%s.png", dataset, chromosome, "cells_by_half", bin_size, nsamples, signal, weights)
       ggsave(gg, filename = filename)
     } ## for (signal ...)
   }
