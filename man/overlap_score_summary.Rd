@@ -5,13 +5,18 @@
 \title{Summarizes the TopDom Best Scores across TopDomOverlapScores}
 \usage{
 overlap_score_summary(fit, weights = c("uniform", "by_length"),
-  drop_reference = TRUE)
+  domain_length = NULL, drop_reference = TRUE)
 }
 \arguments{
 \item{fit}{A \link[base:list]{base::list} of K \code{TopDomOverlapScores} objects}
 
 \item{weights}{A character string specifying how overlap scores across
 domains should be weighted.}
+
+\item{domain_length}{(optional) A length-two numeric vector (min, max)
+specifying the minimum and maximum length of domains to include in the
+summary.  Any domains with lengths outside this range will be discarded.
+If \code{NULL} (default) or \code{c(-Inf, +Inf)}, all domains are included.}
 
 \item{drop_reference}{If TRUE, then the reference partition is dropped.}
 }

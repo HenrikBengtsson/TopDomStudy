@@ -1,6 +1,13 @@
 TopDomStudy
 ===========
 
+Version: 0.0.0-9002 [2019-03-12]
+
+NEW FEATURES:
+
+ o Add support for domain-length filtering in overlap_score_summary().
+
+
 Version: 0.0.0-9001 [2019-02-10]
 
 NEW FEATURES:

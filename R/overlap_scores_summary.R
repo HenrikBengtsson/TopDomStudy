@@ -5,6 +5,11 @@
 #' @param weights A character string specifying how overlap scores across
 #' domains should be weighted.
 #'
+#' @param domain_length (optional) A length-two numeric vector (min, max)
+#' specifying the minimum and maximum length of domains to include in the
+#' summary.  Any domains with lengths outside this range will be discarded.
+#' If `NULL` (default) or `c(-Inf, +Inf)`, all domains are included.
+#'
 #' @param drop_reference If TRUE, then the reference partition is dropped.
 #'
 #' @return A [base::data.frame] with (K-1) rows.
@@ -13,10 +18,11 @@
 #' @importFrom matrixStats weightedMean weightedSd weightedMad
 #' @importFrom Hmisc wtd.quantile
 #' @export
-overlap_score_summary <- function(fit, weights = c("uniform", "by_length"), drop_reference = TRUE) {
+overlap_score_summary <- function(fit, weights = c("uniform", "by_length"), domain_length = NULL, drop_reference = TRUE) {
   stopifnot(is.list(fit))
   lapply(fit, FUN = function(x) stopifnot(inherits(x, "TopDomOverlapScores"), length(x) == 1L))
   weights <- match.arg(weights, choices = c("uniform", "by_length"))
+  if (!is.null(domain_length)) stopifnot(is.numeric(domain_length), length(domain_length) == 2L, !anyNA(domain_length))
   
   n <- length(fit)
   stopifnot(n >= 2L)
@@ -29,7 +35,7 @@ overlap_score_summary <- function(fit, weights = c("uniform", "by_length"), drop
   if (partition_by %in% c("reads_by_half", "cells_by_half")) {
     stopifnot(n == 2L)
   }
-
+  
   chr <- attrs[["chromosome"]]
   stopifnot(length(chr) == 1L, !is.na(chr), is.character(chr))
 
@@ -49,6 +55,16 @@ overlap_score_summary <- function(fit, weights = c("uniform", "by_length"), drop
     y <- x[[chr]]
     y[c("best_score", "best_length")]
   })
+
+  ## Filter by domain lengths?
+  if (!is.null(domain_length)) {
+    data <- lapply(data, FUN = function(xy) {
+      stopifnot(is.data.frame(xy))
+      len <- xy[["best_length"]]
+      keep <- (domain_length[1] <= len & len <= domain_length[2])
+      xy[keep, ]
+    })
+  }
 
   summary <- lapply(data, FUN = function(xy) {
     stopifnot(is.data.frame(xy))

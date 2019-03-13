@@ -1,6 +1,6 @@
 library(TopDomStudy)
 library(future.apply)
-plan(multiprocess, workers = max(1, 3/4 * availableCores()))
+#plan(multiprocess, workers = max(1, 3/4 * availableCores()))
 
 dataset <- "human,HAP1"
 chromosome <- "22"
@@ -17,6 +17,8 @@ summary <- NULL
 ## FIXME: chromosome = "22", rho = 0.01, bin_size = 10000, nsamples = 1L gives an error
 rhos <- c(0.05, 0.20, 0.50)
 
+domain_length <- c(500e3, 1000e3)
+
 for (weights in c("uniform", "by_length")) {
   summary <- future_lapply(rhos, FUN = function(rho) {
     res <- overlap_scores_partitions(reads = reads, dataset = "human,HAP1,unique", bin_size = bin_size, partition_by = "cells_by_half", min_cell_size = 2L, rho = rho, nsamples = nsamples, chrs = chromosome, seed = 0xBEEF, mainseed = 0xBEEF, force = TRUE)
@@ -30,7 +32,7 @@ for (weights in c("uniform", "by_length")) {
         oss <- oss[!failed]
         if (length(oss) < 2) return(NULL)
       }
-      z <- overlap_score_summary(oss, weights = weights)
+      z <- overlap_score_summary(oss, weights = weights, domain_length = domain_length)
       oss <- failed <- NULL
       
       pathname_td <- gsub("[.]rds$", ",topdom.rds", pathname)
@@ -38,12 +40,22 @@ for (weights in c("uniform", "by_length")) {
 
       ref <- which(names(td) == "reference")
       sizes <- td[[ref]]$domain$size
+      ## Filter by domain lengths?
+      if (!is.null(domain_length)) {
+        keep <- (domain_length[1] <= sizes & sizes <= domain_length[2])
+        sizes <- sizes[keep]
+      }
       probs <- c(0.00, 0.05, 0.25, 0.50, 0.75, 0.95, 1.00)
       qsizes <- quantile(sizes, probs = probs, na.rm = TRUE)
       names(qsizes) <- sprintf("ref_len_q%0.2f", probs)
       z <- cbind(z, as.list(qsizes))
 
       sizes <- td[-ref][[1]]$domain$size
+      ## Filter by domain lengths?
+      if (!is.null(domain_length)) {
+        keep <- (domain_length[1] <= sizes & sizes <= domain_length[2])
+        sizes <- sizes[keep]
+      }
       probs <- c(0.00, 0.05, 0.25, 0.50, 0.75, 0.95, 1.00)
       qsizes <- quantile(sizes, probs = probs, na.rm = TRUE)
       names(qsizes) <- sprintf("test_len_q%0.2f", probs)
