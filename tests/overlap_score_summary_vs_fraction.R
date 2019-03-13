@@ -1,6 +1,6 @@
 library(TopDomStudy)
 library(future.apply)
-#plan(multiprocess, workers = max(1, 3/4 * availableCores()))
+plan(multiprocess, workers = max(1, 3/4 * availableCores()))
 
 dataset <- "human,HAP1"
 chromosome <- "22"
