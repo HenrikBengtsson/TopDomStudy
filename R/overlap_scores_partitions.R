@@ -40,8 +40,11 @@
 #' Each list elements contains `nsamples` pathnames of RDS files.
 #'
 #' @section Parallel processing:
-#' Internally, [future.apply::future_lapply] is used to parallelize
-#' over [TopDom::TopDom].
+#' The future framework is used to parallelize [TopDom::TopDom] in three layers:
+#'  1. across chromosomes (argument `chrs`)
+#'  2. across random samples (argument `nsamples`)
+#'  3. per random sample, across partitions (argument `partition_by`)
+#'     - typically two ('reference' and one more)
 #'
 #' @importFrom future value %<-% %label% %seed%
 #' @importFrom future.apply future_lapply
@@ -51,9 +54,9 @@
 #' @export
 overlap_scores_partitions <- function(reads, bin_size, partition_by, rho, nsamples = 100L, seed = TRUE,
                                       chrs = NULL, min_cell_size = 1L, dataset, cell_ids = NULL,
-				      path_out = ".", save_topdom = TRUE, mainseed = 0xBEEF, force = FALSE,
-				      as = c("pathname", "value"),
-				      verbose = FALSE) {
+                                      path_out = ".", save_topdom = TRUE, mainseed = 0xBEEF, force = FALSE,
+                                      as = c("pathname", "value"),
+                                      verbose = FALSE) {
   ## To please R CMD check
   cell_id <- chr_a <- NULL; rm(list = c("cell_id", "chr_a"))
   
@@ -165,13 +168,13 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by, rho, nsampl
         reads_keep <- which(reads$cell_id %in% names(cell_sizes))
         nreads <- nrow(reads)
         if (verbose) {
-	  mprintf("Dropped %d (%.2f%%) cells (out of %d) with less than %d reads each resulting in dropping %d (%.2f%%) reads (out of %d)",
+          mprintf("Dropped %d (%.2f%%) cells (out of %d) with less than %d reads each resulting in dropping %d (%.2f%%) reads (out of %d)",
                   ncells - length(cells_keep), 100 * (ncells - length(cells_keep))/ncells, ncells,
                   min_cell_size,
                   nreads - length(reads_keep), 100 * (nreads - length(reads_keep))/nreads, nreads
           )
-	}
-  	      
+        }
+      
         reads <- reads[reads_keep, ]
         stopifnot(length(setdiff(names(cell_sizes), reads$cell_id)) == 0L,
                   length(setdiff(reads$cell_id, names(cell_sizes))) == 0L)
@@ -206,12 +209,14 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by, rho, nsampl
   
         seed <- seeds[[bb]]
         if (verbose) {
-	  message("- Random seed:")
+          message("- Random seed:")
           str(seed)
-	}
+        }
         
         res_kk[[bb]] %<-% {
           if (verbose) mprintf(" - Random, disjoint partitioning of %s", partition_by)
+          if (verbose) mprint(plan())
+  
           if (partition_by == "reads") {
             reads_partitions <- sample_partitions(nrow(reads), fraction = rho)
           } else if (partition_by == "cells") {
@@ -222,7 +227,9 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by, rho, nsampl
             reads_partitions <- sample_partitions_by_cells_by_half(reads, fraction = rho)
           }
           reads_partitions <- lapply(reads_partitions, FUN = function(partition) reads[partition, ])
-  
+
+          if (verbose) { mprintf("reads_partitions:"); mstr(reads_partitions) }
+
           ## TopDom on each partition
           tds <- lapply(reads_partitions, FUN = function(reads_pp) {
             counts <- {
@@ -231,13 +238,18 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by, rho, nsampl
               counts <- as_TopDomData(counts)
               counts
             }
+            if (verbose) { mprintf("counts:"); mstr(counts) }
             stopifnot(is.list(counts), length(counts) == length(chr), all(names(counts) == chr))
   
-            ## Used to be Try(TopDom), cf. https://github.com/HenrikBengtsson/TopDom/issues/4 
+            ## Used to be Try(TopDom), because:
+            ## 1. https://github.com/HenrikBengtsson/TopDom/issues/4
+            ## 2. https://github.com/HenrikBengtsson/TopDom/issues/8
             tds <- future_lapply(counts, FUN = TopDom, window.size = 5L)
+            if (verbose) { mprintf("tds:"); mstr(tds) }
             stopifnot(is.list(tds), length(tds) == 1L, all(names(tds) == chr))
             
             tds_chr <- tds[[chr]]
+            if (verbose) { mprintf("tds_chr:"); mstr(tds_chr) }
             if (save_topdom) attr(tds_chr, "counts") <- counts
 
             counts <- NULL ## Not needed anymore
@@ -248,13 +260,13 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by, rho, nsampl
           read_partitions <- NULL ## Not needed anymore
 
           if (partition_by %in% c("reads_by_half", "cells_by_half")) {
-	    ref <- 1L
-	  } else {
+            ref <- 1L
+          } else {
             ## Find first TopDom fit that didn't produce an error
             ok <- unlist(lapply(tds, FUN = function(td) !inherits(td, "try-error")))
             stopifnot(length(ok) == length(tds))
             ref <- which(ok)[1]
-	  }
+          }
   
           td_ref <- tds[[ref]]
   
@@ -294,13 +306,17 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by, rho, nsampl
       reads <- NULL  ## Not needed anymore
   
       ## Resolve all samples for current chromosome
-      res__kk <- unlist(res_kk)
+      res_kk <- unlist(res_kk)
+      if (verbose) { mprintf("res_kk:"); mstr(res_kk) }
 
       if (as == "value") {
-        lapply(pathnames, FUN = read_rds)
+        value <- lapply(pathnames, FUN = read_rds)
       } else {
-        pathnames
-      }	
+        value <- pathnames
+      }
+      if (verbose) { mprintf("value:"); mstr(value) }
+
+      value
     } %label% chr_tag
   
     if (verbose) mprintf("Chromosome #%d (%s) of %d ... DONE", cc, chr_tag, length(chrs))
@@ -309,6 +325,7 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by, rho, nsampl
   ## Resolve everything
   res <- as.list(res)
   
+  if (verbose) { mprintf("res:"); mstr(res) }
   if (verbose) print(res)
 
   res
