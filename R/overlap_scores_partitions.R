@@ -215,7 +215,6 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by, rho, nsampl
         
         res_kk[[bb]] %<-% {
           if (verbose) mprintf(" - Random, disjoint partitioning of %s", partition_by)
-          if (verbose) mprint(plan())
   
           if (partition_by == "reads") {
             reads_partitions <- sample_partitions(nrow(reads), fraction = rho)
@@ -324,9 +323,6 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by, rho, nsampl
   
   ## Resolve everything
   res <- as.list(res)
-  
-  if (verbose) { mprintf("res:"); mstr(res) }
-  if (verbose) print(res)
 
   res
 } ## overlap_scores_partitions()

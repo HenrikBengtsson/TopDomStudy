@@ -78,7 +78,7 @@ Try <- function(fcn) function(...) try(fcn(...), silent = TRUE)
 crc32 <- function(x) digest(x, algo = "crc32")
 
 
-mprintf <- function(..., appendLF) message(sprintf(...), appendLF = appendLF)
+mprintf <- function(..., appendLF = TRUE) message(sprintf(...), appendLF = appendLF)
 
 #' @importFrom utils capture.output
 mprint <- function(..., appendLF = TRUE) {

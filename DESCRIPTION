@@ -1,5 +1,5 @@
 Package: TopDomStudy
-Version: 0.0.0-9002
+Version: 0.0.0-9003
 Title: TopDom Study by Segal et al.
 Description: Utility functions for the TopDom-related study by Segal et al. (2017).
 Authors@R: c(
@@ -8,7 +8,7 @@ Authors@R: c(
 License: GPL (>= 3)
 Depends:
     R (>= 3.5.0),
-    TopDom (>= 0.7.0)
+    TopDom (>= 0.7.0-9000)
 Imports:
     digest (>= 0.6.18),
     Hmisc,
