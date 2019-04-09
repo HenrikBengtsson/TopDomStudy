@@ -56,7 +56,14 @@ Calculates TopDom Overlap Scores Across Partitions
 }
 \section{Parallel processing}{
 
-Internally, \link[future.apply:future_lapply]{future.apply::future_lapply} is used to parallelize
-over \link[TopDom:TopDom]{TopDom::TopDom}.
+The future framework is used to parallelize \link[TopDom:TopDom]{TopDom::TopDom} in three layers:
+\enumerate{
+\item across chromosomes (argument \code{chrs})
+\item across random samples (argument \code{nsamples})
+\item per random sample, across partitions (argument \code{partition_by})
+\itemize{
+\item typically two ('reference' and one more)
+}
+}
 }
 
