@@ -91,7 +91,6 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by, rho, nsampl
   stopifnot(length(window_size) == 1L, is.numeric(window_size), !is.na(window_size), window_size >= 1L)
   window_size <- as.integer(window_size)
   window_size_tag <- sprintf("window_size=%d", window_size)
-  if (window_size == 5L) window_size_tag <- NULL  ## BACKWARD COMPATIBILITY
   
   bin_size_tag <- sprintf("bin_size=%g", bin_size)
   partition_by_tag <- sprintf("partition_by=%s", partition_by)
@@ -116,7 +115,7 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by, rho, nsampl
 
   as <- match.arg(as)
 
-  dataset_out <- paste(c(dataset, cell_ids_tag, bin_size_tag, partition_by_tag, min_cell_size_tag, rho_tag, mainseed_tag), collapse = ",")
+  dataset_out <- paste(c(dataset, cell_ids_tag, bin_size_tag, partition_by_tag, min_cell_size_tag, window_size_tag, rho_tag, mainseed_tag), collapse = ",")
   path_out <- file.path("overlapScoreData", dataset_out)
   dir.create(path_out, recursive = TRUE, showWarnings = FALSE)
   stop_if_not(file_test("-d", path_out))
@@ -135,7 +134,7 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by, rho, nsampl
 
     ## Find all input files for this chromosome
     pathnames <- file.path(path_out, sapply(1:nsamples, function(bb) {
-      tags <- c(cell_ids_tag, chr_tag, bin_size_tag, partition_by_tag, min_cell_size_tag, rho_tag, window_size_tag, seed_tags[bb])
+      tags <- c(cell_ids_tag, chr_tag, bin_size_tag, partition_by_tag, min_cell_size_tag, window_size_tag, rho_tag, seed_tags[bb])
       name <- paste(c(dataset, tags), collapse = ",")
       sprintf("%s.rds", name)
     }))
@@ -300,8 +299,8 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by, rho, nsampl
           attr(overlaps, "bin_size") <- bin_size
           attr(overlaps, "chromosome") <- chr
           attr(overlaps, "min_cell_size") <- min_cell_size
-          attr(overlaps, "partition_by") <- partition_by
           attr(overlaps, "window_size") <- window_size
+          attr(overlaps, "partition_by") <- partition_by
           attr(overlaps, "reference_partition") <- ref
           attr(overlaps, "seed") <- seed
           
