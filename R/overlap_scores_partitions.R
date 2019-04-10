@@ -21,6 +21,9 @@
 #'
 #' @param cell_ids (optional, filter) ...
 #'
+#' @param window_size A positive integer passed to [TopDom::TopDom].
+#'        Defaults to `5L`, which is the same as the default in TopDom.
+#'
 #' @param dataset (optional) ...
 #'
 #' @param path_out The root folder that will contain the `overlapScoreData/` folder
@@ -54,6 +57,7 @@
 #' @export
 overlap_scores_partitions <- function(reads, bin_size, partition_by, rho, nsamples = 100L, seed = TRUE,
                                       chrs = NULL, min_cell_size = 1L, dataset, cell_ids = NULL,
+                                      window_size = 5L,
                                       path_out = ".", save_topdom = TRUE, mainseed = 0xBEEF, force = FALSE,
                                       as = c("pathname", "value"),
                                       verbose = FALSE) {
@@ -83,6 +87,12 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by, rho, nsampl
   } else {
     cell_ids_tag <- NULL
   }
+
+  stopifnot(length(window_size) == 1L, is.numeric(window_size), !is.na(window_size), window_size >= 1L)
+  window_size <- as.integer(window_size)
+  window_size_tag <- sprintf("window_size=%d", window_size)
+  if (window_size == 5L) window_size_tag <- NULL  ## BACKWARD COMPATIBILITY
+  
   bin_size_tag <- sprintf("bin_size=%g", bin_size)
   partition_by_tag <- sprintf("partition_by=%s", partition_by)
   if (min_cell_size > 1L) {
@@ -125,7 +135,7 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by, rho, nsampl
 
     ## Find all input files for this chromosome
     pathnames <- file.path(path_out, sapply(1:nsamples, function(bb) {
-      tags <- c(cell_ids_tag, chr_tag, bin_size_tag, partition_by_tag, min_cell_size_tag, rho_tag, seed_tags[bb])
+      tags <- c(cell_ids_tag, chr_tag, bin_size_tag, partition_by_tag, min_cell_size_tag, rho_tag, window_size_tag, seed_tags[bb])
       name <- paste(c(dataset, tags), collapse = ",")
       sprintf("%s.rds", name)
     }))
@@ -243,7 +253,7 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by, rho, nsampl
             ## Used to be Try(TopDom), because:
             ## 1. https://github.com/HenrikBengtsson/TopDom/issues/4
             ## 2. https://github.com/HenrikBengtsson/TopDom/issues/8
-            tds <- future_lapply(counts, FUN = TopDom, window.size = 5L)
+            tds <- future_lapply(counts, FUN = TopDom, window.size = window_size)
             if (verbose) { mprintf("tds:"); mstr(tds) }
             stopifnot(is.list(tds), length(tds) == 1L, all(names(tds) == chr))
             
@@ -274,6 +284,7 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by, rho, nsampl
             attr(tt, "bin_size") <- bin_size
             attr(tt, "chromosome") <- chr
             attr(tt, "min_cell_size") <- min_cell_size
+            attr(tt, "window_size") <- window_size
             attr(tt, "reference_partition") <- ref
             attr(tt, "seed") <- seed
             attr(tt, "reference") <- ref
@@ -290,6 +301,7 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by, rho, nsampl
           attr(overlaps, "chromosome") <- chr
           attr(overlaps, "min_cell_size") <- min_cell_size
           attr(overlaps, "partition_by") <- partition_by
+          attr(overlaps, "window_size") <- window_size
           attr(overlaps, "reference_partition") <- ref
           attr(overlaps, "seed") <- seed
           

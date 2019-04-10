@@ -6,9 +6,9 @@
 \usage{
 overlap_scores_partitions(reads, bin_size, partition_by, rho,
   nsamples = 100L, seed = TRUE, chrs = NULL, min_cell_size = 1L,
-  dataset, cell_ids = NULL, path_out = ".", save_topdom = TRUE,
-  mainseed = 48879, force = FALSE, as = c("pathname", "value"),
-  verbose = FALSE)
+  dataset, cell_ids = NULL, window_size = 5L, path_out = ".",
+  save_topdom = TRUE, mainseed = 48879, force = FALSE,
+  as = c("pathname", "value"), verbose = FALSE)
 }
 \arguments{
 \item{reads}{A \link[base:data.frame]{base::data.frame}.}
@@ -33,6 +33,9 @@ be included. Cells with less reads are dropped.}
 \item{dataset}{(optional) ...}
 
 \item{cell_ids}{(optional, filter) ...}
+
+\item{window_size}{A positive integer passed to \link[TopDom:TopDom]{TopDom::TopDom}.
+Defaults to \code{5L}, which is the same as the default in TopDom.}
 
 \item{path_out}{The root folder that will contain the \code{overlapScoreData/} folder
 to which RDS files are written.}

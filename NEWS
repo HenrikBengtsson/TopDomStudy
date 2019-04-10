@@ -1,6 +1,13 @@
 TopDomStudy
 ===========
 
+Version: 0.0.0-9005 [2019-04-09]
+
+NEW FEATURES:
+
+ o overlap_scores_partitions() gained argument 'window.size'.
+
+
 Version: 0.0.0-9002 [2019-03-12]
 
 NEW FEATURES:
