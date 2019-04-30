@@ -1,10 +1,15 @@
-The files within here, was created using:
+# Notes
+
+The files within here, were created as follows.
+
+Extract HAP1 data for chromosomes 12, 16, and 22:
 
 ```sh
+dir.create("compiledData")
 data <- readRDS("compiledData/human,HAP1,unique.rds")
-for (chr in c(16, 22)) {
+for (chr in c(12, 16, 22)) {
   data_chr <- subset(data, chr_a == chr & chr_b == chr_a)
-  saveRDS(data_chr, sprintf("human,HAP1,unique,chr=%d.rds", chr))
+  saveRDS(data_chr, file.path("compiledData", sprintf("human,HAP1,unique,chr=%d.rds", chr)))
 }
 ```
 
