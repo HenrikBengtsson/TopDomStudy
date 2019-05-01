@@ -1,6 +1,12 @@
 TopDomStudy
 ===========
 
+Version: 0.0.0-9006 [2019-04-30]
+
+ * Add overlap_score_summary_vs_fraction().  Extracted from "work" R script
+   with the same name.
+   
+
 Version: 0.0.0-9005 [2019-04-09]
 
 NEW FEATURES:
