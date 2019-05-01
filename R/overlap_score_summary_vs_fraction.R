@@ -95,6 +95,10 @@ overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, r
       message(sprintf("Bin size #%d (%s) of %d ...", bb, bin_size_tag, length(bin_sizes)))
 
       dummy[[cc,bb]] %<-% {
+        ## WORKAROUND: Below is a case of "y %<-% { if (reset) x <- 0; x + 1 }"
+	## Help future identify these as globals:
+        domain_length_tag
+	
         message("Remaining future::plan():")
         mprint(plan("list"))
 
@@ -154,8 +158,8 @@ overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, r
             mstr(res)
             message("overlap_scores_partitions() ... done")
 
-            ## Summary of overlap scores and reference domain lengths  
-            message("Summary of overlap scores and reference domain lengths ...")        
+            ## Summary of overlap scores and reference domain lengths
+            message("Summary of overlap scores and reference domain lengths ...")
             res_chr <- res[[chromosome]]
             summary_kk %<-% future_lapply(res_chr, FUN = function(pathname) {
               oss <- read_rds(pathname)
