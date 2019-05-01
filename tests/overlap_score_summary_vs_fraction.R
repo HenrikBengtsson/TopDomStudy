@@ -1,13 +1,18 @@
 library(TopDomStudy)
 library(future)
 
-plan(multiprocess, workers = max(1, 3/4 * availableCores()))
+plan(list(
+  chr_bin  = sequential,
+  rho      = sequential,
+  monochr  = sequential,
+  samples  = multiprocess
+))
 
 for (weights in c("uniform", "by_length")) {
   done <- overlap_score_summary_vs_fraction(
     dataset       = "human,HAP1",
     chromosomes   = "22",
-    bin_sizes     = 100000,
+    bin_sizes     = 100e3,
     rhos          = c(0.05, 0.20, 0.50),
     window_size   = 5L,
     weights       = weights,
