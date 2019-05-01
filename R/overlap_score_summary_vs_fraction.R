@@ -122,7 +122,7 @@ overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, r
           rho_tag <- sprintf("fraction=%.3f", rho)
           message(sprintf("Fraction #%d (%s with %s bps on Chr %s) of %d ...", rr, rho_tag, bin_size, chromosome, length(rhos)))
 
-          tags <- c(chromosome_tag, "cells_by_half", "avg_score-vs-fraction", bin_size_tag, rho_tag, window_size_tag, nsamples_tag, weights_tag, domain_length_tag)
+          tags <- c(chromosome_tag, "cells_by_half", "avg_score", bin_size_tag, rho_tag, window_size_tag, domain_length_tag, weights_tag, nsamples_tag)
           fullname <- paste(c(dataset, tags), collapse = ",")
           pathname_summary_kk <- file.path(path, sprintf("%s.rds", fullname))
           message("pathname_summary_kk: ", pathname_summary_kk)

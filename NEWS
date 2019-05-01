@@ -1,11 +1,23 @@
 TopDomStudy
 ===========
 
+Version: 0.0.0-9007 [2019-05-01]
+
+NEW FEATURES:
+
+ * Intermediate results written by overlap_score_summary_vs_bin_size() to
+   overlapScoreSummary/ are now reused by overlap_score_summary_vs_bin_size(),
+   and vice verse.  This was not the case previously because the two functions
+   used different pathname templates.
+
+
 Version: 0.0.0-9006 [2019-04-30]
+
+NEW FEATURES:
 
  * Add overlap_score_summary_vs_bin_size() and overlap_score_summary_vs_fraction().
    Extracted from "work" R scripts with the same name.
-   
+
 
 Version: 0.0.0-9005 [2019-04-09]
 

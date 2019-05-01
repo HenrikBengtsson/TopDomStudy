@@ -104,7 +104,7 @@ overlap_score_summary_vs_bin_size <- function(dataset, chromosomes, bin_sizes, r
           bin_size_tag <- sprintf("bin_size=%.0f", bin_size)
           message(sprintf("Bin size #%d (%s bps with %g on Chr %s) of %d ...", bb, bin_size, rho, chromosome, length(bin_sizes)))
 
-          tags <- c(chromosome_tag, "cells_by_half", "avg_score-vs-bin_size", rho_tag, bin_size_tag, window_size_tag, nsamples_tag, weights_tag, domain_length_tag)
+          tags <- c(chromosome_tag, "cells_by_half", "avg_score", bin_size_tag, rho_tag, window_size_tag, domain_length_tag, weights_tag, nsamples_tag)
           fullname <- paste(c(dataset, tags), collapse = ",")
           pathname_summary_kk <- file.path(path, sprintf("%s.rds", fullname))
           message("pathname_summary_kk: ", pathname_summary_kk)
