@@ -101,29 +101,29 @@ overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, r
         tags <- c(chromosome_tag, "cells_by_half", "avg_score-vs-fraction", bin_size_tag, window_size_tag, nsamples_tag, weights_tag, domain_length_tag)
         fullname <- paste(c(dataset, tags), collapse = ",")
         pathname_summary <- file.path(path, sprintf("%s.rds", fullname))
-	message("pathname_summary: ", pathname_summary)
+        message("pathname_summary: ", pathname_summary)
 
         ## Already processed?
         if (file_test("-f", pathname_summary)) {
-	  summary <- read_rds(pathname_summary)
-	} else {
-	  if (is.character(domain_length) && domain_length == "ref_len_iqr") {
+          summary <- read_rds(pathname_summary)
+        } else {
+          if (is.character(domain_length) && domain_length == "ref_len_iqr") {
             limits <- extract_domain_length_limits(
               dataset    = dataset,
               chromosome = chromosome,
               bin_size   = bin_size,
-	      nsamples   = nsamples,
+              nsamples   = nsamples,
               weights    = weights,
               verbose    = verbose
             )
             mprint(limits)
             stopifnot(nrow(limits) == 1L)
-	    domain_length <- c(limits[["ref_len_q0.25"]], limits[["ref_len_q0.75"]])
+            domain_length <- c(limits[["ref_len_q0.25"]], limits[["ref_len_q0.75"]])
             message("domain_length:")
             mprint(domain_length)
             domain_length_tag <- sprintf("domain_length=%.0f-%.0f", domain_length[1], domain_length[2])
-	  } 
-	  
+          } 
+          
           summary <- listenv()
           
           for (rr in seq_along(rhos)) {
@@ -135,15 +135,15 @@ overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, r
             fullname <- paste(c(dataset, tags), collapse = ",")
             pathname_summary_kk <- file.path(path, sprintf("%s.rds", fullname))
             message("pathname_summary_kk: ", pathname_summary_kk)
-	    
+            
             ## Already processed?
             if (file_test("-f", pathname_summary_kk)) {
-	      summary[[rr]] <- read_rds(pathname_summary_kk)
-	      
+              summary[[rr]] <- read_rds(pathname_summary_kk)
+              
               message(sprintf("Fraction #%d (%s with %s bps on Chr %s) of %d ... already done", rr, rho_tag, bin_size, chromosome, length(rhos)))
-	      next
+              next
             }
-	    
+            
             summary[[rr]] %<-% {
               message("Remaining future::plan():")
               mprint(plan("list"))
@@ -227,9 +227,9 @@ overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, r
 #          ## Save summaries to file
 #          saveRDS(summary, file = pathname_summary)
 #          message("Saved pathname_summary: ", pathname_summary)
-	  
-	  summary
-	} ## if (file_test("-f", pathname_summary))
+          
+          summary
+        } ## if (file_test("-f", pathname_summary))
         mprint(summary)
 
         if (figures) {
@@ -244,9 +244,9 @@ overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, r
             "test Q75 length"         = "test_len_q0.75"
           )
           signals <- c(mean = "mean", median = "`50%`", length_signals)
-	  
+          
           fraction <- NULL; rm(list = "fraction") ## To please R CMD check
-	  
+          
           for (signal_label in names(signals)) {
             signal <- signals[[signal_label]]
     
@@ -281,7 +281,7 @@ overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, r
             dir.create("figures", recursive = TRUE, showWarnings = FALSE)
             ggsave(gg, filename=file.path("figures", filename))
           } ## for (signal ...)
-        } ## if (require("ggplot2"))
+        } ## if (figures)
   
         TRUE
       } %label% sprintf("%s-%s", chromosome, bin_size)
