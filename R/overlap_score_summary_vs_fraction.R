@@ -85,15 +85,15 @@ overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, r
   for (cc in seq_along(chromosomes)) {
     chromosome <- chromosomes[cc]
     chromosome_tag <- sprintf("chr=%s", chromosome)
-    
+
     message(sprintf("Chromosome #%d (%s) of %d ...", cc, chromosome_tag, length(chromosomes)))
-    
+
     for (bb in seq_along(bin_sizes)) {
       bin_size <- bin_sizes[bb]
       bin_size_tag <- sprintf("bin_size=%.0f", bin_size)
 
       message(sprintf("Bin size #%d (%s) of %d ...", bb, bin_size_tag, length(bin_sizes)))
-  
+
       dummy[[cc,bb]] %<-% {
         message("Remaining future::plan():")
         mprint(plan("list"))
@@ -126,7 +126,7 @@ overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, r
           fullname <- paste(c(dataset, tags), collapse = ",")
           pathname_summary_kk <- file.path(path, sprintf("%s.rds", fullname))
           message("pathname_summary_kk: ", pathname_summary_kk)
-          
+
           ## Already processed?
           if (file_test("-f", pathname_summary_kk)) {
             summary[[rr]] <- read_rds(pathname_summary_kk)
@@ -134,7 +134,7 @@ overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, r
             message(sprintf("Fraction #%d (%s with %s bps on Chr %s) of %d ... already done", rr, rho_tag, bin_size, chromosome, length(rhos)))
             next
           }
-          
+
           summary[[rr]] %<-% {
             message("Remaining future::plan():")
             mprint(plan("list"))
@@ -146,14 +146,14 @@ overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, r
             message(sprintf("Reads (%s):", pathname))
             reads <- read_rds(pathname)
             mprint(reads)
-            
-            message("overlap_scores_partitions() ...")        
+
+            message("overlap_scores_partitions() ...")
             res <- overlap_scores_partitions(reads = reads, dataset = sprintf("%s,unique", dataset), bin_size = bin_size,
                                              partition_by = "cells_by_half", min_cell_size = 2L, window_size = window_size, rho = rho,
                                              nsamples = nsamples, chrs = chromosome, seed = 0xBEEF, mainseed = 0xBEEF, verbose = verbose)
             mstr(res)
             message("overlap_scores_partitions() ... done")
-          
+
             ## Summary of overlap scores and reference domain lengths  
             message("Summary of overlap scores and reference domain lengths ...")        
             res_chr <- res[[chromosome]]
@@ -167,10 +167,10 @@ overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, r
               }
               z <- overlap_score_summary(oss, weights = weights, domain_length = domain_length)
               oss <- failed <- NULL
-    
+
               pathname_td <- gsub("[.]rds$", ",topdom.rds", pathname)
               td <- read_rds(pathname_td)
-    
+
               ref <- which(names(td) == "reference")
               sizes <- td[[ref]]$domain$size
               ## Filter by domain lengths?
@@ -210,16 +210,16 @@ overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, r
 
           message(sprintf("Fraction #%d (%s with %s bps on Chr %s) of %d ... done", rr, rho_tag, bin_size, chromosome, length(rhos)))
         } ## for (rr ...)
-      
+
         ## Resolve futures
         summary <- as.list(summary)
-        
+
         summary <- do.call(rbind, summary)
         mprint(summary)
 
         if (figures) {
           dw <- diff(range(rhos)) / length(rhos)
-          
+
           length_signals <- c(
             "reference Q25 length"    = "ref_len_q0.25",
             "reference median length" = "ref_len_q0.50",
@@ -229,21 +229,21 @@ overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, r
             "test Q75 length"         = "test_len_q0.75"
           )
           signals <- c(mean = "mean", median = "`50%`", length_signals)
-          
+
           fraction <- NULL; rm(list = "fraction") ## To please R CMD check
-          
+
           for (signal_label in names(signals)) {
             signal <- signals[[signal_label]]
-    
+
             gg <- ggplot(summary, aes_string(x = "fraction", y = signal))
 
             gg <- gg + geom_boxplot(aes(group = as.factor(fraction)), width = 0.2*dw)
             gg <- gg + geom_jitter(height = 0, width = 0.05*dw, size = 0.7, colour = "darkgray")
-          
+
             gg <- gg + stat_summary(aes_string(y = signal, group = 1L),
                                     fun.y = function(x) mean(x, trim = 0.10),
                                     geom = "line", size = 2L, group = 1L)
-      
+
             params <- c(sprintf("estimator: %s", signal_label),
                         sprintf("weights: %s", weights),
                         sprintf("domains: %.0f-%.0f", domain_length[1], domain_length[2]))
