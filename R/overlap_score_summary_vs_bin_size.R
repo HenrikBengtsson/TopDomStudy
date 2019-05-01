@@ -102,7 +102,8 @@ overlap_score_summary_vs_bin_size <- function(dataset, chromosomes, bin_sizes, r
         for (bb in seq_along(bin_sizes)) {
           bin_size <- bin_sizes[bb]
           bin_size_tag <- sprintf("bin_size=%.0f", bin_size)
-	  
+          message(sprintf("Bin size #%d (%s bps with %g on Chr %s) of %d ...", bb, bin_size, rho, chromosome, length(bin_sizes)))
+
           tags <- c(chromosome_tag, "cells_by_half", "avg_score-vs-bin_size", rho_tag, bin_size_tag, window_size_tag, nsamples_tag, weights_tag, domain_length_tag)
           fullname <- paste(c(dataset, tags), collapse = ",")
           pathname_summary_kk <- file.path(path, sprintf("%s.rds", fullname))
@@ -130,11 +131,13 @@ overlap_score_summary_vs_bin_size <- function(dataset, chromosomes, bin_sizes, r
     
             message("overlap_scores_partitions() ...")
             res <- overlap_scores_partitions(reads = reads, dataset = sprintf("%s,unique", dataset), bin_size = bin_size,
-                                             partition_by = "cells_by_half", min_cell_size = 2L, rho = rho,
-                                             nsamples = nsamples, chrs = chromosome, seed = 0xBEEF, mainseed = 0xBEEF)
+                                             partition_by = "cells_by_half", min_cell_size = 2L, window_size = window_size, rho = rho,
+                                             nsamples = nsamples, chrs = chromosome, seed = 0xBEEF, mainseed = 0xBEEF, verbose = verbose)
+            mstr(res)
             message("overlap_scores_partitions() ... done")
           
             ## Summary of overlap scores and reference domain lengths
+            message("Summary of overlap scores and reference domain lengths ...")        
 	    res_chr <- res[[chromosome]]
             summary_kk %<-% future_lapply(res_chr, FUN = function(pathname) {
               oss <- read_rds(pathname)
@@ -183,6 +186,7 @@ overlap_score_summary_vs_bin_size <- function(dataset, chromosomes, bin_sizes, r
             ## Save intermediate results to file
             saveRDS(summary_kk, file = pathname_summary_kk)
             message("Saved pathname_summary_kk: ", pathname_summary_kk)
+
             summary_kk
           } %label% sprintf("%s-%s-%s", chromosome, rho, bin_size)
 	  
