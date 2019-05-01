@@ -146,7 +146,6 @@ overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, r
             message(sprintf("Reads (%s):", pathname))
             reads <- read_rds(pathname)
             mprint(reads)
-    
             
             message("overlap_scores_partitions() ...")        
             res <- overlap_scores_partitions(reads = reads, dataset = sprintf("%s,unique", dataset), bin_size = bin_size,
