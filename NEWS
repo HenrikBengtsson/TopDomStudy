@@ -3,8 +3,8 @@ TopDomStudy
 
 Version: 0.0.0-9006 [2019-04-30]
 
- * Add overlap_score_summary_vs_fraction().  Extracted from "work" R script
-   with the same name.
+ * Add overlap_score_summary_vs_bin_size() and overlap_score_summary_vs_fraction().
+   Extracted from "work" R scripts with the same name.
    
 
 Version: 0.0.0-9005 [2019-04-09]
