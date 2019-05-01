@@ -81,6 +81,7 @@ overlap_score_summary_vs_bin_size <- function(dataset, chromosomes, bin_sizes, r
 
   dummy <- listenv()
   dim(dummy) <- c(length(chromosomes), length(rhos))
+  dimnames(dummy) <- list(chromosomes, rhos)
   for (cc in seq_along(chromosomes)) {
     chromosome <- chromosomes[cc]
     chromosome_tag <- sprintf("chr=%s", chromosome)
@@ -123,12 +124,15 @@ overlap_score_summary_vs_bin_size <- function(dataset, chromosomes, bin_sizes, r
     
             filename <- sprintf("%s,unique,chr=%s.rds", dataset, chromosome)
             pathname <- system.file("compiledData", filename, package = "TopDomStudy", mustWork = TRUE)
+            message(sprintf("Reads (%s):", pathname))
             reads <- read_rds(pathname)
             mprint(reads)
     
-            res <- overlap_scores_partitions(reads = reads, dataset = "human,HAP1,unique", bin_size = bin_size,
+            message("overlap_scores_partitions() ...")
+            res <- overlap_scores_partitions(reads = reads, dataset = sprintf("%s,unique", dataset), bin_size = bin_size,
                                              partition_by = "cells_by_half", min_cell_size = 2L, rho = rho,
                                              nsamples = nsamples, chrs = chromosome, seed = 0xBEEF, mainseed = 0xBEEF)
+            message("overlap_scores_partitions() ... done")
           
             ## Summary of overlap scores and reference domain lengths
 	    res_chr <- res[[chromosome]]
@@ -233,12 +237,14 @@ overlap_score_summary_vs_bin_size <- function(dataset, chromosomes, bin_sizes, r
             }
     
             signal <- gsub("`50%`", "median", signal)
-            tags <- sprintf("%s,chr=%s,%s,avg_score-vs-fraction,bin_size=%d,nsamples=%d,signal=%s,weights=%s", dataset, chromosome, "cells_by_half", bin_size, nsamples, signal, weights)
+            tags <- sprintf("%s,chr=%s,%s,avg_score-vs-bin_size,fraction=%.3f,window_size=%d,nsamples=%d,signal=%s,weights=%s", dataset, chromosome, "cells_by_half", rho, window_size, nsamples, signal, weights)
             filename <- sprintf("%s.png", paste(c(tags, domain_length_tag), collapse = ","))
-            dir.create("figures", recursive = TRUE)
+            dir.create("figures", recursive = TRUE, showWarnings = FALSE)
             ggsave(gg, filename=file.path("figures", filename))
           } ## for (signal ...)
         } ## if (figures)
+
+        TRUE
       } %label% sprintf("%s-%s", chromosome, rho)
       
       message(sprintf("Fraction #%d (%g on Chr %s) of %d ... done", rr, rho, chromosome, length(rhos)))
@@ -253,4 +259,4 @@ overlap_score_summary_vs_bin_size <- function(dataset, chromosomes, bin_sizes, r
   dummy <- as.list(dummy)
 
   dummy
-} ## overlap_score_summary_vs_bin_size()
+}
