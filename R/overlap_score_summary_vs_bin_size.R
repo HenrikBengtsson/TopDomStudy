@@ -137,8 +137,8 @@ overlap_score_summary_vs_bin_size <- function(dataset, chromosomes, bin_sizes, r
             message("overlap_scores_partitions() ... done")
 
             ## Summary of overlap scores and reference domain lengths
-            message("Summary of overlap scores and reference domain lengths ...")        
-	    res_chr <- res[[chromosome]]
+            message("Summary of overlap scores and reference domain lengths ...")
+            res_chr <- res[[chromosome]]
             summary_kk %<-% future_lapply(res_chr, FUN = function(pathname) {
               oss <- read_rds(pathname)
               ## Drop failed TopDom fits and possibly skip this sample?
