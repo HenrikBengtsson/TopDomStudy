@@ -94,137 +94,118 @@ overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, r
 
       message(sprintf("Bin size #%d (%s) of %d ...", bb, bin_size_tag, length(bin_sizes)))
 
-      dummy[[cc, bb, 1L]] %<-% {
-        ## WORKAROUND: Below is a case of "y %<-% { if (reset) x <- 0; x + 1 }"
-        ## Help future identify these as globals:
-        domain_length_tag
-        
-        message("Remaining future::plan():")
-        mprint(plan("list"))
+      for (rr in seq_along(rhos)) {
+        rho <- rhos[rr]
+        rho_tag <- sprintf("fraction=%.3f", rho)
+        message(sprintf("Fraction #%d (%s with %s bps on Chr %s) of %d ...", rr, rho_tag, bin_size, chromosome, length(rhos)))
 
-        if (is.character(domain_length) && domain_length == "ref_len_iqr") {
-          limits <- extract_domain_length_limits(
-            dataset    = dataset,
-            chromosome = chromosome,
-            bin_size   = bin_size,
-            nsamples   = nsamples,
-            weights    = weights,
-            verbose    = verbose
-          )
-          mprint(limits)
-          stopifnot(nrow(limits) == 1L)
-          domain_length <- c(limits[["ref_len_q0.25"]], limits[["ref_len_q0.75"]])
-          message("domain_length:")
-          mprint(domain_length)
-          domain_length_tag <- sprintf("domain_length=%.0f-%.0f", domain_length[1], domain_length[2])
+        tags <- c(chromosome_tag, "cells_by_half", "avg_score", bin_size_tag, rho_tag, window_size_tag, domain_length_tag, weights_tag, nsamples_tag)
+        fullname <- paste(c(dataset, tags), collapse = ",")
+        pathname_summary_kk <- file.path(path, sprintf("%s.rds", fullname))
+        message("pathname_summary_kk: ", pathname_summary_kk)
+
+        ## Already processed?
+        if (file_test("-f", pathname_summary_kk)) {
+          dummy[[cc, bb, rr]] <- pathname_summary_kk
+          message(sprintf("Fraction #%d (%s with %s bps on Chr %s) of %d ... already done", rr, rho_tag, bin_size, chromosome, length(rhos)))
+          next
         }
 
-        pathnames_summary <- character(length(rhos))
-        summary <- listenv()
-        for (rr in seq_along(rhos)) {
-          rho <- rhos[rr]
-          rho_tag <- sprintf("fraction=%.3f", rho)
-          message(sprintf("Fraction #%d (%s with %s bps on Chr %s) of %d ...", rr, rho_tag, bin_size, chromosome, length(rhos)))
+        dummy[[cc, bb, rr]] %<-% {
+          ## WORKAROUND: Below is a case of "y %<-% { if (reset) x <- 0; x + 1 }"
+          ## Help future identify these as globals:
+          domain_length_tag
+        
+          message("Remaining future::plan():")
+          mprint(plan("list"))
 
-          tags <- c(chromosome_tag, "cells_by_half", "avg_score", bin_size_tag, rho_tag, window_size_tag, domain_length_tag, weights_tag, nsamples_tag)
-          fullname <- paste(c(dataset, tags), collapse = ",")
-          pathname_summary_kk <- file.path(path, sprintf("%s.rds", fullname))
-          pathnames_summary[rr] <- pathname_summary_kk
-          message("pathname_summary_kk: ", pathname_summary_kk)
-
-          ## Already processed?
-          if (file_test("-f", pathname_summary_kk)) {
-            summary[[rr]] <- read_rds(pathname_summary_kk)
-            
-            message(sprintf("Fraction #%d (%s with %s bps on Chr %s) of %d ... already done", rr, rho_tag, bin_size, chromosome, length(rhos)))
-            next
+          if (is.character(domain_length) && domain_length == "ref_len_iqr") {
+            limits <- extract_domain_length_limits(
+              dataset    = dataset,
+              chromosome = chromosome,
+              bin_size   = bin_size,
+              nsamples   = nsamples,
+              weights    = weights,
+              verbose    = verbose
+            )
+            mprint(limits)
+            stopifnot(nrow(limits) == 1L)
+            domain_length <- c(limits[["ref_len_q0.25"]], limits[["ref_len_q0.75"]])
+            message("domain_length:")
+            mprint(domain_length)
+            domain_length_tag <- sprintf("domain_length=%.0f-%.0f", domain_length[1], domain_length[2])
           }
+  
+          filename <- sprintf("%s,unique,chr=%s.rds", dataset, chromosome)
+          pathname <- system.file("compiledData", filename, package = "TopDomStudy", mustWork = TRUE)
+          message(sprintf("Reads (%s):", pathname))
+          reads <- read_rds(pathname)
+          mprint(reads)
 
-          summary[[rr]] %<-% {
-            message("Remaining future::plan():")
-            mprint(plan("list"))
+          message("overlap_scores_partitions() ...")
+          res <- overlap_scores_partitions(reads = reads, dataset = sprintf("%s,unique", dataset), bin_size = bin_size,
+                                           partition_by = "cells_by_half", min_cell_size = 2L, window_size = window_size, rho = rho,
+                                           nsamples = nsamples, chrs = chromosome, seed = 0xBEEF, mainseed = 0xBEEF, verbose = verbose)
+          mstr(res)
+          message("overlap_scores_partitions() ... done")
 
-            message(sprintf("Fraction #%d (%s with %s bps on Chr %s) of %d ... already done", rr, rho_tag, bin_size, chromosome, length(rhos)))
+          ## Summary of overlap scores and reference domain lengths
+          message("Summary of overlap scores and reference domain lengths ...")
+          res_chr <- res[[chromosome]]
+          summary_kk %<-% future_lapply(res_chr, FUN = function(pathname) {
+            oss <- read_rds(pathname)
+            ## Drop failed TopDom fits and possibly skip this sample?
+            failed <- unlist(lapply(oss, FUN = inherits, "try-error"))
+            if (any(failed)) {
+              oss <- oss[!failed]
+              if (length(oss) < 2) return(NULL)
+            }
+            z <- overlap_score_summary(oss, weights = weights, domain_length = domain_length)
+            oss <- failed <- NULL
 
-            filename <- sprintf("%s,unique,chr=%s.rds", dataset, chromosome)
-            pathname <- system.file("compiledData", filename, package = "TopDomStudy", mustWork = TRUE)
-            message(sprintf("Reads (%s):", pathname))
-            reads <- read_rds(pathname)
-            mprint(reads)
+            pathname_td <- gsub("[.]rds$", ",topdom.rds", pathname)
+            td <- read_rds(pathname_td)
 
-            message("overlap_scores_partitions() ...")
-            res <- overlap_scores_partitions(reads = reads, dataset = sprintf("%s,unique", dataset), bin_size = bin_size,
-                                             partition_by = "cells_by_half", min_cell_size = 2L, window_size = window_size, rho = rho,
-                                             nsamples = nsamples, chrs = chromosome, seed = 0xBEEF, mainseed = 0xBEEF, verbose = verbose)
-            mstr(res)
-            message("overlap_scores_partitions() ... done")
+            ref <- which(names(td) == "reference")
+            sizes <- td[[ref]]$domain$size
+            ## Filter by domain lengths?
+            if (!is.null(domain_length)) {
+              keep <- (domain_length[1] <= sizes & sizes <= domain_length[2])
+              sizes <- sizes[keep]
+            }
+            probs <- c(0.00, 0.05, 0.25, 0.50, 0.75, 0.95, 1.00)
+            qsizes <- quantile(sizes, probs = probs, na.rm = TRUE)
+            names(qsizes) <- sprintf("ref_len_q%0.2f", probs)
+            z <- cbind(z, as.list(qsizes))
+  
+            sizes <- td[-ref][[1]]$domain$size
+            ## Filter by domain lengths?
+            if (!is.null(domain_length)) {
+              keep <- (domain_length[1] <= sizes & sizes <= domain_length[2])
+              sizes <- sizes[keep]
+            }
+            probs <- c(0.00, 0.05, 0.25, 0.50, 0.75, 0.95, 1.00)
+            qsizes <- quantile(sizes, probs = probs, na.rm = TRUE)
+            names(qsizes) <- sprintf("test_len_q%0.2f", probs)
+            z <- cbind(z, as.list(qsizes))
+  
+            z
+          })
+          summary_kk <- do.call(rbind, summary_kk)
+          rownames(summary_kk) <- NULL
+          summary_kk <- cbind(summary_kk, fraction = rho)
+          message("Summary of overlap scores and reference domain lengths ... done")
 
-            ## Summary of overlap scores and reference domain lengths
-            message("Summary of overlap scores and reference domain lengths ...")
-            res_chr <- res[[chromosome]]
-            summary_kk %<-% future_lapply(res_chr, FUN = function(pathname) {
-              oss <- read_rds(pathname)
-              ## Drop failed TopDom fits and possibly skip this sample?
-              failed <- unlist(lapply(oss, FUN = inherits, "try-error"))
-              if (any(failed)) {
-                oss <- oss[!failed]
-                if (length(oss) < 2) return(NULL)
-              }
-              z <- overlap_score_summary(oss, weights = weights, domain_length = domain_length)
-              oss <- failed <- NULL
+          ## Save intermediate results to file
+          saveRDS(summary_kk, file = pathname_summary_kk)
+          message("Saved pathname_summary_kk: ", pathname_summary_kk)
 
-              pathname_td <- gsub("[.]rds$", ",topdom.rds", pathname)
-              td <- read_rds(pathname_td)
+          pathname_summary_kk
+        } %label% sprintf("%s-%s-%s", chromosome, bin_size, rho)
 
-              ref <- which(names(td) == "reference")
-              sizes <- td[[ref]]$domain$size
-              ## Filter by domain lengths?
-              if (!is.null(domain_length)) {
-                keep <- (domain_length[1] <= sizes & sizes <= domain_length[2])
-                sizes <- sizes[keep]
-              }
-              probs <- c(0.00, 0.05, 0.25, 0.50, 0.75, 0.95, 1.00)
-              qsizes <- quantile(sizes, probs = probs, na.rm = TRUE)
-              names(qsizes) <- sprintf("ref_len_q%0.2f", probs)
-              z <- cbind(z, as.list(qsizes))
-    
-              sizes <- td[-ref][[1]]$domain$size
-              ## Filter by domain lengths?
-              if (!is.null(domain_length)) {
-                keep <- (domain_length[1] <= sizes & sizes <= domain_length[2])
-                sizes <- sizes[keep]
-              }
-              probs <- c(0.00, 0.05, 0.25, 0.50, 0.75, 0.95, 1.00)
-              qsizes <- quantile(sizes, probs = probs, na.rm = TRUE)
-              names(qsizes) <- sprintf("test_len_q%0.2f", probs)
-              z <- cbind(z, as.list(qsizes))
-    
-              z
-            })
-            summary_kk <- do.call(rbind, summary_kk)
-            rownames(summary_kk) <- NULL
-            summary_kk <- cbind(summary_kk, fraction = rho)
-            message("Summary of overlap scores and reference domain lengths ... done")
+        message(sprintf("Fraction #%d (%s with %s bps on Chr %s) of %d ...", rr, rho_tag, bin_size, chromosome, length(rhos)))
+      } ## for (rr ...)
 
-            ## Save intermediate results to file
-            saveRDS(summary_kk, file = pathname_summary_kk)
-            message("Saved pathname_summary_kk: ", pathname_summary_kk)
-
-            summary_kk
-          } %label% sprintf("%s-%s-%s", chromosome, bin_size, rho)
-
-          message(sprintf("Fraction #%d (%s with %s bps on Chr %s) of %d ... done", rr, rho_tag, bin_size, chromosome, length(rhos)))
-        } ## for (rr ...)
-
-        ## Resolve futures
-        summary <- as.list(summary)
-
-        summary <- do.call(rbind, summary)
-        mprint(summary)
-
-        pathnames_summary
-      } %label% sprintf("%s-%s", chromosome, bin_size)
-      
       message(sprintf("Bin size #%d (%s bps on Chr %s) of %d ... done", bb, bin_size, chromosome, length(bin_sizes)))
     } ## for (bb ...)
     
@@ -235,14 +216,6 @@ overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, r
   
   ## Resolve
   dummy <- as.list(dummy)
-
-  ## AD HOC: distribute pathnames
-  for (cc in seq_along(dim(dummy)[1])) {
-    for (bb in seq_along(dim(dummy)[2])) {
-      pathnames <- dummy[[cc,bb,1]]
-      dummy[cc,bb,] <- pathnames
-    }
-  }
 
   ## Coerce to a character array
   pathnames <- unlist(dummy)
@@ -274,6 +247,7 @@ overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, r
           fullname <- paste(c(dataset, tags), collapse = ",")
           pathname_summary_kk <- file.path(path, sprintf("%s.rds", fullname))
           message("pathname_summary_kk: ", pathname_summary_kk)
+          message("pathnames[cc,bb,rr]: ", pathnames[cc,bb,rr])
           ## Sanity check
           stop_if_not(identical(pathname_summary_kk, pathnames[cc,bb,rr]))
           stop_if_not(file_test("-f", pathname_summary_kk))
