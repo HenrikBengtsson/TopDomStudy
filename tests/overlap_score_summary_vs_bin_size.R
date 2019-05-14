@@ -9,7 +9,7 @@ plan(list(
 ))
 
 for (weights in c("uniform", "by_length")) {
-  pathnames <- overlap_score_summary_vs_fraction(
+  pathnames <- overlap_score_summary_vs_bin_size(
     dataset       = "human,HAP1",
     chromosomes   = "22",
     bin_sizes     = c(50e3, 100e3, 200e3),

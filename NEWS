@@ -7,6 +7,10 @@ NEW FEATURES:
 
  * Add previously standalone R and PBS scripts to the package bin/ folder, i.e.
    system.file("bin", package = "TopDomStudy")
+
+SOFTWARE QUALITY:
+
+ * TESTS: overlap_score_summary_vs_bin_size() was never tested due to a typo.
  
 
 Version: 0.0.0-9007 [2019-05-01]
