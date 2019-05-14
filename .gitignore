@@ -1,6 +1,8 @@
 .Rhistory
 *~
 **/*~
+last.dump*
+figures/*
 .local
 .check
 .test

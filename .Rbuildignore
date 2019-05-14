@@ -4,4 +4,7 @@
 ^incl
 ^.local
 ^overlapScoreData
+^overlapScoreSummary
+^figures
+^last[.]dump
 [.]png$
