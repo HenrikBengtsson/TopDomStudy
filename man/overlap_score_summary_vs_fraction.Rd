@@ -36,8 +36,8 @@ folder (created if missing).  This requires the \pkg{ggplot2} packages.}
 \item{verbose}{(logical) If TRUE, verbose output is produced.}
 }
 \value{
-A logical list matrix with \code{length(chromosomes)} rows and \code{length(bin_sizes)}
-columns where row names are \code{chromosomes} and column names are \code{bin_sizes}.
+A three-dimensional character array of pathname names where the first
+dimension specify \code{chromosomes}, the second \code{bin_sizes}, and the third 'rhos'.
 }
 \description{
 Calculate and Summarize TopDom Overlap Scores as Function of Sample Fraction

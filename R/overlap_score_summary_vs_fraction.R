@@ -26,8 +26,8 @@
 #'
 #' @param verbose (logical) If TRUE, verbose output is produced.
 #'
-#' @return A logical list matrix with `length(chromosomes)` rows and `length(bin_sizes)`
-#' columns where row names are `chromosomes` and column names are `bin_sizes`.
+#' @return A three-dimensional character array of pathname names where the first
+#' dimension specify `chromosomes`, the second `bin_sizes`, and the third 'rhos'.
 #'
 #' @section Parallel processing:
 #' The \pkg{future} framework is used to parallelize [TopDom::TopDom()] in 2+3 layers:
@@ -118,9 +118,9 @@ overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, r
           mprint(domain_length)
           domain_length_tag <- sprintf("domain_length=%.0f-%.0f", domain_length[1], domain_length[2])
         }
-        
+
+        pathnames_summary <- character(length(rhos))
         summary <- listenv()
-        
         for (rr in seq_along(rhos)) {
           rho <- rhos[rr]
           rho_tag <- sprintf("fraction=%.3f", rho)
@@ -129,6 +129,7 @@ overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, r
           tags <- c(chromosome_tag, "cells_by_half", "avg_score", bin_size_tag, rho_tag, window_size_tag, domain_length_tag, weights_tag, nsamples_tag)
           fullname <- paste(c(dataset, tags), collapse = ",")
           pathname_summary_kk <- file.path(path, sprintf("%s.rds", fullname))
+	  pathnames_summary[rr] <- pathname_summary_kk
           message("pathname_summary_kk: ", pathname_summary_kk)
 
           ## Already processed?
@@ -272,7 +273,7 @@ overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, r
           } ## for (signal ...)
         } ## if (figures)
 
-        TRUE
+        pathnames_summary
       } %label% sprintf("%s-%s", chromosome, bin_size)
       
       message(sprintf("Bin size #%d (%s bps on Chr %s) of %d ... done", bb, bin_size, chromosome, length(bin_sizes)))
@@ -286,5 +287,18 @@ overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, r
   ## Resolve
   dummy <- as.list(dummy)
 
-  dummy
+  ## AD HOC: distribute pathnames
+  for (aa in seq_along(dim(dummy)[1])) {
+    for (bb in seq_along(dim(dummy)[2])) {
+      pathnames <- dummy[aa,bb,1]
+      dummy[aa,bb,] <- pathnames
+    }
+  }
+
+  ## Coerce to a character array
+  pathnames <- unlist(dummy)
+  dim(pathnames) <- dim(dummy)
+  dimnames(pathnames) <- dimnames(dummy)
+
+  pathnames
 }
