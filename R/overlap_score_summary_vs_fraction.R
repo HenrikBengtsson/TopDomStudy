@@ -80,8 +80,8 @@ overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, r
   dir.create(path, recursive = TRUE, showWarnings = FALSE)
 
   dummy <- listenv()
-  dim(dummy) <- c(length(chromosomes), length(bin_sizes))
-  dimnames(dummy) <- list(chromosomes, bin_sizes)
+  dim(dummy) <- c(length(chromosomes), length(bin_sizes), length(rhos))
+  dimnames(dummy) <- list(chromosomes, bin_sizes, rhos)
   for (cc in seq_along(chromosomes)) {
     chromosome <- chromosomes[cc]
     chromosome_tag <- sprintf("chr=%s", chromosome)
@@ -94,7 +94,7 @@ overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, r
 
       message(sprintf("Bin size #%d (%s) of %d ...", bb, bin_size_tag, length(bin_sizes)))
 
-      dummy[[cc,bb]] %<-% {
+      dummy[[cc, bb, 1L]] %<-% {
         ## WORKAROUND: Below is a case of "y %<-% { if (reset) x <- 0; x + 1 }"
 	## Help future identify these as globals:
         domain_length_tag
@@ -278,7 +278,7 @@ overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, r
       message(sprintf("Bin size #%d (%s bps on Chr %s) of %d ... done", bb, bin_size, chromosome, length(bin_sizes)))
     } ## for (bb ...)
     
-    message(sprintf("Chromosome #%d (Chr %s) of %d ... done", cc, chromosome, length(chromosomes)))
+    message(sprintf("Chromosome #%d (%s) of %d ... done", cc, chromosome_tag, length(chromosomes)))
   } ## for (cc ...)
   
   message("All tasks submitted as futures")

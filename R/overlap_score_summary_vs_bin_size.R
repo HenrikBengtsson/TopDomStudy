@@ -80,8 +80,8 @@ overlap_score_summary_vs_bin_size <- function(dataset, chromosomes, bin_sizes, r
   dir.create(path, recursive = TRUE, showWarnings = FALSE)
 
   dummy <- listenv()
-  dim(dummy) <- c(length(chromosomes), length(rhos))
-  dimnames(dummy) <- list(chromosomes, rhos)
+  dim(dummy) <- c(length(chromosomes), length(bin_sizes), length(rhos))
+  dimnames(dummy) <- list(chromosomes, bin_sizes, rhos)
   for (cc in seq_along(chromosomes)) {
     chromosome <- chromosomes[cc]
     chromosome_tag <- sprintf("chr=%s", chromosome)
@@ -94,7 +94,7 @@ overlap_score_summary_vs_bin_size <- function(dataset, chromosomes, bin_sizes, r
 
       message(sprintf("Fraction #%d (%g on Chr %s) of %d ... done", rr, rho, chromosome, length(rhos)))
 
-      dummy[[cc,rr]] %<-% {
+      dummy[[cc, 1L, rr]] %<-% {
         message("Remaining future::plan():")
         mprint(plan("list"))
 
@@ -211,6 +211,8 @@ overlap_score_summary_vs_bin_size <- function(dataset, chromosomes, bin_sizes, r
             "test Q75 length"         = "test_len_q0.75"
           )
           signals <- c(mean = "mean", median = "`50%`", length_signals)
+
+          fraction <- NULL; rm(list = "fraction") ## To please R CMD check
 
           for (signal_label in names(signals)) {
             signal <- signals[[signal_label]]
