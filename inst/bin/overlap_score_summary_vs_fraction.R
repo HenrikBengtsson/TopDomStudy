@@ -1,0 +1,60 @@
+#!/usr/bin/env Rscript
+##-----------------------------------------------------------------------------
+## Usage:
+##
+##  Rscript overlap_score_summary_vs_fraction.R
+##
+## Parameters:
+##  * chromosomes
+##  * bin_sizes
+##  * rhos
+##  * nsamples
+##  * window_size
+##  * weights
+##  * domain_length
+##
+## Input:
+##  * human,HAP1,unique,chr*.rds files in R package 'TopDomStudy', i.e.
+##    in folder system.file("compiledData", package="TopDomStudy")
+##
+## Output:
+##  * figures/
+##  * overlapScoreData/
+##  * overlapScoreSummary/
+##-----------------------------------------------------------------------------
+library(TopDomStudy)
+library(future) ## sources ./.future.R, if it exists
+
+## Allow for 3-GiB objects to be exported during parallelizing
+options(future.globals.maxSize = 3 * 1024^3)
+
+bin_sizes <- c(5, 6, 8, 10, 12, 15, 20, 40, 60, 80, 100) * 1e3
+bin_sizes <- c(         10,         20, 40, 60, 80, 100) * 1e3
+## FIXME: chromosome = "22", rho = 0.01, bin_size = 10000, nsamples = 1L
+## gives an error
+rhos <- c(0.01, 0.02, 0.04, 0.05, 0.06, 0.08, 0.10, 0.20, 0.30, 0.40, 0.50)[-1]
+rhos <- c(            0.04, 0.05, 0.06, 0.08, 0.10, 0.20, 0.30, 0.40, 0.50) ## Skip rho=0.02 due to chr=12 memory constraints
+
+domain_length <- NULL
+#domain_length <- c(300e3, 1000e3)
+#domain_length <- "ref_len_iqr"  ## WARNING: Requires that domain_length = NULL has been run before
+
+done <- overlap_score_summary_vs_fraction(
+  dataset       = "human,HAP1",
+  chromosomes   = c("12", "16", "22"),
+  bin_sizes     = bin_sizes,
+  rhos          = rhos,
+  window_size   = 5L,
+  weights       = c("by_length", "uniform")[2],
+  domain_length = domain_length,
+  nsamples      = 50L,
+  verbose       = TRUE
+)
+print(done)
+
+
+## NOTES:
+## * 2019-01-08:
+##   Running the above with nsamples = 50L, bin_size = 100000 on chromosomes
+##   12, 19, 22 (data available in TopDomStudy) takes ~30 minutes with 6 cores
+##   on a Thinkpad X1C6.
