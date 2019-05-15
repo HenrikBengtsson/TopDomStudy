@@ -30,26 +30,21 @@ Argument passed as is to \code{\link[=overlap_score_summary]{overlap_score_summa
 If specified, controls how to filter out too short or too long TopDom domains.
 Argument passed as is to \code{\link[=overlap_score_summary]{overlap_score_summary()}}.}
 
-\item{figures}{(logical) If TRUE, PNG images are written to the \file{figures/}
-folder (created if missing).  This requires the \pkg{ggplot2} packages.}
+\item{figures}{(logical) If TRUE, PNG images are written to the
+\file{figures/} folder (created if missing).  This requires the
+\pkg{ggplot2} packages.}
 
 \item{verbose}{(logical) If TRUE, verbose output is produced.}
 }
 \value{
-A three-dimensional character array of pathname names where the first
-dimension specify \code{chromosomes}, the second \code{bin_sizes}, and the third 'rhos'.
+A three-dimensional character array of pathname names where the
+first dimension specify \code{chromosomes}, the second \code{bin_sizes}, and
+the third 'rhos'.
 }
 \description{
 Calculate and Summarize TopDom Overlap Scores as Function of Sample Fraction
 }
-\section{Parallel processing}{
-
-The \pkg{future} framework is used to parallelize \code{\link[TopDom:TopDom]{TopDom::TopDom()}} in 1+2 layers:
-\enumerate{
-\item across (chromosome, bin size fraction) (arguments \code{chromosomes}, \code{bin_sizes}, and \code{rhos})
-\item \code{\link[=overlap_scores_partitions]{overlap_scores_partitions()}} layers:
-i. random samples (argument \code{nsamples})
-ii. partions per sample (typically only two)
+\seealso{
+Internal, \code{\link[=overlap_score_summary_grid]{overlap_score_summary_grid()}} is used to calculate overlap
+scores over (chromosome, bin_size, rho).
 }
-}
-

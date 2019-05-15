@@ -2,10 +2,8 @@ library(TopDomStudy)
 library(future)
 
 plan(list(
-  chr_bin  = sequential,
-  rho      = sequential,
-  monochr  = sequential,
-  samples  = multiprocess
+  chr_bin_rho = multiprocess,
+  samples     = sequential
 ))
 
 for (weights in c("uniform", "by_length")) {
