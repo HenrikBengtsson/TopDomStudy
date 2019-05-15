@@ -44,14 +44,12 @@ Calculate and Summarize TopDom Overlap Scores as Function of Bin Size
 }
 \section{Parallel processing}{
 
-The \pkg{future} framework is used to parallelize \code{\link[TopDom:TopDom]{TopDom::TopDom()}} in 2+3 layers:
+The \pkg{future} framework is used to parallelize \code{\link[TopDom:TopDom]{TopDom::TopDom()}} in 1+2 layers:
 \enumerate{
-\item across (chromosome, fraction) (arguments \code{chromosomes} and \code{rhos})
-\item across all bin sizes (argument \code{bin_sizes})
+\item across (chromosome, bin size fraction) (arguments \code{chromosomes}, \code{bin_sizes}, and \code{rhos})
 \item \code{\link[=overlap_scores_partitions]{overlap_scores_partitions()}} layers:
-a. chromosomes (here a single one)
-b. random samples (argument \code{nsamples})
-c. partions per sample (typically only two)
+i. random samples (argument \code{nsamples})
+ii. partions per sample (typically only two)
 }
 }
 

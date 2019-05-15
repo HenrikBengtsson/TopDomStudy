@@ -30,13 +30,11 @@
 #' dimension specify `chromosomes`, the second `bin_sizes`, and the third 'rhos'.
 #'
 #' @section Parallel processing:
-#' The \pkg{future} framework is used to parallelize [TopDom::TopDom()] in 2+3 layers:
-#'  1. across (chromosome, bin_size) (arguments `chromosomes` and `bin_sizes`)
-#'  2. across all fractions (argument `rhos`)
-#'  3. [overlap_scores_partitions()] layers:
-#'    a. chromosomes (here a single one)
-#'    b. random samples (argument `nsamples`)
-#'    c. partions per sample (typically only two)
+#' The \pkg{future} framework is used to parallelize [TopDom::TopDom()] in 1+2 layers:
+#'  1. across (chromosome, bin size fraction) (arguments `chromosomes`, `bin_sizes`, and `rhos`)
+#'  2. [overlap_scores_partitions()] layers:
+#'    i. random samples (argument `nsamples`)
+#'    ii. partions per sample (typically only two)
 #'
 #' @importFrom listenv listenv
 #' @importFrom future %<-% plan
@@ -138,7 +136,7 @@ overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, r
           ## Summary of overlap scores and reference domain lengths
           message("Summary of overlap scores and reference domain lengths ...")
           res_chr <- res[[chromosome]]
-          summary_kk %<-% future_lapply(res_chr, FUN = function(pathname) {
+          summary_kk <- future_lapply(res_chr, FUN = function(pathname) {
             oss <- read_rds(pathname)
             ## Drop failed TopDom fits and possibly skip this sample?
             failed <- unlist(lapply(oss, FUN = inherits, "try-error"))
