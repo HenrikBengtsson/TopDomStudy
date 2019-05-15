@@ -11,6 +11,7 @@ Depends:
     TopDom (>= 0.8.0)
 Imports:
     digest (>= 0.6.18),
+    ggplot2,
     Hmisc,
     listenv,
     matrixStats,
@@ -19,8 +20,6 @@ Imports:
     parallel,
     stats,
     utils
-Suggests:
-    ggplot2
 Remotes:
     github::HenrikBengtsson/TopDom
 RoxygenNote: 6.1.1

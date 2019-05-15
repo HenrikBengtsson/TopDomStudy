@@ -21,7 +21,7 @@
 #' If specified, controls how to filter out too short or too long TopDom domains.
 #' Argument passed as is to [overlap_score_summary()].
 #'
-#' @param verbose (logical) If TRUE, verbose output is produced.
+#' @param verbose (logical) If `TRUE`, verbose output is produced.
 #'
 #' @return A three-dimensional character array of pathname names where the first
 #' dimension specify `chromosomes`, the second `bin_sizes`, and the third 'rhos'.

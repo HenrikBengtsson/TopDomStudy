@@ -10,7 +10,7 @@
 #' summary.  Any domains with lengths outside this range will be discarded.
 #' If `NULL` (default) or `c(-Inf, +Inf)`, all domains are included.
 #'
-#' @param drop_reference If TRUE, then the reference partition is dropped.
+#' @param drop_reference If `TRUE`, then the reference partition is dropped.
 #'
 #' @return A [base::data.frame] with (K-1) rows.
 #'

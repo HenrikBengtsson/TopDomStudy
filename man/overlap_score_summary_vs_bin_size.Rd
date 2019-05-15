@@ -6,7 +6,7 @@
 \usage{
 overlap_score_summary_vs_bin_size(dataset, chromosomes, bin_sizes, rhos,
   window_size = 5L, nsamples = 50L, weights = c("by_length",
-  "uniform"), domain_length = NULL, figures = TRUE, verbose = FALSE)
+  "uniform"), domain_length = NULL, verbose = FALSE)
 }
 \arguments{
 \item{dataset}{(character string) The name of the data set.}
@@ -30,10 +30,6 @@ Argument passed as is to \code{\link[=overlap_score_summary]{overlap_score_summa
 If specified, controls how to filter out too short or too long TopDom domains.
 Argument passed as is to \code{\link[=overlap_score_summary]{overlap_score_summary()}}.}
 
-\item{figures}{(logical) If TRUE, PNG images are written to the
-\file{figures/} folder (created if missing).  This requires the
-\pkg{ggplot2} packages.}
-
 \item{verbose}{(logical) If TRUE, verbose output is produced.}
 }
 \value{
@@ -43,6 +39,9 @@ the third 'rhos'.
 }
 \description{
 Calculate and Summarize TopDom Overlap Scores as Function of Bin Size
+}
+\details{
+PNG images are written to the \file{figures/} folder (created if missing).
 }
 \seealso{
 Internal, \code{\link[=overlap_score_summary_grid]{overlap_score_summary_grid()}} is used to calculate overlap

@@ -1,12 +1,14 @@
 TopDomStudy
 ===========
 
-Version: 0.0.0-9008 [2019-05-14]
+Version: 0.0.0-9008 [2019-05-15]
 
 SIGNIFICANT CHANGES:
 
  * overlap_score_summary_vs_nnn() functions now parallelize over fewer layers.
- 
+
+ * Package now imports ggplot2.
+
 NEW FEATURES:
 
  * Add overlap_score_summary_grid().
@@ -19,7 +21,7 @@ NEW FEATURES:
 SOFTWARE QUALITY:
 
  * TESTS: overlap_score_summary_vs_bin_size() was never tested due to a typo.
- 
+
 
 Version: 0.0.0-9007 [2019-05-01]
 
