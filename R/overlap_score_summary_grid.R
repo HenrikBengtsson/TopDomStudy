@@ -65,18 +65,18 @@ overlap_score_summary_grid <- function(dataset, chromosomes, bin_sizes, rhos, wi
     chromosome <- chromosomes[cc]
     chromosome_tag <- sprintf("chr=%s", chromosome)
 
-    message(sprintf("Chromosome #%d (%s) of %d ...", cc, chromosome_tag, length(chromosomes)))
+    if (verbose) message(sprintf("Chromosome #%d (%s) of %d ...", cc, chromosome_tag, length(chromosomes)))
 
     for (bb in seq_along(bin_sizes)) {
       bin_size <- bin_sizes[bb]
       bin_size_tag <- sprintf("bin_size=%.0f", bin_size)
 
-      message(sprintf("Bin size #%d (%s) of %d ...", bb, bin_size_tag, length(bin_sizes)))
+      if (verbose) message(sprintf("Bin size #%d (%s) of %d ...", bb, bin_size_tag, length(bin_sizes)))
 
       for (rr in seq_along(rhos)) {
         rho <- rhos[rr]
         rho_tag <- sprintf("fraction=%.3f", rho)
-        message(sprintf("Fraction #%d (%s with %s bps on Chr %s) of %d ...", rr, rho_tag, bin_size, chromosome, length(rhos)))
+        if (verbose) message(sprintf("Fraction #%d (%s with %s bps on Chr %s) of %d ...", rr, rho_tag, bin_size, chromosome, length(rhos)))
 
         if (is.character(domain_length) && domain_length == "ref_len_iqr") {
           limits <- extract_domain_length_limits(
@@ -87,45 +87,45 @@ overlap_score_summary_grid <- function(dataset, chromosomes, bin_sizes, rhos, wi
             weights    = weights,
             verbose    = verbose
           )
-          mprint(limits)
+          if (verbose) mprint(limits)
           stopifnot(nrow(limits) == 1L)
           domain_length <- c(limits[["ref_len_q0.25"]], limits[["ref_len_q0.75"]])
-          message("domain_length:")
-          mprint(domain_length)
+          if (verbose) message("domain_length:")
+          if (verbose) mprint(domain_length)
           domain_length_tag <- sprintf("domain_length=%.0f-%.0f", domain_length[1], domain_length[2])
         }
   
         tags <- c(chromosome_tag, "cells_by_half", "avg_score", bin_size_tag, rho_tag, window_size_tag, domain_length_tag, weights_tag, nsamples_tag)
         fullname <- paste(c(dataset, tags), collapse = ",")
         pathname_summary_kk <- file.path(path, sprintf("%s.rds", fullname))
-        message("pathname_summary_kk: ", pathname_summary_kk)
+        if (verbose) message("pathname_summary_kk: ", pathname_summary_kk)
 
         ## Already processed?
         if (file_test("-f", pathname_summary_kk)) {
           dummy[[cc, bb, rr]] <- pathname_summary_kk
-          message(sprintf("Fraction #%d (%s with %s bps on Chr %s) of %d ... already done", rr, rho_tag, bin_size, chromosome, length(rhos)))
+          if (verbose) message(sprintf("Fraction #%d (%s with %s bps on Chr %s) of %d ... already done", rr, rho_tag, bin_size, chromosome, length(rhos)))
           next
         }
 
         dummy[[cc, bb, rr]] %<-% {
-          message("Remaining future::plan():")
-          mprint(plan("list"))
+          if (verbose) message("Remaining future::plan():")
+          if (verbose) mprint(plan("list"))
 
           filename <- sprintf("%s,unique,chr=%s.rds", dataset, chromosome)
           pathname <- system.file("compiledData", filename, package = "TopDomStudy", mustWork = TRUE)
-          message(sprintf("Reads (%s):", pathname))
+          if (verbose) message(sprintf("Reads (%s):", pathname))
           reads <- read_rds(pathname)
-          mprint(reads)
+          if (verbose) mprint(reads)
 
-          message("overlap_scores_partitions() ...")
+          if (verbose) message("overlap_scores_partitions() ...")
           res <- overlap_scores_partitions(reads = reads, dataset = sprintf("%s,unique", dataset), bin_size = bin_size,
                                            partition_by = "cells_by_half", min_cell_size = 2L, window_size = window_size, rho = rho,
                                            nsamples = nsamples, chrs = chromosome, seed = 0xBEEF, mainseed = 0xBEEF, verbose = verbose)
-          mstr(res)
-          message("overlap_scores_partitions() ... done")
+          if (verbose) mstr(res)
+          if (verbose) message("overlap_scores_partitions() ... done")
 
           ## Summary of overlap scores and reference domain lengths
-          message("Summary of overlap scores and reference domain lengths ...")
+          if (verbose) message("Summary of overlap scores and reference domain lengths ...")
           res_chr <- res[[chromosome]]
           summary_kk <- future_lapply(res_chr, FUN = function(pathname) {
             oss <- read_rds(pathname)
@@ -169,25 +169,25 @@ overlap_score_summary_grid <- function(dataset, chromosomes, bin_sizes, rhos, wi
           summary_kk <- do.call(rbind, summary_kk)
           rownames(summary_kk) <- NULL
           summary_kk <- cbind(summary_kk, fraction = rho)
-          message("Summary of overlap scores and reference domain lengths ... done")
+          if (verbose) message("Summary of overlap scores and reference domain lengths ... done")
 
           ## Save intermediate results to file
           saveRDS(summary_kk, file = pathname_summary_kk)
-          message("Saved pathname_summary_kk: ", pathname_summary_kk)
+          if (verbose) message("Saved pathname_summary_kk: ", pathname_summary_kk)
 
           pathname_summary_kk
         } %label% sprintf("%s-%s-%s", chromosome, bin_size, rho)
 
-        message(sprintf("Fraction #%d (%s with %s bps on Chr %s) of %d ...", rr, rho_tag, bin_size, chromosome, length(rhos)))
+        if (verbose) message(sprintf("Fraction #%d (%s with %s bps on Chr %s) of %d ...", rr, rho_tag, bin_size, chromosome, length(rhos)))
       } ## for (rr ...)
 
-      message(sprintf("Bin size #%d (%s bps on Chr %s) of %d ... done", bb, bin_size, chromosome, length(bin_sizes)))
+      if (verbose) message(sprintf("Bin size #%d (%s bps on Chr %s) of %d ... done", bb, bin_size, chromosome, length(bin_sizes)))
     } ## for (bb ...)
     
-    message(sprintf("Chromosome #%d (%s) of %d ... done", cc, chromosome_tag, length(chromosomes)))
+    if (verbose) message(sprintf("Chromosome #%d (%s) of %d ... done", cc, chromosome_tag, length(chromosomes)))
   } ## for (cc ...)
   
-  message("All tasks submitted as futures")
+  if (verbose) message("All tasks submitted as futures")
   
   ## Resolve
   dummy <- as.list(dummy)

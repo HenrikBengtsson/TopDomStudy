@@ -30,7 +30,7 @@ Argument passed as is to \code{\link[=overlap_score_summary]{overlap_score_summa
 If specified, controls how to filter out too short or too long TopDom domains.
 Argument passed as is to \code{\link[=overlap_score_summary]{overlap_score_summary()}}.}
 
-\item{verbose}{(logical) If TRUE, verbose output is produced.}
+\item{verbose}{(logical) If \code{TRUE}, verbose output is produced.}
 }
 \value{
 A three-dimensional character array of pathname names where the

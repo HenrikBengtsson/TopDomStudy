@@ -38,43 +38,42 @@ overlap_score_summary_vs_bin_size <- function(dataset, chromosomes, bin_sizes, r
   path <- "overlapScoreSummary"
   stop_if_not(file_test("-d", path))
 
-  message("Plotting ...")
+  if (verbose) message("Plotting ...")
 
   for (cc in seq_along(chromosomes)) {
     chromosome <- chromosomes[cc]
     chromosome_tag <- sprintf("chr=%s", chromosome)
 
-    message(sprintf("Chromosome #%d (%s) of %d ...", cc, chromosome_tag, length(chromosomes)))
+    if (verbose) message(sprintf("Chromosome #%d (%s) of %d ...", cc, chromosome_tag, length(chromosomes)))
 
     for (rr in seq_along(rhos)) {
       rho <- rhos[rr]
       rho_tag <- sprintf("fraction=%.3f", rho)
 
-      message(sprintf("Fraction #%d (%g on Chr %s) of %d ... done", rr, rho, chromosome, length(rhos)))
+      if (verbose) message(sprintf("Fraction #%d (%g on Chr %s) of %d ... done", rr, rho, chromosome, length(rhos)))
 
       summary <- list()
       
       for (bb in seq_along(bin_sizes)) {
         bin_size <- bin_sizes[bb]
         bin_size_tag <- sprintf("bin_size=%.0f", bin_size)
-        message(sprintf("Bin size #%d (%s bps with %g on Chr %s) of %d ...", bb, bin_size, rho, chromosome, length(bin_sizes)))
+        if (verbose) message(sprintf("Bin size #%d (%s bps with %g on Chr %s) of %d ...", bb, bin_size, rho, chromosome, length(bin_sizes)))
 
         tags <- c(chromosome_tag, "cells_by_half", "avg_score", bin_size_tag, rho_tag, window_size_tag, domain_length_tag, weights_tag, nsamples_tag)
         fullname <- paste(c(dataset, tags), collapse = ",")
         pathname_summary_kk <- file.path(path, sprintf("%s.rds", fullname))
-        message("pathname_summary_kk: ", pathname_summary_kk)
-        message("pathnames[cc,bb,rr]: ", pathnames[cc,bb,rr])
+        if (verbose) message("pathname_summary_kk: ", pathname_summary_kk)
         ## Sanity check
         stop_if_not(identical(pathname_summary_kk, pathnames[cc,bb,rr]))
         stop_if_not(file_test("-f", pathname_summary_kk))
         
         summary[[bb]] <- read_rds(pathname_summary_kk)
           
-        message(sprintf("Bin size #%d (%s bps with %g on Chr %s) of %d ... already done", bb, bin_size, rho, chromosome, length(bin_sizes)))
+        if (verbose) message(sprintf("Bin size #%d (%s bps with %g on Chr %s) of %d ... already done", bb, bin_size, rho, chromosome, length(bin_sizes)))
       } ## for (bb ...)
 
       summary <- do.call(rbind, summary)
-      mprint(summary)
+      if (verbose) mprint(summary)
 
       dw <- diff(range(bin_sizes)) / length(bin_sizes)
 
@@ -125,13 +124,13 @@ overlap_score_summary_vs_bin_size <- function(dataset, chromosomes, bin_sizes, r
         ggsave(gg, filename=file.path("figures", filename))
       } ## for (signal ...)
         
-      message(sprintf("Fraction #%d (%g on Chr %s) of %d ... done", rr, rho, chromosome, length(rhos)))
+      if (verbose) message(sprintf("Fraction #%d (%g on Chr %s) of %d ... done", rr, rho, chromosome, length(rhos)))
     } ## for (rr ...)
     
-    message(sprintf("Chromosome #%d (%s) of %d ... done", cc, chromosome_tag, length(chromosomes)))
+    if (verbose) message(sprintf("Chromosome #%d (%s) of %d ... done", cc, chromosome_tag, length(chromosomes)))
   } ## for (cc ...)
 
-  message("Plotting ... done")
+  if (verbose) message("Plotting ... done")
 
   pathnames
 }

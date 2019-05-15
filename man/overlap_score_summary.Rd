@@ -18,7 +18,7 @@ specifying the minimum and maximum length of domains to include in the
 summary.  Any domains with lengths outside this range will be discarded.
 If \code{NULL} (default) or \code{c(-Inf, +Inf)}, all domains are included.}
 
-\item{drop_reference}{If TRUE, then the reference partition is dropped.}
+\item{drop_reference}{If \code{TRUE}, then the reference partition is dropped.}
 }
 \value{
 A \link[base:data.frame]{base::data.frame} with (K-1) rows.

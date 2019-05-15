@@ -22,6 +22,10 @@ SOFTWARE QUALITY:
 
  * TESTS: overlap_score_summary_vs_bin_size() was never tested due to a typo.
 
+BUG FIXES:
+
+ * overlap_score_summary_nnn() functions did not respect 'verbose' argument.
+ 
 
 Version: 0.0.0-9007 [2019-05-01]
 
