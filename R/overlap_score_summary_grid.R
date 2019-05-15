@@ -28,7 +28,7 @@
 #'
 #' @section Parallel processing:
 #' The \pkg{future} framework is used to parallelize in two layers:
-#'  1. across (chromosome, bin size fraction)
+#'  1. across (chromosome, bin size, fraction)
 #'  2. [overlap_scores_partitions()] across `nsamples` random samples
 #'
 #' @importFrom listenv listenv

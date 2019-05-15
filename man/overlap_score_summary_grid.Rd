@@ -43,7 +43,7 @@ Calculate and Summarize TopDom Overlap Scores Across Chromosomes, Bin Sizes, and
 
 The \pkg{future} framework is used to parallelize in two layers:
 \enumerate{
-\item across (chromosome, bin size fraction)
+\item across (chromosome, bin size, fraction)
 \item \code{\link[=overlap_scores_partitions]{overlap_scores_partitions()}} across \code{nsamples} random samples
 }
 }
