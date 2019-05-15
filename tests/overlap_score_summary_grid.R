@@ -11,11 +11,11 @@ future::plan(list(
 ))
 
 for (weights in c("uniform", "by_length")) {
-  pathnames <- overlap_score_summary_vs_fraction(
+  pathnames <- overlap_score_summary_grid(
     dataset       = "human,HAP1",
     chromosomes   = chromosomes,
-    bin_sizes     = rev(bin_sizes)[1],
-    rhos          = rhos,
+    bin_sizes     = bin_sizes,
+    rhos          = rev(rhos)[1],
     window_size   = 5L,
     weights       = weights,
     domain_length = c(500e3, 1000e3),

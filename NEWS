@@ -20,6 +20,8 @@ NEW FEATURES:
 
 SOFTWARE QUALITY:
 
+ * TESTS: Add package test for overlap_score_summary_grid().
+
  * TESTS: overlap_score_summary_vs_bin_size() was never tested due to a typo.
 
 BUG FIXES:
