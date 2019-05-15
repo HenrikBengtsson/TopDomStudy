@@ -27,9 +27,39 @@
 #' dimension specify `chromosomes`, the second `bin_sizes`, and the third 'rhos'.
 #'
 #' @section Parallel processing:
-#' The \pkg{future} framework is used to parallelize in two layers:
+#' The \pkg{future} framework is used to parallelize in three layers:
 #'  1. across (chromosome, bin size, fraction)
-#'  2. [overlap_scores_partitions()] across `nsamples` random samples
+#'  2. [overlap_scores_partitions()]:
+#'     1. across a single chromosome (already subsetted above)
+#'     2. across `nsamples` random samples
+#'
+#' An example of a [future::plan()] setup for parallelization on the
+#' local machine is:
+#' ```r
+#'  plan(list(
+#'    chr_bin_rho = sequential,   ## across (chr, bin_size, rho)
+#'    mono_chr    = sequential,   ## always a single chromosome
+#'    samples     = multiprocess  ## across 1:nsamples
+#'  ))
+#' ```
+#' Another is,
+#' ```r
+#'  plan(list(
+#'    chr_bin_rho = multiprocess, ## across (chr, bin_size, rho)
+#'    mono_chr    = sequential,   ## always a single chromosome
+#'    samples     = sequential    ## across 1:nsamples
+#'  ))
+#' ```
+#' For parallelization on a HPC cluster via a scheduler,
+#' ```r
+#'  hpc_scheduler <- tweak(future.batchtools::batchtools_torque,
+#'                         resources = list(nodes="1:ppn=8", vmem="32gb"))
+#'  plan(list(
+#'    chr_bin_rho = hpc_scheduler,
+#'    mono_chr    = sequential,
+#'    samples     = multiprocess
+#'  ))
+#' ```
 #'
 #' @importFrom listenv listenv
 #' @importFrom future %<-% plan

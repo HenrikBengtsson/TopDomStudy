@@ -41,10 +41,38 @@ Calculate and Summarize TopDom Overlap Scores Across Chromosomes, Bin Sizes, and
 }
 \section{Parallel processing}{
 
-The \pkg{future} framework is used to parallelize in two layers:
+The \pkg{future} framework is used to parallelize in three layers:
 \enumerate{
 \item across (chromosome, bin size, fraction)
-\item \code{\link[=overlap_scores_partitions]{overlap_scores_partitions()}} across \code{nsamples} random samples
+\item \code{\link[=overlap_scores_partitions]{overlap_scores_partitions()}}:
+\enumerate{
+\item across a single chromosome (already subsetted above)
+\item across \code{nsamples} random samples
+}
+}
+
+An example of a \code{\link[future:plan]{future::plan()}} setup for parallelization on the
+local machine is:\preformatted{ plan(list(
+   chr_bin_rho = sequential,   ## across (chr, bin_size, rho)
+   mono_chr    = sequential,   ## always a single chromosome
+   samples     = multiprocess  ## across 1:nsamples
+ ))
+}
+
+Another is,\preformatted{ plan(list(
+   chr_bin_rho = multiprocess, ## across (chr, bin_size, rho)
+   mono_chr    = sequential,   ## always a single chromosome
+   samples     = sequential    ## across 1:nsamples
+ ))
+}
+
+For parallelization on a HPC cluster via a scheduler,\preformatted{ hpc_scheduler <- tweak(future.batchtools::batchtools_torque,
+                        resources = list(nodes="1:ppn=8", vmem="32gb"))
+ plan(list(
+   chr_bin_rho = hpc_scheduler,
+   mono_chr    = sequential,
+   samples     = multiprocess
+ ))
 }
 }
 
