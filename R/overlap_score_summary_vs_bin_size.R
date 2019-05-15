@@ -88,16 +88,16 @@ overlap_score_summary_vs_bin_size <- function(dataset, chromosomes, bin_sizes, r
 
     message(sprintf("Chromosome #%d (%s) of %d ...", cc, chromosome_tag, length(chromosomes)))
 
-    for (rr in seq_along(rhos)) {
-      rho <- rhos[rr]
-      rho_tag <- sprintf("fraction=%.3f", rho)
+    for (bb in seq_along(bin_sizes)) {
+      bin_size <- bin_sizes[bb]
+      bin_size_tag <- sprintf("bin_size=%.0f", bin_size)
 
-      message(sprintf("Fraction #%d (%g on Chr %s) of %d ... done", rr, rho, chromosome, length(rhos)))
+      message(sprintf("Bin size #%d (%s) of %d ...", bb, bin_size_tag, length(bin_sizes)))
 
-      for (bb in seq_along(bin_sizes)) {
-        bin_size <- bin_sizes[bb]
-        bin_size_tag <- sprintf("bin_size=%.0f", bin_size)
-        message(sprintf("Bin size #%d (%s bps with %g on Chr %s) of %d ...", bb, bin_size, rho, chromosome, length(bin_sizes)))
+      for (rr in seq_along(rhos)) {
+        rho <- rhos[rr]
+        rho_tag <- sprintf("fraction=%.3f", rho)
+        message(sprintf("Fraction #%d (%s with %s bps on Chr %s) of %d ...", rr, rho_tag, bin_size, chromosome, length(rhos)))
 
         tags <- c(chromosome_tag, "cells_by_half", "avg_score", bin_size_tag, rho_tag, window_size_tag, domain_length_tag, weights_tag, nsamples_tag)
         fullname <- paste(c(dataset, tags), collapse = ",")
@@ -107,7 +107,7 @@ overlap_score_summary_vs_bin_size <- function(dataset, chromosomes, bin_sizes, r
         ## Already processed?
         if (file_test("-f", pathname_summary_kk)) {
           dummy[[cc, bb, rr]] <- pathname_summary_kk
-          message(sprintf("Bin size #%d (%s bps with %g on Chr %s) of %d ... already done", bb, bin_size, rho, chromosome, length(bin_sizes)))
+          message(sprintf("Fraction #%d (%s with %s bps on Chr %s) of %d ... already done", rr, rho_tag, bin_size, chromosome, length(rhos)))
           next
         }
 
@@ -182,11 +182,11 @@ overlap_score_summary_vs_bin_size <- function(dataset, chromosomes, bin_sizes, r
           pathname_summary_kk
         } %label% sprintf("%s-%s-%s", chromosome, bin_size, rho)
 
-        message(sprintf("Bin size #%d (%s bps with %g on Chr %s) of %d ... done", bb, bin_size, rho, chromosome, length(bin_sizes)))
-      } ## for (bb ...)
+        message(sprintf("Fraction #%d (%s with %s bps on Chr %s) of %d ...", rr, rho_tag, bin_size, chromosome, length(rhos)))
+      } ## for (rr ...)
 
-      message(sprintf("Fraction #%d (%g on Chr %s) of %d ... done", rr, rho, chromosome, length(rhos)))
-    } ## for (rr ...)
+      message(sprintf("Bin size #%d (%s bps on Chr %s) of %d ... done", bb, bin_size, chromosome, length(bin_sizes)))
+    } ## for (bb ...)
     
     message(sprintf("Chromosome #%d (%s) of %d ... done", cc, chromosome_tag, length(chromosomes)))
   } ## for (cc ...)
