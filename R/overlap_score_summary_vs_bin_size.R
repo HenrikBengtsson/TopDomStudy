@@ -62,20 +62,6 @@ overlap_score_summary_vs_bin_size <- function(dataset, chromosomes, bin_sizes, r
     domain_length_tag <- NULL
   }
 
-  if (figures) {
-    aes <- ggplot2::aes
-    aes_string <- ggplot2::aes_string
-    geom_boxplot <- ggplot2::geom_boxplot
-    geom_jitter <- ggplot2::geom_jitter
-    ggplot <- ggplot2::ggplot
-    ggsave <- ggplot2::ggsave
-    ggtitle <- ggplot2::ggtitle
-    stat_summary <- ggplot2::stat_summary
-    xlab <- ggplot2::xlab
-    ylab <- ggplot2::ylab
-    ylim <- ggplot2::ylim
-  }
-
   path <- "overlapScoreSummary"
   dir.create(path, recursive = TRUE, showWarnings = FALSE)
 
@@ -203,6 +189,18 @@ overlap_score_summary_vs_bin_size <- function(dataset, chromosomes, bin_sizes, r
 
   if (figures) {
     message("Plotting ...")
+    
+    aes <- ggplot2::aes
+    aes_string <- ggplot2::aes_string
+    geom_boxplot <- ggplot2::geom_boxplot
+    geom_jitter <- ggplot2::geom_jitter
+    ggplot <- ggplot2::ggplot
+    ggsave <- ggplot2::ggsave
+    ggtitle <- ggplot2::ggtitle
+    stat_summary <- ggplot2::stat_summary
+    xlab <- ggplot2::xlab
+    ylab <- ggplot2::ylab
+    ylim <- ggplot2::ylim
     
     for (cc in seq_along(chromosomes)) {
       chromosome <- chromosomes[cc]
