@@ -54,6 +54,33 @@ A \link[ggplot2:ggplot]{ggplot2::ggplot} object.
 \description{
 Plots TopDom Overlap Scores and Lengths as a Function of Sample Fraction
 }
+\examples{
+pathnames <- overlap_score_summary_grid(
+  dataset       = "human,HAP1",
+  chromosomes   = "22",
+  bin_sizes     = 100*1e3,
+  rhos          = c(0.10, 0.20, 0.30, 0.40, 0.50),
+  window_size   = 5L,
+  weights       = "uniform",
+  domain_length = NULL,
+  nsamples      = 10L,
+  verbose       = TRUE
+)
+print(pathnames)
+
+gg <- gg_overlap_score_summary_vs_fraction(
+  dataset       = "human,HAP1",
+  chromosome    = "22",
+  bin_size      = 100*1e3,
+  rhos          = c(0.10, 0.20, 0.30, 0.40, 0.50),
+  window_size   = 5L,
+  weights       = "uniform",
+  domain_length = NULL,
+  nsamples      = 10L,
+  verbose       = TRUE
+)
+print(gg)
+}
 \seealso{
 Internal, \code{\link[=overlap_score_summary_grid]{overlap_score_summary_grid()}} is used to calculate overlap
 scores over (chromosome, bin_size, rho).

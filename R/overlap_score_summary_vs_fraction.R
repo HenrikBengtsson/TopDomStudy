@@ -202,6 +202,8 @@ read_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size
 #'
 #' @return A [ggplot2::ggplot] object.
 #'
+#' @example incl/gg_overlap_score_summary_vs_fraction.R
+#'
 #' @seealso
 #' Internal, [overlap_score_summary_grid()] is used to calculate overlap
 #' scores over (chromosome, bin_size, rho).
