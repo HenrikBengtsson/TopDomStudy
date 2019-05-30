@@ -1,6 +1,13 @@
 TopDomStudy
 ===========
 
+Version: 0.0.0-9009 [2019-05-30]
+
+NEW FEATURES:
+
+ * Added gg_overlap_score_summary_vs_fraction()
+
+
 Version: 0.0.0-9008 [2019-05-15]
 
 SIGNIFICANT CHANGES:
