@@ -6,7 +6,8 @@
 \usage{
 overlap_score_summary_vs_bin_size(dataset, chromosomes, bin_sizes, rhos,
   window_size = 5L, nsamples = 50L, weights = c("by_length",
-  "uniform"), domain_length = NULL, verbose = FALSE)
+  "uniform"), domain_length = NULL, fig_path = "figures",
+  verbose = FALSE)
 }
 \arguments{
 \item{dataset}{(character string) The name of the data set.}
@@ -29,6 +30,8 @@ Argument passed as is to \code{\link[=overlap_score_summary]{overlap_score_summa
 \item{domain_length}{(optional; character string or numeric vector of length two)
 If specified, controls how to filter out too short or too long TopDom domains.
 Argument passed as is to \code{\link[=overlap_score_summary]{overlap_score_summary()}}.}
+
+\item{fig_path}{If non-NULL, a PNG image is written to this path.}
 
 \item{verbose}{(logical) If \code{TRUE}, verbose output is produced.}
 }

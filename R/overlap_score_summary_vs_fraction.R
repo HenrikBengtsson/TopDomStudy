@@ -2,6 +2,8 @@
 #'
 #' @inheritParams overlap_score_summary_grid
 #'
+#' @param fig_path If non-NULL, a PNG image is written to this path.
+#'
 #' @return A three-dimensional character array of pathname names where the
 #' first dimension specify `chromosomes`, the second `bin_sizes`, and
 #' the third 'rhos'.
@@ -16,10 +18,15 @@
 #' @importFrom ggplot2 aes aes_string geom_boxplot geom_jitter ggplot ggsave ggtitle stat_summary xlab ylab ylim
 #' @importFrom utils file_test
 #' @export
-overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, rhos, window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, verbose = FALSE) {
+overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, rhos, window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, fig_path = "figures", verbose = FALSE) {
   weights <- match.arg(weights)
   weights_tag <- sprintf("weights=%s", weights)
-  
+
+  if (!file_test("-d", fig_path)) {
+    dir.create(fig_path, recursive = TRUE, showWarnings = FALSE)
+    stop_if_not(file_test("-d", fig_path))
+  }
+
   pathnames <- overlap_score_summary_grid(dataset, chromosomes = chromosomes, bin_sizes = bin_sizes, rhos = rhos, window_size = window_size, nsamples = nsamples, weights = weights, domain_length = domain_length, verbose = verbose)
 
   nsamples_tag <- sprintf("nsamples=%d", nsamples)
@@ -99,9 +106,8 @@ overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, r
         signal <- gsub("`50%`", "median", signal)
         tags <- sprintf("%s,chr=%s,%s,avg_score-vs-fraction,bin_size=%d,window_size=%d,nsamples=%d,signal=%s,weights=%s", dataset, chromosome, "cells_by_half", bin_size, window_size, nsamples, signal, weights)
         filename <- sprintf("%s.png", paste(c(tags, domain_length_tag), collapse = ","))
-        dir.create("figures", recursive = TRUE, showWarnings = FALSE)
         if (verbose) suppressMessages <- identity
-        suppressMessages(ggsave(gg, filename=file.path("figures", filename)))
+        suppressMessages(ggsave(gg, filename=file.path(fig_path, filename)))
       } ## for (signal ...)
       
       if (verbose) message(sprintf("Bin size #%d (%s) of %d ... done", bb, bin_size_tag, length(bin_sizes)))
@@ -230,7 +236,7 @@ gg_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size, 
 
   if (!is.null(fig_path) && !file_test("-d", fig_path)) {
     dir.create(fig_path, recursive = TRUE, showWarnings = FALSE)
-    stop_if_not(file_test(file_test("-d", fig_path)))
+    stop_if_not(file_test("-d", fig_path))
   }
 
   summary <- read_overlap_score_summary_vs_fraction(dataset, chromosome = chromosome, bin_size = bin_size, rhos = rhos, window_size = window_size, nsamples = nsamples, weights = weights, domain_length = domain_length, ..., verbose = verbose)
@@ -315,4 +321,3 @@ gg_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size, 
 
   res
 } ## gg_overlap_score_summary_vs_fraction()
-
