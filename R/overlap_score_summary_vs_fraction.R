@@ -51,27 +51,7 @@ overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, r
       bin_size_tag <- sprintf("bin_size=%.0f", bin_size)
       if (verbose) message(sprintf("Bin size #%d (%s) of %d ...", bb, bin_size_tag, length(bin_sizes)))
 
-      summary <- list()
-      for (rr in seq_along(rhos)) {
-        rho <- rhos[rr]
-        rho_tag <- sprintf("fraction=%.3f", rho)
-        if (verbose) message(sprintf("Fraction #%d (%s with %s bps on Chr %s) of %d ...", rr, rho_tag, bin_size, chromosome, length(rhos)))
-
-        tags <- c(chromosome_tag, "cells_by_half", "avg_score", bin_size_tag, rho_tag, window_size_tag, domain_length_tag, weights_tag, nsamples_tag)
-        fullname <- paste(c(dataset, tags), collapse = ",")
-        pathname_summary_kk <- file.path(path, sprintf("%s.rds", fullname))
-        if (verbose) message("pathname_summary_kk: ", pathname_summary_kk)
-
-        ## Sanity check
-        stop_if_not(identical(pathname_summary_kk, pathnames[cc,bb,rr]))
-        stop_if_not(file_test("-f", pathname_summary_kk))
-
-        summary[[rr]] <- read_rds(pathname_summary_kk)
-            
-        if (verbose) message(sprintf("Fraction #%d (%s with %s bps on Chr %s) of %d ... already done", rr, rho_tag, bin_size, chromosome, length(rhos)))
-      } ## for (rr ...)
-
-      summary <- do.call(rbind, summary)
+      summary <- read_overlap_score_summary_vs_fraction(dataset, chromosome = chromosome, bin_size = bin_size, rhos = rhos, window_size = window_size, nsamples = nsamples, weights = weights, domain_length = domain_length, path = path, verbose = verbose)
       if (verbose) mprint(summary)
     
       dw <- diff(range(rhos)) / length(rhos)
@@ -134,3 +114,57 @@ overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, r
 
   pathnames
 }
+
+
+#' @importFrom utils file_test
+read_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size, rhos, window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, path = "overlapScoreSummary", ..., verbose = FALSE) {
+  weights <- match.arg(weights)
+  stopifnot(file_test("-d", path))
+
+  ## Tags
+  chromosome_tag <- sprintf("chr=%s", chromosome)
+  bin_size_tag <- sprintf("bin_size=%.0f", bin_size)
+  window_size_tag <- sprintf("window_size=%d", window_size)
+  if (!is.null(domain_length)) {
+    stop_if_not(is.numeric(domain_length), length(domain_length) == 2L, !anyNA(domain_length), all(domain_length > 0))
+    domain_length_tag <- sprintf("domain_length=%.0f-%.0f", domain_length[1], domain_length[2])
+  } else {
+    domain_length_tag <- NULL
+  }
+  weights_tag <- sprintf("weights=%s", weights)
+  nsamples_tag <- sprintf("nsamples=%d", nsamples)
+
+  if (verbose) {
+    message("read_overlap_score_summary_vs_fraction() ...")
+    message("- chromosome: ", chromosome)
+    message("- bin_size: ", bin_size)
+    message("- window_size: ", window_size)
+    message("- weights: ", weights)
+    message("- nsamples: ", nsamples)
+  }
+
+  summary <- list()
+  for (rr in seq_along(rhos)) {
+    rho <- rhos[rr]
+    rho_tag <- sprintf("fraction=%.3f", rho)
+    if (verbose) message(sprintf("Fraction #%d (%s with %s bps on Chr %s) of %d ...", rr, rho_tag, bin_size, chromosome, length(rhos)))
+
+    tags <- c(chromosome_tag, "cells_by_half", "avg_score", bin_size_tag, rho_tag, window_size_tag, domain_length_tag, weights_tag, nsamples_tag)
+
+    fullname <- paste(c(dataset, tags), collapse = ",")
+    pathname_summary_kk <- file.path(path, sprintf("%s.rds", fullname))
+    if (verbose) message("pathname_summary_kk: ", pathname_summary_kk)
+    ## Sanity check
+    stop_if_not(file_test("-f", pathname_summary_kk))
+    summary[[rr]] <- read_rds(pathname_summary_kk)
+            
+    if (verbose) message(sprintf("Fraction #%d (%s with %s bps on Chr %s) of %d ... already done", rr, rho_tag, bin_size, chromosome, length(rhos)))
+  } ## for (rr ...)
+
+  summary <- do.call(rbind, summary)
+  if (verbose) mprint(summary)
+
+  if (verbose) message("read_overlap_score_summary_vs_fraction() ... done")
+
+  summary
+} ## read_overlap_score_summary_vs_fraction()
