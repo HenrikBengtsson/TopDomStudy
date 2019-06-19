@@ -93,6 +93,8 @@ overlap_score_summary_grid <- function(dataset, chromosomes, bin_sizes, rhos, wi
   dummy <- listenv()
   dim(dummy) <- c(length(chromosomes), length(bin_sizes), length(rhos))
   dimnames(dummy) <- list(chromosomes, bin_sizes, rhos)
+  progress <- progressor(prod(dim(dummy)))
+
   for (cc in seq_along(chromosomes)) {
     chromosome <- chromosomes[cc]
     chromosome_tag <- sprintf("chr=%s", chromosome)
@@ -132,6 +134,8 @@ overlap_score_summary_grid <- function(dataset, chromosomes, bin_sizes, rhos, wi
         pathname_summary_kk <- file.path(path, sprintf("%s.rds", fullname))
         if (verbose) message("pathname_summary_kk: ", pathname_summary_kk)
 
+        progress(message = paste(c(chromosome_tag, bin_size_tag, rho_tag), collapse=", "))
+	  
         ## Already processed?
         if (file_test("-f", pathname_summary_kk)) {
           dummy[[cc, bb, rr]] <- pathname_summary_kk

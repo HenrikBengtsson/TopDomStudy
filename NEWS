@@ -1,7 +1,19 @@
 TopDomStudy
 ===========
 
-Version: 0.0.0-9010 [2019-06-17]
+Version: 0.0.0-9011 [2019-06-18]
+
+NEW FEATURES:
+
+ * Add support for progress updates.
+
+BUG FIXES:
+
+ * gg_overlap_score_summary_vs_fraction() gave empty 'estimator' labels
+   in the plot and empty tags in the image file name.
+
+
+Version: 0.0.0-9010 [2019-06-18]
 
 NEW FEATURES:
 

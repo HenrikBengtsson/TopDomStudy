@@ -256,7 +256,7 @@ gg_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size, 
     message("- weights: ", weights)
     message("- nsamples: ", nsamples)
     message("- signals: ", paste(sQuote(signals), collapse = ", "))
-    message("- signal labels: ", paste(sQuote(signal_lables), collapse = ", "))
+    message("- signal labels: ", paste(sQuote(signal_labels), collapse = ", "))
   }
 
   if (!is.null(fig_path) && !file_test("-d", fig_path)) {
