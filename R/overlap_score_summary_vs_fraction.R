@@ -232,6 +232,7 @@ read_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size
 #' @importFrom utils file_test
 #' @export
 gg_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size, rhos, window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, signals = c("mean", "test_len_q0.50"), rho_lim = c(0, 1/2), length_lim = c(0, 2e6), rel_heights = c(4,1), fig_path = "figures", skip = TRUE, ..., verbose = TRUE) {
+  avg_signals <- c(mean = "mean", median = "`50%`", "q25" = "`25%`", "q75" = "`75%`")
   length_signals <- c(
     "reference Q25 length"    = "ref_len_q0.25",
     "reference median length" = "ref_len_q0.50",
@@ -240,8 +241,12 @@ gg_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size, 
     "test median length"      = "test_len_q0.50",
     "test Q75 length"         = "test_len_q0.75"
   )
-  known_signals <- c(mean = "mean", median = "`50%`", length_signals)
+  known_signals <- c(avg_signals, length_signals)
   stopifnot(length(signals) == 2L, all(signals %in% known_signals))
+  signal_labels <- character(2L)
+  signal_labels[1] <- names(known_signals)[signals[1] == known_signals]
+  signal_labels[2] <- signals[2]
+  stop_if_not(length(signal_labels) == 2L)
 
   if (verbose) {
     message("gg_overlap_score_summary_vs_fraction() ...")
@@ -251,6 +256,7 @@ gg_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size, 
     message("- weights: ", weights)
     message("- nsamples: ", nsamples)
     message("- signals: ", paste(sQuote(signals), collapse = ", "))
+    message("- signal labels: ", paste(sQuote(signal_lables), collapse = ", "))
   }
 
   if (!is.null(fig_path) && !file_test("-d", fig_path)) {
@@ -273,7 +279,7 @@ gg_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size, 
 
   fig_pathname <- NULL
   if (!is.null(fig_path)) {
-    signals_tag <- sprintf("signals=%s", paste(names(known_signals)[signals == names(known_signals)], collapse = "-"))
+    signals_tag <- sprintf("signals=%s", paste(signal_labels, collapse = "-"))
   
     tags <- c(chromosome_tag, "cells_by_half", "avg_score-vs-fraction", bin_size_tag, window_size_tag, nsamples_tag, signals_tag, weights_tag, domain_length_tag)
     fullname <- paste(c(dataset, tags), collapse = ",")
@@ -294,7 +300,7 @@ gg_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size, 
 
   dw <- diff(range(rhos)) / length(rhos)
 
-  signal_label <- names(known_signals)[signals[1] == names(known_signals)]
+  signal_label <- names(known_signals)[signals[1] == known_signals]
   params <- c(sprintf("estimator: %s", signal_label),
               sprintf("weights: %s", weights),
               sprintf("domains: %.0f-%.0f", domain_length[1], domain_length[2]))
