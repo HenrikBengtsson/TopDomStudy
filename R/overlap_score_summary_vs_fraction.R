@@ -16,6 +16,7 @@
 #' scores over (chromosome, bin_size, rho).
 #'
 #' @importFrom ggplot2 aes aes_string geom_boxplot geom_jitter ggplot ggsave ggtitle stat_summary xlab ylab ylim
+#' @importFrom tibble as_tibble
 #' @importFrom utils file_test
 #' @export
 overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, rhos, window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, fig_path = "figures", verbose = FALSE) {
@@ -59,6 +60,8 @@ overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, r
       if (verbose) message(sprintf("Bin size #%d (%s) of %d ...", bb, bin_size_tag, length(bin_sizes)))
 
       summary <- read_overlap_score_summary_vs_fraction(dataset, chromosome = chromosome, bin_size = bin_size, rhos = rhos, window_size = window_size, nsamples = nsamples, weights = weights, domain_length = domain_length, path = path, verbose = verbose)
+      summary <- as_tibble(summary)
+      
       if (verbose) mprint(summary)
     
       dw <- diff(range(rhos)) / length(rhos)
@@ -122,6 +125,7 @@ overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, r
 }
 
 
+#' @importFrom tibble as_tibble
 #' @importFrom utils file_test
 read_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size, rhos, window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, path = "overlapScoreSummary", ..., verbose = FALSE) {
   weights <- match.arg(weights)
@@ -160,6 +164,14 @@ read_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size
     fullname <- paste(c(dataset, tags), collapse = ",")
     pathname_summary_kk <- file.path(path, sprintf("%s.rds", fullname))
     if (verbose) message("pathname_summary_kk: ", pathname_summary_kk)
+
+    ## Calculate on the fly?
+    if (!file_test("-f", pathname_summary_kk)) {
+      message("overlap_score_summary_grid() ...")
+      res <- overlap_score_summary_grid(dataset = dataset, chromosomes = chromosome, bin_sizes = bin_size, rhos = rhos, window_size = window_size, nsamples = nsamples, weights = weights, domain_length = domain_length, verbose = verbose)
+      message("overlap_score_summary_grid() ... done")
+    }
+    
     ## Sanity check
     stop_if_not(file_test("-f", pathname_summary_kk))
     summary[[rr]] <- read_rds(pathname_summary_kk)
@@ -168,6 +180,8 @@ read_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size
   } ## for (rr ...)
 
   summary <- do.call(rbind, summary)
+  summary <- as_tibble(summary)
+  
   if (verbose) mprint(summary)
 
   if (verbose) message("read_overlap_score_summary_vs_fraction() ... done")
@@ -198,6 +212,8 @@ read_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size
 #'
 #' @param fig_path If non-NULL, a PNG image is written to this path.
 #'
+#' @param skip If TRUE and the PNG file already exists, then it is not replotted.
+#'
 #' @param \ldots Not used.
 #'
 #' @return A [ggplot2::ggplot] object.
@@ -213,8 +229,9 @@ read_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size
 #'             geom_boxplot geom_jitter ggplot ggsave ggtitle stat_summary
 #'             theme xlab ylab ylim
 #' @importFrom cowplot plot_grid
+#' @importFrom utils file_test
 #' @export
-gg_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size, rhos, window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, signals = c("mean", "test_len_q0.50"), rho_lim = c(0, 1/2), length_lim = c(0, 2e6), rel_heights = c(4,1), fig_path = "figures", ..., verbose = TRUE) {
+gg_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size, rhos, window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, signals = c("mean", "test_len_q0.50"), rho_lim = c(0, 1/2), length_lim = c(0, 2e6), rel_heights = c(4,1), fig_path = "figures", skip = TRUE, ..., verbose = TRUE) {
   length_signals <- c(
     "reference Q25 length"    = "ref_len_q0.25",
     "reference median length" = "ref_len_q0.50",
@@ -241,8 +258,6 @@ gg_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size, 
     stop_if_not(file_test("-d", fig_path))
   }
 
-  summary <- read_overlap_score_summary_vs_fraction(dataset, chromosome = chromosome, bin_size = bin_size, rhos = rhos, window_size = window_size, nsamples = nsamples, weights = weights, domain_length = domain_length, ..., verbose = verbose)
-
   ## Tags
   chromosome_tag <- sprintf("chr=%s", chromosome)
   bin_size_tag <- sprintf("bin_size=%.0f", bin_size)
@@ -256,6 +271,25 @@ gg_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size, 
   weights_tag <- sprintf("weights=%s", weights)
   nsamples_tag <- sprintf("nsamples=%d", nsamples)
 
+  fig_pathname <- NULL
+  if (!is.null(fig_path)) {
+    signals_tag <- sprintf("signals=%s", paste(names(known_signals)[signals == names(known_signals)], collapse = "-"))
+  
+    tags <- c(chromosome_tag, "cells_by_half", "avg_score-vs-fraction", bin_size_tag, window_size_tag, nsamples_tag, signals_tag, weights_tag, domain_length_tag)
+    fullname <- paste(c(dataset, tags), collapse = ",")
+    filename <- sprintf("%s.png", fullname)
+    fig_pathname <- file.path(fig_path, filename)
+
+    ## Nothing to do?
+    if (skip && file_test("-f", fig_pathname)) {
+      res <- list()
+      attr(res, "fig_pathname") <- normalizePath(fig_pathname)
+      return(res)
+    }
+  }
+
+  summary <- read_overlap_score_summary_vs_fraction(dataset, chromosome = chromosome, bin_size = bin_size, rhos = rhos, window_size = window_size, nsamples = nsamples, weights = weights, domain_length = domain_length, ..., verbose = verbose)
+
   fraction <- NULL; rm(list = "fraction") ## To please R CMD check
 
   dw <- diff(range(rhos)) / length(rhos)
@@ -266,17 +300,6 @@ gg_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size, 
               sprintf("domains: %.0f-%.0f", domain_length[1], domain_length[2]))
   subtitle <- sprintf("chromosome %s, bin size=%d, window size=%d (%d samples)\n[%s]",
                        chromosome, bin_size, window_size, nsamples, paste(params, collapse = "; "))
-
-
-  fig_pathname <- NULL
-  if (!is.null(fig_path)) {
-    signals_tag <- sprintf("signals=%s", paste(names(known_signals)[signals == names(known_signals)], collapse = "-"))
-  
-    tags <- c(chromosome_tag, "cells_by_half", "avg_score-vs-fraction", bin_size_tag, window_size_tag, nsamples_tag, signals_tag, weights_tag, domain_length_tag)
-    fullname <- paste(c(dataset, tags), collapse = ",")
-    filename <- sprintf("%s.png", fullname)
-    fig_pathname <- file.path(fig_path, filename)
-  }
 
   ggs <- list()
   for (ss in seq_along(signals)) {
@@ -316,6 +339,7 @@ gg_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size, 
   if (!is.null(fig_pathname)) {
     if (verbose) suppressMessages <- identity
     suppressMessages(ggsave(res, filename = fig_pathname))
+    attr(res, "fig_pathname") <- normalizePath(fig_pathname)
     if (verbose) message(" - Figure written: ", fig_pathname)
   }
 

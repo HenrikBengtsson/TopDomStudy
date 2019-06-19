@@ -1,6 +1,16 @@
 TopDomStudy
 ===========
 
+Version: 0.0.0-9010 [2019-06-17]
+
+NEW FEATURES:
+
+ * Now using tibble data frames for briefer output when printed.
+
+ * gg_overlap_score_summary_vs_fraction() gained argument 'skip'.  When
+   skip=TRUE, already produced image files will not be regenerated.
+
+
 Version: 0.0.0-9009 [2019-05-30]
 
 NEW FEATURES:

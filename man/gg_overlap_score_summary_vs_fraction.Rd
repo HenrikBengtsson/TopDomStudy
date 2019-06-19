@@ -8,7 +8,8 @@ gg_overlap_score_summary_vs_fraction(dataset, chromosome, bin_size, rhos,
   window_size = 5L, nsamples = 50L, weights = c("by_length",
   "uniform"), domain_length = NULL, signals = c("mean",
   "test_len_q0.50"), rho_lim = c(0, 1/2), length_lim = c(0, 2e+06),
-  rel_heights = c(4, 1), fig_path = "figures", ..., verbose = TRUE)
+  rel_heights = c(4, 1), fig_path = "figures", skip = TRUE, ...,
+  verbose = TRUE)
 }
 \arguments{
 \item{dataset}{(character string) The name of the data set.}
@@ -43,6 +44,8 @@ plotted in the top and bottom panels.}
 of the two figures.  Passed to \link[cowplot:plot_grid]{cowplot::plot_grid} as is.}
 
 \item{fig_path}{If non-NULL, a PNG image is written to this path.}
+
+\item{skip}{If TRUE and the PNG file already exists, then it is not replotted.}
 
 \item{verbose}{(logical) If \code{TRUE}, verbose output is produced.}
 
