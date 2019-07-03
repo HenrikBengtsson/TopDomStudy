@@ -66,6 +66,8 @@
 #' @importFrom future.apply future_lapply
 #' @export
 overlap_score_summary_grid <- function(dataset, chromosomes, bin_sizes, rhos, window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, verbose = FALSE) {
+  progressor <- import_progressor()
+
   chromosomes <- as.character(chromosomes)
   stopifnot(is.character(chromosomes), !anyNA(chromosomes))
   stopifnot(length(window_size) == 1L, is.numeric(window_size), !is.na(window_size), window_size >= 1L)

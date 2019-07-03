@@ -1,6 +1,14 @@
 TopDomStudy
 ===========
 
+Version: 0.0.0-9012 [2019-07-03]
+
+BUG FIXES:
+
+ * Package would give an error if the 'progressr' package was not available.
+   Now it falls back to a dummy progressor function that voids all updates.
+ 
+
 Version: 0.0.0-9011 [2019-06-18]
 
 NEW FEATURES:

@@ -90,3 +90,15 @@ mstr <- function(..., appendLF = TRUE) {
   message(paste(capture.output(str(...)), collapse = "\n"), appendLF = appendLF)
 }
 
+
+## WORKAROUND: This will create a dummy progressor() until
+## the 'progressr' package is publicly available / installed.
+import_progressor <- function() {
+  if (requireNamespace("progressr", quietly = TRUE)) {
+    progressr::progressor
+  } else {
+    progressor <- function(...) {
+      function(...) invisible()
+    }
+  }
+}
