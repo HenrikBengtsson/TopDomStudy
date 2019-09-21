@@ -1,3 +1,5 @@
+#' Efficiently Extract Unique Elements from a Data Frame
+#'
 #' @param x A [base:data.frame]
 #'
 #' @param by The column, as an integer or by name, to be used
@@ -14,6 +16,11 @@
 #' @details
 #' `unique_by(x)` is typically more memory efficient than
 #' `unique(x)`.
+#'
+#' @examples
+#' iris1 <- unique(datasets::iris)
+#' iris2 <- unique_by(datasets::iris, by = "Species")
+#' stopifnot(identical(iris2, iris1))
 #'
 #' @export
 unique_by <- function(x, by = NA_integer_, ...) {
