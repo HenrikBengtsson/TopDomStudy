@@ -5,6 +5,7 @@ library("progress")
 library("dplyr")
 library("future.apply")
 library("listenv")
+library("R.utils")
 
 options(width = 140)
 progressr::handlers("progress")
@@ -15,25 +16,29 @@ progressr::handlers("progress")
 ## ---------------------------------------------------------------------
 ## Setup data
 ## ---------------------------------------------------------------------
-names <- c(
+known_samples <- c(
   "GSM2254215_ML1", "GSM2254216_ML2", "GSM2254217_ML3",
-  "GSM2254218_PL1", "GSM2254219_PL2"
-  ##  "GSM2438426_ML4"
+  "GSM2254218_PL1", "GSM2254219_PL2",
+  "GSM2438426_ML4" ## Not really supported
 )
-organisms <- c("human", "mouse")
+known_organisms <- c("human", "mouse")
+
+samples <- cmdArg(samples = c("GSM2254215_ML1", "GSM2254216_ML2", "GSM2254218_PL1", "GSM2254219_PL2"))
+organisms <- cmdArg(organisms = "human")
+stopifnot(all(samples %in% known_samples), all(organisms %in% known_organisms))
 
 res <- listenv()
-dim(res) <- c(length(names), length(organisms))
-dimnames(res) <- list(names, organisms)
+dim(res) <- c(length(samples), length(organisms))
+dimnames(res) <- list(samples, organisms)
 
 with_progress({
-  p <- progressr::progressor(length(names) + (2+7)*length(res))
+  p <- progressr::progressor(length(samples) + (2+7)*length(res))
   
-for (name in names) {
-  message(sprintf("Sample %s ...", sQuote(name)))
-  p(sprintf("Reading 'percentages' for %s", sQuote(name)))
+for (sample in samples) {
+  message(sprintf("Sample %s ...", sQuote(sample)))
+  p(sprintf("Reading 'percentages' for %s", sQuote(sample)))
 
-  file <- sprintf("hicData/GSE84920/%s.percentages.txt.gz", name)
+  file <- sprintf("hicData/GSE84920/%s.percentages.txt.gz", sample)
   per <- read_percentages(file) ## Takes 1-2 sec to read (270 kB)
   
   ## ---------------------------------------------------------------------
@@ -62,17 +67,17 @@ for (name in names) {
   for (org in c("human", "mouse")) {
     message("Organism: ", org)
   
-    filename <- sprintf("%s,%s,unique.rds", name, org)
+    filename <- sprintf("%s,%s,unique.rds", sample, org)
     pathname <- file.path(path_dest, filename)
 
     ## Already done?
     if (file_test("-f", pathname)) {
-      res[[name, org]] <- pathname
-      p(sprintf("Already done (%s,%s)", name, org), amount=9L)
+      res[[sample, org]] <- pathname
+      p(sprintf("Already done (%s,%s)", sample, org), amount=9L)
       next
     }
 
-    p(sprintf("Processing (%s,%s)", name, org))
+    p(sprintf("Processing (%s,%s)", sample, org))
 
     ## Keep only celltypes for organism of interest
     per_org <- switch(org,
@@ -110,18 +115,18 @@ for (name in names) {
     ## 10 CGATGCTC      ATATCAGA      HAP1
     ## # ... with 3,262 more rows
 
-    p(sprintf("Processing (%s,%s) for %d cells", name, org, nrow(celltypes)))
+    p(sprintf("Processing (%s,%s) for %d cells", sample, org, nrow(celltypes)))
 
-    res[[name, org]] %<-% {
+    res[[sample, org]] %<-% {
       ## Valid pairs for this organism
       path <- file.path("hicData", "GSE84920")
-      filename <- sprintf("%s.validPairs.txt.gz", name)
+      filename <- sprintf("%s.validPairs.txt.gz", sample)
       pathname <- file.path(path, filename)
-      p(sprintf("Reading 'validPairs' for %s: %s", name, filename))
+      p(sprintf("Reading 'validPairs' for %s: %s", sample, filename))
       vp <- read_validpairs(pathname, columns = c("chr_a", "start_a", "end_a", "chr_b", "start_b", "end_b", "inner_barcode", "outer_barcode"))
       
       ## Subset for organism
-      p(sprintf("Subsetting %s for organism %s", name, org))
+      p(sprintf("Subsetting %s for organism %s", sample, org))
       vp <- vp[grepl(org, vp$chr_a, fixed = TRUE) & grepl(org, vp$chr_b, fixed = TRUE), ]
       vp <- as_tibble(vp)
       print(vp)
@@ -190,7 +195,7 @@ for (name in names) {
       data$inner_barcode <- data$outer_barcode <- NULL
       barcodes <- NULL  ## Not needed anymore
       
-      filename <- sprintf("%s,%s.rds", name, org)
+      filename <- sprintf("%s,%s.rds", sample, org)
       pathname <- file.path(path_dest, filename)
       p(sprintf("Saving to file: %s", filename))
       saveRDS(data, file = pathname)
@@ -200,7 +205,7 @@ for (name in names) {
       ## NOTE: unique() on a data.frame can be very memory hungry.
       ## Because of this, we run unique() per chromosome.
       data <- unique_by(data, by = "chr_a")
-      filename <- sprintf("%s,%s,unique.rds", name, org)
+      filename <- sprintf("%s,%s,unique.rds", sample, org)
       pathname <- file.path(path_dest, filename)
       p(sprintf("Saving to file: %s", filename))
       saveRDS(data, file = pathname)
@@ -208,11 +213,11 @@ for (name in names) {
       data <- NULL  ## Not needed anymore
       
       pathname
-    } %label% paste(name, org, sep = "-") ## %<-%    
+    } %label% paste(sample, org, sep = "-") ## %<-%    
   } ## for (org ...)
   
-  message(sprintf("Sample %s ... OK", sQuote(name)))
-} ## for (name ...)
+  message(sprintf("Sample %s ... OK", sQuote(sample)))
+} ## for (sample ...)
 print(res)
 res <- as.list(res)
 }) ## with_progress({ ... })
