@@ -6,7 +6,7 @@ library("dplyr")
 library("future.apply")
 library("listenv")
 
-options(width = 160)
+options(width = 140)
 progressr::handlers("progress")
 
 
