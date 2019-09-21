@@ -17,7 +17,8 @@ progressr::handlers("progress")
 ## ---------------------------------------------------------------------
 names <- c(
   "GSM2254215_ML1", "GSM2254216_ML2", "GSM2254217_ML3",
-  "GSM2254218_PL1", "GSM2254219_PL2", "GSM2438426_ML4"
+  "GSM2254218_PL1", "GSM2254219_PL2"
+  ##  "GSM2438426_ML4"
 )
 organisms <- c("human", "mouse")
 
