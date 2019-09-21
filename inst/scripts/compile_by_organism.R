@@ -10,6 +10,8 @@ options(width = 160)
 progressr::handlers("progress")
 
 
+## NOTES: GSM2438426_ML4,human takes ~14 GiB RAM and ~25 mins to finish
+
 ## ---------------------------------------------------------------------
 ## Setup data
 ## ---------------------------------------------------------------------
