@@ -198,19 +198,7 @@ for (name in names) {
       p(sprintf("Dropping duplicated read pairs"))
       ## NOTE: unique() on a data.frame can be very memory hungry.
       ## Because of this, we run unique() per chromosome.
-      uchrs <- unique(data$chr_a)
-      udata <- vector("list", length = length(uchrs))
-      for (ii in seq_along(uchrs)) {
-        chr <- uchrs[ii]
-	rows <- which(data$chr_a == chr)
-	data_ii <- data[rows, , drop = FALSE]
-	data <- data[-rows, , drop = FALSE]
-	udata[[ii]] <- unique(data_ii)
-	data_ii <- NULL
-      }
-      data <- NULL
-      data <- do.call(rbind, udata)
-      udata <- NULL
+      data <- unique_by(data, by = "chr_a")
       filename <- sprintf("%s,%s,unique.rds", name, org)
       pathname <- file.path(path_dest, filename)
       p(sprintf("Saving to file: %s", filename))
