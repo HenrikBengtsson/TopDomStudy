@@ -12,6 +12,7 @@ Depends:
 Imports:
     cowplot,
     digest (>= 0.6.18),
+    dplyr,
     ggplot2,
     Hmisc,
     listenv,
@@ -19,14 +20,13 @@ Imports:
     future,
     future.apply,
     parallel,
+    progressr,
+    ramani,
     tibble,
     stats,
     utils
 Suggests:
-    dplyr,
-    progress,
-    ramani,
-    progressr
+    progress
 Remotes:
     github::HenrikBengtsson/TopDom,
     github::HenrikBengtsson/ramani,

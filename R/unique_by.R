@@ -1,6 +1,6 @@
 #' Efficiently Extract Unique Elements from a Data Frame
 #'
-#' @param x A [base:data.frame]
+#' @param x A [base::data.frame]
 #'
 #' @param by The column, as an integer or by name, to be used
 #' to split up `x` in chunks.
@@ -11,7 +11,7 @@
 #' @param \ldots Additional arguments passed to [base::unique]
 #' per chunk.
 #'
-#' @return A [base:data.frame] with duplicated rows drop.
+#' @return A [base::data.frame] with duplicated rows drop.
 #'
 #' @details
 #' `unique_by(x)` is typically more memory efficient than

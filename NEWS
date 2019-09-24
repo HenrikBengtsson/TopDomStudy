@@ -1,11 +1,12 @@
 TopDomStudy
 ===========
 
-Version: 0.0.0-9013 [2019-09-21]
+Version: 0.0.0-9013 [2019-09-23]
 
 NEW FEATURES:
 
- * Add script for filtering and compiling Ramain et al. (2017) data by organism.
+ * Add compile_by_organism() for filtering and compiling Ramain et al. (2017)
+   data by organism.  Added example script as well.
  
  * Add script for splitting compiled data by celltype.
  

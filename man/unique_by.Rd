@@ -7,7 +7,7 @@
 unique_by(x, by = NA_integer_, ...)
 }
 \arguments{
-\item{x}{A \link{base:data.frame}}
+\item{x}{A \link[base:data.frame]{base::data.frame}}
 
 \item{by}{The column, as an integer or by name, to be used
 to split up \code{x} in chunks.
@@ -19,7 +19,7 @@ the first column will be used.}
 per chunk.}
 }
 \value{
-A \link{base:data.frame} with duplicated rows drop.
+A \link[base:data.frame]{base::data.frame} with duplicated rows drop.
 }
 \description{
 Efficiently Extract Unique Elements from a Data Frame
