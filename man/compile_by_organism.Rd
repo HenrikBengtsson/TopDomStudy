@@ -24,3 +24,22 @@ Each RDS file contains a data.frame.
 \description{
 Compile Ramani HiC Data Files into Data Frames stored in RDS files
 }
+\section{Progress updates}{
+
+This function signals \link[progressr:progression]{progressr::progression} updates. To visualize,
+or in other ways render, progress information, wrap the call inside a
+\link[progressr:with_progress]{progressr::with_progress} call.
+}
+
+\examples{
+\donttest{\dontrun{
+files <- progressr::with_progress(TopDomStudy::compile_by_organism(
+   samples="GSM2254215_ML1", organisms="human",
+   path="hicData/GSE84920", path_dest="compiledData"
+))
+print(files)
+#                human                                         
+# GSM2254215_ML1 "compiledData/GSM2254215_ML1,human,unique.rds"
+}}
+
+}
