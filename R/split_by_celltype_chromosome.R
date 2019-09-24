@@ -125,4 +125,3 @@ split_by_celltype_chromosome <- function(celltypes = list(
   
   res
 }
-

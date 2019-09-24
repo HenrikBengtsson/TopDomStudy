@@ -17,7 +17,7 @@
 #' progressr::with_progress({
 #'   files <- TopDomStudy::compile_by_organism(
 #'               samples=c("GSM2254215_ML1", "GSM2254219_PL2",
-#'                          "GSM2254216_ML2", "GSM2254218_PL1"),
+#'                         "GSM2254216_ML2", "GSM2254218_PL1"),
 #'               organisms="human",
 #'               path="hicData/GSE84920", path_dest="compiledData"
 #'            )
@@ -25,6 +25,9 @@
 #' print(files)
 #' #                human                                         
 #' # GSM2254215_ML1 "compiledData/GSM2254215_ML1,human,unique.rds"
+#' # GSM2254219_PL2 "compiledData/GSM2254219_PL2,human,unique.rds"
+#' # GSM2254216_ML2 "compiledData/GSM2254216_ML2,human,unique.rds"
+#' # GSM2254218_PL1 "compiledData/GSM2254218_PL1,human,unique.rds"
 #' }}
 #'
 #' @section Progress updates:
@@ -245,7 +248,9 @@ compile_by_organism <- function(samples, organisms = c("human", "mouse"), path =
     message(sprintf("Sample %s ... OK", sQuote(sample)))
   } ## for (sample ...)
   print(res)
-  res <- as.list(res)
 
-  print(res)
+  ## This will relay conditions from futures as they are resolved
+  res <- resolve(res)
+
+  as.list(res)
 }
