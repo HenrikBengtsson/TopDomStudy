@@ -14,10 +14,12 @@
 #'
 #' @examples
 #' \donttest{\dontrun{
-#' files <- progressr::with_progress(TopDomStudy::compile_by_organism(
-#'    samples="GSM2254215_ML1", organisms="human",
-#'    path="hicData/GSE84920", path_dest="compiledData"
-#' ))
+#' progressr::with_progress({
+#'   files <- TopDomStudy::compile_by_organism(
+#'               samples="GSM2254215_ML1", organisms="human",
+#'               path="hicData/GSE84920", path_dest="compiledData"
+#'            )
+#' })
 #' print(files)
 #' #                human                                         
 #' # GSM2254215_ML1 "compiledData/GSM2254215_ML1,human,unique.rds"
