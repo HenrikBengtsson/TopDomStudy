@@ -20,6 +20,9 @@
 #' @importFrom progressr with_progress progressor
 #' @export
 compile_by_organism <- function(samples, organisms = c("human", "mouse"), path = file.path("hicData", "GSE84920"), path_dest = "compiledData") {
+  ## Dummy globals to please R CMD check
+  celltype <- hg19_frac <- mm10_frac <- inner_barcode <- outer_barcode <- chr_a <- chr_b <- start_a <- start_b <- NULL
+
   organisms <- match.arg(organisms)
   stopifnot(file_test("-d", path))
   if (!file_test("-d", path_dest)) dir.create(path_dest, recursive = TRUE)
