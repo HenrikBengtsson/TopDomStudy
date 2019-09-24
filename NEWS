@@ -1,7 +1,7 @@
 TopDomStudy
 ===========
 
-Version: 0.0.0-9013 [2019-09-24]
+Version: 0.0.0-9014 [2019-09-24]
 
 NEW FEATURES:
 
@@ -11,7 +11,8 @@ NEW FEATURES:
  * Add split_by_celltype() for splitting compiled data by celltype.  Added
    example script as well.
  
- * Add script for splitting compiled data by celltype and intra chromosomes.
+ * Add split_by_celltype_chromosome() for splitting compiled data by celltype
+   and intra chromosomes.  Added example script as well.
  
 
 Version: 0.0.0-9012 [2019-07-03]
