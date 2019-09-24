@@ -31,6 +31,14 @@ or in other ways render, progress information, wrap the call inside a
 \link[progressr:with_progress]{progressr::with_progress} call.
 }
 
+\section{Parallel processing}{
+
+This function supports processing of (celltype):s in parallel via the
+\pkg{future} framework.
+For example, setting \code{future::plan("multiprocess")} will parallelize
+on the local machine.
+}
+
 \examples{
 \donttest{\dontrun{
 progressr::with_progress({

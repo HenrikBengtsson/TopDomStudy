@@ -28,6 +28,12 @@
 #' or in other ways render, progress information, wrap the call inside a
 #' [progressr::with_progress] call.
 #'
+#' @section Parallel processing:
+#' This function supports processing of (celltype):s in parallel via the
+#' \pkg{future} framework.
+#' For example, setting `future::plan("multiprocess")` will parallelize
+#' on the local machine.
+#'
 #' @importFrom utils file_test
 #' @importFrom future.apply future_lapply
 #' @importFrom dplyr arrange filter

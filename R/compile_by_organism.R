@@ -16,7 +16,9 @@
 #' \donttest{\dontrun{
 #' progressr::with_progress({
 #'   files <- TopDomStudy::compile_by_organism(
-#'               samples="GSM2254215_ML1", organisms="human",
+#'               samples=c("GSM2254215_ML1", "GSM2254219_PL2",
+#'                          "GSM2254216_ML2", "GSM2254218_PL1"),
+#'               organisms="human",
 #'               path="hicData/GSE84920", path_dest="compiledData"
 #'            )
 #' })
@@ -29,6 +31,12 @@
 #' This function signals [progressr::progression] updates. To visualize,
 #' or in other ways render, progress information, wrap the call inside a
 #' [progressr::with_progress] call.
+#'
+#' @section Parallel processing:
+#' This function supports processing of (organism, sample):s in parallel
+#' via the \pkg{future} framework.
+#' For example, setting `future::plan("multiprocess")` will parallelize
+#' on the local machine.
 #'
 #' @importFrom utils file_test
 #' @importFrom dplyr filter left_join mutate arrange select
