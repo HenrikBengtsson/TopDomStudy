@@ -82,13 +82,17 @@ total 5533616
 ## Step 2. Extract Human Data
 
 In R, call:
-```sh
-> stopifnot(file_test("-d", "hicData/GSE84920/")
-> source(system.file("scripts", "compile_by_organism.R", package="TopDomStudy"))
-```
 
-This will produce four RDS files:
 ```r
+progressr::with_progress({
+  files <- TopDomStudy::compile_by_organism(
+              samples=c("GSM2254215_ML1", "GSM2254219_PL2",
+                        "GSM2254216_ML2", "GSM2254218_PL1"),
+              organisms="human",
+              path="hicData/GSE84920", path_dest="compiledData"
+           )
+})
+print(files)
 #                human                                         
 # GSM2254215_ML1 "compiledData/GSM2254215_ML1,human,unique.rds"
 # GSM2254219_PL2 "compiledData/GSM2254219_PL2,human,unique.rds"
@@ -96,16 +100,17 @@ This will produce four RDS files:
 # GSM2254218_PL1 "compiledData/GSM2254218_PL1,human,unique.rds"
 ```
 
+
 ## Step 2. Split Human Data by Cell Type
 
 In R, call:
-```sh
-> stopifnot(file_test("-d", "hicData/GSE84920/")
-> source(system.file("scripts", "split_by_celltype.R", package="TopDomStudy"))
-```
 
-This will produce one RDS file:
 ```r
+progressr::with_progress({
+  files <- TopDomStudy::split_by_celltype(celltypes=list(human="HAP1"),
+                                          path="compiledData")
+})
+print(files)
 # $human
 #                                 HAP1 
 # "compiledData/human,HAP1,unique.rds"
@@ -115,14 +120,14 @@ This will produce one RDS file:
 ## Step 3. Split Human Data by Cell Type and Chromosomes
 
 In R, call:
-```sh
-> stopifnot(file_test("-d", "hicData/GSE84920/")
-> source(system.file("scripts", "split_by_celltype_chromosome.R", package="TopDomStudy"))
-```
-
-This will produce three RDS files:
 
 ```r
+progressr::with_progress({
+  files <- TopDomStudy::split_by_celltype_chromosome(
+                celltypes=list(human="HAP1"), chromosomes=c(12,16,22),
+                path="compiledData")
+})
+print(files)
 # $human
 # $human$HAP1
 #                                      chr=12 
@@ -133,7 +138,7 @@ This will produce three RDS files:
 # "compiledData/human,HAP1,unique,chr=22.rds"
 ```
 
-which corresponds to the three RDS files that are installed with this package in folder `system.file("compiledData", package="TomDopStudy")`.  The content of these files look like:
+The latter three RDS files correspond to the three files that are installed with this package in folder `system.file("compiledData", package="TomDopStudy")`.  The content of these files look like:
 ```r
 > data <- readRDS("compiledData/human,HAP1,unique,chr=22.rds")
 > tibble::as_tibble(data)
