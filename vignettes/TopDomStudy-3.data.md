@@ -87,12 +87,28 @@ In R, call:
 > source(system.file("scripts", "compile_by_organism.R", package="TopDomStudy"))
 ```
 
+This will produce four RDS files:
+```r
+#                human                                         
+# GSM2254215_ML1 "compiledData/GSM2254215_ML1,human,unique.rds"
+# GSM2254219_PL2 "compiledData/GSM2254219_PL2,human,unique.rds"
+# GSM2254216_ML2 "compiledData/GSM2254216_ML2,human,unique.rds"
+# GSM2254218_PL1 "compiledData/GSM2254218_PL1,human,unique.rds"
+```
+
 ## Step 2. Split Human Data by Cell Type
 
 In R, call:
 ```sh
 > stopifnot(file_test("-d", "hicData/GSE84920/")
 > source(system.file("scripts", "split_by_celltype.R", package="TopDomStudy"))
+```
+
+This will produce one RDS file:
+```r
+# $human
+#                                 HAP1 
+# "compiledData/human,HAP1,unique.rds"
 ```
 
 
@@ -104,7 +120,38 @@ In R, call:
 > source(system.file("scripts", "split_by_celltype_chromosome.R", package="TopDomStudy"))
 ```
 
-This latter step will produce the three `human,HAP1,unique,chr=*.rds` files (located under hicData/GSE84920/).
+This will produce three RDS files:
+
+```r
+# $human
+# $human$HAP1
+#                                      chr=12 
+# "compiledData/human,HAP1,unique,chr=12.rds" 
+#                                      chr=16 
+# "compiledData/human,HAP1,unique,chr=16.rds" 
+#                                      chr=22 
+# "compiledData/human,HAP1,unique,chr=22.rds"
+```
+
+which corresponds to the three RDS files that are installed with this package in folder `system.file("compiledData", package="TomDopStudy")`.  The content of these files look like:
+```r
+> data <- readRDS("compiledData/human,HAP1,unique,chr=22.rds")
+> tibble::as_tibble(data)
+# A tibble: 112,704 x 9
+   chr_a  start_a    end_a chr_b  start_b    end_b celltype cell_id           name          
+   <chr>    <int>    <int> <chr>    <int>    <int> <chr>    <fct>             <chr>         
+ 1 22    16304723 16304853 22    16368550 16368588 HAP1     GGTCAGTG-TGTCTGCA GSM2254215_ML1
+ 2 22    16344591 16344666 22    17082891 17082926 HAP1     AAGCCGGT-CTACTAGG GSM2254215_ML1
+ 3 22    16357581 16357715 22    17723422 17723517 HAP1     TCGACTGC-TTAATCGA GSM2254219_PL2
+ 4 22    16433346 16433395 22    17060321 17060372 HAP1     ACCACCAC-TGTAATCG GSM2254216_ML2
+ 5 22    16433811 16433879 22    17137580 17137702 HAP1     TTGTGCCG-CGTTACTT GSM2254215_ML1
+ 6 22    16499667 16499748 22    17462757 17462829 HAP1     CGCGCAAT-CTTAGAAG GSM2254215_ML1
+ 7 22    16551301 16551348 22    21911741 21911808 HAP1     CGACATGG-CAGCATAT GSM2254215_ML1
+ 8 22    16554345 16554502 22    17900200 17900292 HAP1     AACGGTCG-TGCAGTGA GSM2254219_PL2
+ 9 22    16848715 16848855 22    16872125 16872172 HAP1     AAGCCGGT-AACGCGTA GSM2254216_ML2
+10 22    16852229 16852468 22    16856842 16857008 HAP1     GCTGAGAC-CCTTATAG GSM2254215_ML1
+# ... with 112,694 more rows
+```
 
 
 ## References
