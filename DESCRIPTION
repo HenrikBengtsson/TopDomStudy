@@ -1,5 +1,5 @@
 Package: TopDomStudy
-Version: 0.0.0-9014
+Version: 0.0.0-9015
 Title: TopDom Study by Segal et al.
 Description: Utility functions for the TopDom-related study by Segal et al. (2017).
 Authors@R: c(
@@ -26,7 +26,11 @@ Imports:
     stats,
     utils
 Suggests:
-    progress
+    progress,
+    tools,
+    commonmark
+VignetteBuilder:
+    TopDomStudy
 Remotes:
     github::HenrikBengtsson/TopDom,
     github::HenrikBengtsson/ramani,

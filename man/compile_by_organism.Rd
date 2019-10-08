@@ -44,7 +44,7 @@ on the local machine.
 progressr::with_progress({
   files <- TopDomStudy::compile_by_organism(
               samples=c("GSM2254215_ML1", "GSM2254219_PL2",
-                         "GSM2254216_ML2", "GSM2254218_PL1"),
+                        "GSM2254216_ML2", "GSM2254218_PL1"),
               organisms="human",
               path="hicData/GSE84920", path_dest="compiledData"
            )
@@ -52,6 +52,9 @@ progressr::with_progress({
 print(files)
 #                human                                         
 # GSM2254215_ML1 "compiledData/GSM2254215_ML1,human,unique.rds"
+# GSM2254219_PL2 "compiledData/GSM2254219_PL2,human,unique.rds"
+# GSM2254216_ML2 "compiledData/GSM2254216_ML2,human,unique.rds"
+# GSM2254218_PL1 "compiledData/GSM2254218_PL1,human,unique.rds"
 }}
 
 }

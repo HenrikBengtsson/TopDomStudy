@@ -12,9 +12,12 @@ progressr::handlers("progress")
 ## Setup data
 ## ---------------------------------------------------------------------
 known_samples <- c(
-  "GSM2254215_ML1", "GSM2254216_ML2", "GSM2254217_ML3",
-  "GSM2254218_PL1", "GSM2254219_PL2",
-  "GSM2438426_ML4" ## Not really supported
+  "GSM2254215_ML1",
+  "GSM2254216_ML2",
+  "GSM2254217_ML3",  
+  "GSM2254218_PL1",
+  "GSM2254219_PL2",
+  "GSM2438426_ML4"  ## Non-supported file format
 )
 known_organisms <- c("human", "mouse")
 
@@ -33,7 +36,4 @@ res <- TopDomStudy::compile_by_organism(
   path_dest = "compiledData"
 )
 print(res)
-
-
-# res <- TopDomStudy::compile_by_organism(samples = "GSM2254215_ML1", organisms = "human", path = "hicData/GSE84920", path_dest = "compiledData")
 

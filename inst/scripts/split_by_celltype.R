@@ -2,9 +2,13 @@ options(width = 140)
 progressr::handlers("progress")
 
 ## NOTES: 6 human + 2 mouse cell types takes ~40 minutes to complete
-celltypes <- list(
+known_celltypes <- list(
   human = c("HAP1", "HeLa", "GM12878", "K562", "Asynchronous", "Nocadazole"),
   mouse = c("MEF", "Patski")
+)
+
+celltypes <- list(
+  human = c("HAP1")
 )
 
 progressr::with_progress({
