@@ -45,7 +45,8 @@ matrix:
 before_install:
   - Rscript -e 'c(physical = parallel::detectCores(logical = FALSE), logical = parallel::detectCores())'
   - export _R_CHECK_TIMINGS_=0
-  - Rscript -e 'install.packages(".", type="source", repos=NULL)'
+  - Rscript -e 'install.packages("remotes")'
+  - Rscript -e 'remotes::install_github("HenrikBengtsson/TopDomStudy@develop")'
 
 
 notifications:
