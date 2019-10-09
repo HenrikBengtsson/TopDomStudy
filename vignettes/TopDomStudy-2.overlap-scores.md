@@ -14,6 +14,8 @@ In this document we show how to precalculate TopDom overlap-score summaries for 
 
 ```r
 library(TopDomStudy)
+## Allow for 2-GiB objects to be exported to parallel workers
+options(future.globals.maxSize = 2*1024^3)
 
 done <- overlap_score_summary_vs_fraction(
   dataset       = "human,HAP1",
@@ -29,7 +31,7 @@ done <- overlap_score_summary_vs_fraction(
 print(done)
 ```
 
-_Comment_: The above takes approximately NNN hours to complete.
+_Comment_: The above takes approximately 20-25 hours to complete when running in parallel using two cores (`future::plan("multicore", workers=2)`).  The majority of the processing time, and memory, is consumed on Chr 12 at the higher resolutions (bin sizes <= 10 kb).
 
 
 
@@ -37,6 +39,8 @@ _Comment_: The above takes approximately NNN hours to complete.
 
 ```r
 library(TopDomStudy)
+## Allow for 2-GiB objects to be exported to parallel workers
+options(future.globals.maxSize = 2*1024^3)
 
 done <- overlap_score_summary_vs_bin_size(
   dataset       = "human,HAP1",
