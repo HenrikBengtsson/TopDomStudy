@@ -45,7 +45,7 @@
 #' @importFrom dplyr filter left_join mutate arrange select
 #' @importFrom ramani read_percentages read_validpairs
 #' @importFrom listenv listenv
-#' @importFrom future %<-%
+#' @importFrom future %<-% resolve
 #' @importFrom progressr progressor
 #' @export
 compile_by_organism <- function(samples, organisms = c("human", "mouse"), path = file.path("hicData", "GSE84920"), path_dest = "compiledData") {
