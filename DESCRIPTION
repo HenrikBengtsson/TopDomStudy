@@ -27,7 +27,6 @@ Imports:
     utils
 Suggests:
     progress,
-    tibble,
     tools,
     commonmark
 VignetteBuilder:
