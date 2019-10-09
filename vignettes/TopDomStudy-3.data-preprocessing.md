@@ -1,4 +1,4 @@
-%\VignetteIndexEntry{TopDomStudy: Compiling Raw Data}
+%\VignetteIndexEntry{TopDomStudy: Data Preprocessing}
 %\VignetteAuthor{Henrik Bengtsson}
 %\VignetteEngine{TopDomStudy::self}
 %\VignetteEncoding{UTF-8}
@@ -86,10 +86,10 @@ In R, call:
 ```r
 progressr::with_progress({
   files <- TopDomStudy::compile_by_organism(
-              samples=c("GSM2254215_ML1", "GSM2254219_PL2",
-                        "GSM2254216_ML2", "GSM2254218_PL1"),
-              organisms="human",
-              path="hicData/GSE84920", path_dest="compiledData"
+             samples=c("GSM2254215_ML1", "GSM2254219_PL2",
+                       "GSM2254216_ML2", "GSM2254218_PL1"),
+             organisms="human",
+             path="hicData/GSE84920", path_dest="compiledData"
            )
 })
 print(files)
@@ -100,21 +100,25 @@ print(files)
 # GSM2254218_PL1 "compiledData/GSM2254218_PL1,human,unique.rds"
 ```
 
+_Comment_: This step make take a few hours to complete.
+
 
 ## Step 2. Split Human Data by Cell Type
 
 In R, call:
 
 ```r
-progressr::with_progress({
-  files <- TopDomStudy::split_by_celltype(celltypes=list(human="HAP1"),
-                                          path="compiledData")
-})
+files <- TopDomStudy::split_by_celltype(
+           celltypes=list(human="HAP1"),
+           path="compiledData")
 print(files)
 # $human
 #                                 HAP1 
 # "compiledData/human,HAP1,unique.rds"
 ```
+
+_Comment_: This step takes approximately a minute to complete.
+
 
 
 ## Step 3. Split Human Data by Cell Type and Chromosomes
@@ -122,11 +126,10 @@ print(files)
 In R, call:
 
 ```r
-progressr::with_progress({
-  files <- TopDomStudy::split_by_celltype_chromosome(
-                celltypes=list(human="HAP1"), chromosomes=c(12,16,22),
-                path="compiledData")
-})
+files <- TopDomStudy::split_by_celltype_chromosome(
+           celltypes=list(human="HAP1"),
+	   chromosomes=c(12,16,22),
+           path="compiledData")
 print(files)
 # $human
 # $human$HAP1
@@ -137,6 +140,8 @@ print(files)
 #                                      chr=22 
 # "compiledData/human,HAP1,unique,chr=22.rds"
 ```
+
+_Comment_: This step takes less than a minute to complete.
 
 The latter three RDS files correspond to the three files that are installed with this package in folder `system.file("compiledData", package="TomDopStudy")`.  The content of these files look like:
 ```r

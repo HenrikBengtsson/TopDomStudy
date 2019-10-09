@@ -5,7 +5,7 @@ Version: 0.0.0-9015 [2019-10-08]
 
 DOCUMENTATION:
 
- * Add vignette on 'Compiling Raw Data'.
+ * Add 'Data Preprocessing' vignette.
  
 
 Version: 0.0.0-9014 [2019-09-24]
