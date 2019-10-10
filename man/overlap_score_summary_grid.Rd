@@ -34,7 +34,7 @@ Argument passed as is to \code{\link[=overlap_score_summary]{overlap_score_summa
 }
 \value{
 A three-dimensional character array of pathname names where the first
-dimension specify \code{chromosomes}, the second \code{bin_sizes}, and the third 'rhos'.
+dimension specify \code{chromosomes}, the second \code{bin_sizes}, and the third \code{rhos} (fractions).
 }
 \description{
 Calculate and Summarize TopDom Overlap Scores Across Chromosomes, Bin Sizes, and Fractions

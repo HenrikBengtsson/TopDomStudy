@@ -24,7 +24,7 @@
 #' @param verbose (logical) If `TRUE`, verbose output is produced.
 #'
 #' @return A three-dimensional character array of pathname names where the first
-#' dimension specify `chromosomes`, the second `bin_sizes`, and the third 'rhos'.
+#' dimension specify `chromosomes`, the second `bin_sizes`, and the third `rhos` (fractions).
 #'
 #' @section Parallel processing:
 #' The \pkg{future} framework is used to parallelize in three layers:
