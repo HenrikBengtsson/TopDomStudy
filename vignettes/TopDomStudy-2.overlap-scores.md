@@ -97,3 +97,6 @@ The produces figures use the default gray [ggplot2] theme (`theme_set(theme_gray
 ## References
 
 1. Ramani, V., Deng, X., Qiu, R., Gunderson, K. L., Steemers, F. J., Disteche, C. M., … Shendure, J. (2017). Massively multiplex single-cell Hi-C. Nature methods, 14(3), 263–266. doi:10.1038/nmeth.4155, [PMC5330809](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5330809/)
+
+
+[ggplot2]: https://cran.r-project.org/package=ggplot2
