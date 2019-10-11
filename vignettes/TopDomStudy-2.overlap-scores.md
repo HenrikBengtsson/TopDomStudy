@@ -51,7 +51,7 @@ The above takes approximately 24-30 hours and up to 20 GiB of RAM to complete wh
 
 ## Producing figures
 
-To produce figures, as PNG images, presenting the relationship between overlap-score summaries as a function of sample fraction used, run:
+To produce figures, as PNG images in `./figures/`, presenting the relationship between overlap-score summaries as a function of sample fraction used, run:
 
 ```r
 library(TopDomStudy)
@@ -65,12 +65,13 @@ done <- overlap_score_summary_vs_fraction(
   weights       = "uniform",
   domain_length = NULL,
   nsamples      = 50L,
+  fig_path      = "figures/",
   verbose       = TRUE
 )
 print(done)
 ```
 
-To produce figures, as PNG images, presenting the relationship between overlap-score summaries as a function of sample bin size used, run:
+To produce figures, as PNG images in `./figures/`, presenting the relationship between overlap-score summaries as a function of sample bin size used, run:
 
 ```r
 library(TopDomStudy)
@@ -84,10 +85,13 @@ done <- overlap_score_summary_vs_bin_size(
   weights       = "uniform",
   domain_length = NULL,
   nsamples      = 50L,
+  fig_path      = "figures/",
   verbose       = TRUE
 )
 print(done)
 ```
+
+The produces figures use the default gray [ggplot2] theme (`theme_set(theme_gray())`).  To use produce more publication friendly figures, call `ggplot2::theme_set(cowplot::theme_cowplot())` prior to the above.
 
 
 ## References
