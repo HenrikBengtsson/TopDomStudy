@@ -10,6 +10,7 @@
 #'
 #' @importFrom utils file_test
 #' @export
+#' @keywords internal
 read_rds <- function(pathname) {
   if (!file_test("-f", pathname)) {
     stop(sprintf("No such file: %s", sQuote(pathname)))

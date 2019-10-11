@@ -23,6 +23,7 @@
 #' stopifnot(identical(iris2, iris1))
 #'
 #' @export
+#' @keywords internal
 unique_by <- function(x, by = NA_integer_, ...) {
   stopifnot(is.data.frame(x))
   if (nrow(x) <= 1L) return(x)

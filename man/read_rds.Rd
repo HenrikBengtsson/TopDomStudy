@@ -19,3 +19,4 @@ Robustly Reads an RDS File
 Uses \link[base:readRDS]{base::readRDS} internally but gives a more informative error message
 on failure.
 }
+\keyword{internal}

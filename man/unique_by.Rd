@@ -34,3 +34,4 @@ iris2 <- unique_by(datasets::iris, by = "Species")
 stopifnot(identical(iris2, iris1))
 
 }
+\keyword{internal}

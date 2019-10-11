@@ -1,3 +1,4 @@
+^CONDUCT[.]md$
 ^README[.]md$
 ^.(git|svn)
 ^([.]travis|appveyor)[.]yml$

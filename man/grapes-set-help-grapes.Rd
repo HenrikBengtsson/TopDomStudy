@@ -17,3 +17,4 @@ x \%<-?\% value
 \description{
 Assigns a value to a variable, unless it already exists
 }
+\keyword{internal}

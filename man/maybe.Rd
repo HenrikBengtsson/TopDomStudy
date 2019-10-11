@@ -18,3 +18,4 @@ A lazy \link[future:Future]{future::Future}.
 \description{
 An R Expression that Maybe Evaluated Later
 }
+\keyword{internal}
