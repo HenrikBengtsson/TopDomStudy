@@ -1,11 +1,12 @@
 TopDomStudy
 ===========
 
-Version: 0.0.0-9015 [2019-10-08]
+Version: 0.0.0-9015 [2019-10-10]
 
 DOCUMENTATION:
 
- * Add vignettes on 'Data Preprocessing' and 'TopDom Overlap Score Summaries'.
+ * Add vignettes on 'Data Preprocessing', 'TopDom Overlap Score Summaries',
+   and 'Overview of the Ramani Data Set'.
  
 
 Version: 0.0.0-9014 [2019-09-24]
