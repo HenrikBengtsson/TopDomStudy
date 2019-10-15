@@ -11,7 +11,7 @@ This [R] package depends on several R packages.  Most of them are available on [
 
 However, you do _not_ need to install those manually as long as you follow the installation instruction below; they will be install automatically.
 
-Moreover, this packages produces and makes use of pathnames that are longer than 255 characters.  Unfortunately, this means that this package does not run on MS Windows (https://github.com/HenrikBengtsson/TopDomStudy/issues/3).  The package tests have been validated on Linux and macOS.
+Moreover, this packages produces and makes use of pathnames that are longer than 255 characters.  Unfortunately, this means that this package _does not run on MS Windows_ (https://github.com/HenrikBengtsson/TopDomStudy/issues/3).  The package tests have been validated on Linux and macOS.
 
 
 ## References
