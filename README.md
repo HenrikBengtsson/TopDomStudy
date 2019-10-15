@@ -5,13 +5,29 @@
 
 This [R] package depends on several R packages.  Most of them are available on [CRAN] but not all.  Currently, the following packages are available only on GitHub:
 
-* [TopDom]
-* [ramani]
-* [progressr]
+* [TopDom] - An efficient and Deterministic Method for identifying Topological Domains in Genomes
+* [ramani] - Access Ramani et al. Hi-C Data
+* [progressr] - A Unifying API for Progress Updates
 
 However, you do _not_ need to install those manually as long as you follow the installation instruction below; they will be install automatically.
 
 Moreover, this packages produces and makes use of pathnames that are longer than 255 characters.  Unfortunately, this means that this package does not run on MS Windows (https://github.com/HenrikBengtsson/TopDomStudy/issues/3).  The package tests have been validated on Linux and macOS.
+
+
+## References
+
+1. Ramani, V., Deng, X., Qiu, R., Gunderson, K. L., Steemers, F. J., Disteche,
+   C. M., ..., Shendure, J. (2017). Massively multiplex single-cell Hi-C.
+   Nature methods, 14(3), 263–266.
+   doi:10.1038/nmeth.4155,
+   [PMC5330809](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5330809/).
+
+2. Shin, et al., TopDom: an efficient and deterministic method for
+   identifying topological domains in genomes,
+   Nucleic Acids Res. 2016 Apr 20; 44(7): e70., 2016.
+   doi: 10.1093/nar/gkv1505,
+   PMCID: [PMC4838359](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4838359/),
+   PMID: 26704975.
 
 
 ## Installation
