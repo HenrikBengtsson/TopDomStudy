@@ -103,7 +103,7 @@ print(files)
 _Comment_: This step make take a few hours to complete.
 
 
-## Step 2. Split Human Data by Cell Type
+## Step 3. Split Human Data by Cell Type
 
 In R, call:
 
@@ -121,7 +121,7 @@ _Comment_: This step takes approximately a minute to complete.
 
 
 
-## Step 3. Split Human Data by Cell Type and Chromosomes
+## Step 4. Split Human Data by Cell Type and Chromosomes
 
 In R, call:
 
