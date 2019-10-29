@@ -129,7 +129,11 @@ overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, r
 #' @importFrom utils file_test
 read_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size, rhos, window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, path = "overlapScoreSummary", ..., verbose = FALSE) {
   weights <- match.arg(weights)
-  stopifnot(file_test("-d", path))
+  
+  if (!file_test("-d", path)) {
+    dir.create(path, recursive = TRUE, showWarnings = FALSE)
+    stop_if_not(file_test("-d", path))
+  }
 
   ## Tags
   chromosome_tag <- sprintf("chr=%s", chromosome)
