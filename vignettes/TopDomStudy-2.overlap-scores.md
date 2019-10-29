@@ -48,6 +48,63 @@ The overlap scores and their summaries are written to file to folders `./overlap
 The above takes approximately 24-30 hours and up to 20 GiB of RAM to complete when running in parallel using two cores (with `future::plan("multicore", workers=2)`) on a Lenovo Thinkpad Carbon X1 (gen 6) with 16 GiB of RAM.  The majority of the processing time, and memory, is consumed on Chr 12 at the higher resolutions (bin sizes <= 10 kb).  Running sequentially (default) will lower the memory requirements to approximately 10 GiB of RAM.
 
 
+In addition to the above computationally expensive 10-by-10 grid, we will also need a a few additional calcuations;
+
+```r
+library(TopDomStudy)
+done <- unlist(lapply(c(5, 50, 100), FUN = function(nsamples) {
+  overlap_score_summary_grid(
+    dataset       = "human,HAP1",
+    chromosomes   = "22",
+    bin_sizes     = 100 * 1e3,
+    rhos          = c(0.02, 0.04, 0.05, 0.06, 0.08, 0.10, 0.20, 0.30, 0.40, 0.50),
+    window_size   = 5L,
+    weights       = "uniform",
+    domain_length = NULL,
+    nsamples      = nsamples,
+    verbose       = TRUE
+  )
+}))
+print(done)
+```
+
+```r
+library(TopDomStudy)
+done <- unlist(lapply(c("uniform", "by_length"), FUN = function(weights) {
+  overlap_score_summary_grid(
+    dataset       = "human,HAP1",
+    chromosomes   = "22",
+    bin_sizes     = 100 * 1e3,
+    rhos          = c(0.02, 0.04, 0.05, 0.06, 0.08, 0.10, 0.20, 0.30, 0.40, 0.50),
+    window_size   = 5L,
+    weights       = weights,
+    domain_length = NULL,
+    nsamples      = 50L,
+    verbose       = TRUE
+  )
+}))
+print(done)
+```
+
+```r
+library(TopDomStudy)
+done <- unlist(lapply(c(5, 10, 20, 40), FUN = function(window_size) {
+  overlap_score_summary_grid(
+    dataset       = "human,HAP1",
+    chromosomes   = "22",
+    bin_sizes     = 100 * 1e3,
+    rhos          = c(0.02, 0.04, 0.05, 0.06, 0.08, 0.10, 0.20, 0.30, 0.40, 0.50),
+    window_size   = window_size,
+    weights       = "uniform",
+    domain_length = NULL,
+    nsamples      = 50L,
+    verbose       = TRUE
+  )
+}))
+print(done)
+```
+
+
 
 ## Producing figures
 
