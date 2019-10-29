@@ -1,7 +1,11 @@
 TopDomStudy
 ===========
 
-Version: 0.0.0-9015 [2019-10-10]
+Version: 0.0.0-9015 [2019-10-29]
+
+NEW FEATURES:
+
+ * Add gg_overlap_score_summary_vs_bin_size() with example.
 
 DOCUMENTATION:
 
