@@ -14,7 +14,6 @@ Imports:
     digest (>= 0.6.18),
     dplyr,
     ggplot2,
-    Hmisc,
     listenv,
     matrixStats,
     future,
@@ -26,6 +25,7 @@ Imports:
     stats,
     utils
 Suggests:
+    Hmisc,
     progress,
     tools,
     commonmark

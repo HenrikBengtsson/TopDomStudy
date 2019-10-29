@@ -16,7 +16,7 @@
 #'
 #' @importFrom stats mad quantile sd
 #' @importFrom matrixStats weightedMean weightedSd weightedMad
-#' @importFrom Hmisc wtd.quantile
+#  @importFrom Hmisc wtd.quantile
 #' @export
 overlap_score_summary <- function(fit, weights = c("uniform", "by_length"), domain_length = NULL, drop_reference = TRUE) {
   stopifnot(is.list(fit))
@@ -84,6 +84,9 @@ overlap_score_summary <- function(fit, weights = c("uniform", "by_length"), doma
       sd_hat <- sd(score)
       mad_hat <- mad(score)
     } else if (weights == "by_length") {
+      ## FIXME: Workaround for https://github.com/harrelfe/Hmisc/issues/119
+      wtd.quantile <- Hmisc::wtd.quantile
+      
       mean_hat <- weightedMean(score, w = length)
       quantile_hat <- wtd.quantile(score, weights = length)
       ## Make names consistent with stats::quantile() names
