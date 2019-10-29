@@ -76,7 +76,7 @@ gg1 <- gg_overlap_score_summary_vs_fraction(
   window_size   = 5L,
   weights       = "uniform",
   domain_length = NULL,
-  nsamples      = 10L,
+  nsamples      = 4L,
   verbose       = TRUE
 )
 print(gg1)
