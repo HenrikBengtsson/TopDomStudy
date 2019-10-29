@@ -74,6 +74,7 @@ overlap_score_summary_grid <- function(dataset, chromosomes, bin_sizes, rhos, wi
   window_size <- as.integer(window_size)
   window_size_tag <- sprintf("window_size=%d", window_size)
 
+  stopifnot(length(nsamples) == 1L, is.numeric(nsamples), !is.na(nsamples), nsamples >= 1L)
   nsamples_tag <- sprintf("nsamples=%d", nsamples)
 
   weights <- match.arg(weights)
