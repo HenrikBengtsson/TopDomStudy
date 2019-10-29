@@ -8,9 +8,9 @@
 
 In this work, we study the human HAP1 cell types part of the Ramani et al. (2017) data set. For simplicity and memory performance, we focus on Chromosomes 12, 16, and 22.  The purpose of this document is to show how the three files:
 
- 1. human,HAP1,unique,chr=12.rds
- 2. human,HAP1,unique,chr=16.rds
- 3. human,HAP1,unique,chr=22.rds
+ 1. human,HAP1,unique,chr=12.rds (6.5 MB; 537,659 reads)
+ 2. human,HAP1,unique,chr=16.rds (3.3 MB; 265,621 reads)
+ 3. human,HAP1,unique,chr=22.rds (1.4 MB; 112,704 reads)
 
 in the `system.file("compiledData", package="TomDopStudy")` folder, which are used for this study, were generated from the Ramani et al. (2017) data set.
 
