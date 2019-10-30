@@ -7,6 +7,7 @@ gg1 <- gg_overlap_score_summary_vs_fraction(
   weights       = "uniform",
   domain_length = NULL,
   nsamples      = 4L,
+  line_col      = "red",
   verbose       = TRUE
 )
 print(gg1)
@@ -20,6 +21,7 @@ gg2 <- gg_overlap_score_summary_vs_bin_size(
   weights       = "uniform",
   domain_length = NULL,
   nsamples      = 4L,
+  line_col      = "blue",
   verbose       = TRUE
 )
 print(gg2)

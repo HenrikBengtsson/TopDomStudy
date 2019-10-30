@@ -37,7 +37,7 @@
 #' @importFrom cowplot plot_grid
 #' @importFrom utils file_test
 #' @export
-gg_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size, rhos, window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, signals = c("mean", "test_len_q0.50"), rho_lim = c(0, 1/2), length_lim = c(0, 2e6), rel_heights = c(4,1), fig_path = "figures", skip = TRUE, ..., verbose = TRUE) {
+gg_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size, rhos, window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, signals = c("mean", "test_len_q0.50"), rho_lim = c(0, 1/2), length_lim = c(0, 2e6), rel_heights = c(4,1), line_col = "black", fig_path = "figures", skip = FALSE, ..., verbose = TRUE) {
   avg_signals <- c(mean = "mean", median = "`50%`", "q25" = "`25%`", "q75" = "`75%`")
   length_signals <- c(
     "reference Q25 length"    = "ref_len_q0.25",
@@ -121,7 +121,8 @@ gg_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size, 
     gg <- gg + geom_jitter(height = 0, width = 0.05*dw, size = 0.7, colour = "darkgray")
     gg <- gg + stat_summary(aes_string(y = signal, group = 1L),
                             fun.y = function(x) mean(x, trim = 0.10),
-                            geom = "line", size = 2L, group = 1L)
+                            geom = "line",
+			    colour = line_col, size = 2L, group = 1L)
     
     if (ss == 1L) {			      
       gg <- gg + ggtitle(dataset, subtitle = subtitle)
@@ -177,7 +178,7 @@ gg_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size, 
 #' @importFrom utils file_test
 #'
 #' @export
-gg_overlap_score_summary_vs_bin_size <- function(dataset, chromosome, bin_sizes, rho, window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, signals = c("mean", "test_len_q0.50"), bin_size_lim = c(0, max(bin_sizes)), length_lim = c(0, 2e6), rel_heights = c(4,1), fig_path = "figures", skip = TRUE, ..., verbose = TRUE) {
+gg_overlap_score_summary_vs_bin_size <- function(dataset, chromosome, bin_sizes, rho, window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, signals = c("mean", "test_len_q0.50"), bin_size_lim = c(0, max(bin_sizes)), length_lim = c(0, 2e6), rel_heights = c(4,1), line_col = "black", fig_path = "figures", skip = FALSE, ..., verbose = TRUE) {
   avg_signals <- c(mean = "mean", median = "`50%`", "q25" = "`25%`", "q75" = "`75%`")
   length_signals <- c(
     "reference Q25 length"    = "ref_len_q0.25",
@@ -261,7 +262,8 @@ gg_overlap_score_summary_vs_bin_size <- function(dataset, chromosome, bin_sizes,
     gg <- gg + geom_jitter(height = 0, width = 0.05*dw, size = 0.7, colour = "darkgray")
     gg <- gg + stat_summary(aes_string(y = signal, group = 1L),
                             fun.y = function(x) mean(x, trim = 0.10),
-                            geom = "line", size = 2L, group = 1L)
+                            geom = "line",
+			    colour = line_col, size = 2L, group = 1L)
     
     if (ss == 1L) {			      
       gg <- gg + ggtitle(dataset, subtitle = subtitle)
