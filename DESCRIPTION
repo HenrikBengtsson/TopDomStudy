@@ -1,5 +1,5 @@
 Package: TopDomStudy
-Version: 0.0.0-9015
+Version: 0.0.0-9016
 Title: TopDom Study by Segal et al.
 Description: Utility functions for the TopDom-related study by Segal et al. (2017).
 Authors@R: c(
@@ -35,5 +35,5 @@ Remotes:
     github::HenrikBengtsson/TopDom,
     github::HenrikBengtsson/ramani,
     github::HenrikBengtsson/progressr
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.1
 Roxygen: list(markdown = TRUE)

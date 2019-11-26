@@ -47,7 +47,7 @@ split_by_celltype_chromosome <- function(celltypes = list(
   stopifnot(is.list(celltypes), !is.null(names(celltypes)),
             names(celltypes) %in% c("human", "mouse"),
             all(vapply(celltypes, FUN = anyDuplicated, FUN.VALUE = 0L) == 0L))
-  stopifnot(is.numeric(chromosomes), length(chromosomes) > 1L)
+  stopifnot(is.numeric(chromosomes), length(chromosomes) >= 1L)
   
   if (!file_test("-d", path)) dir.create(path, recursive = TRUE)
   stopifnot(file_test("-d", path))

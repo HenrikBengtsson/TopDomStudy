@@ -1,6 +1,15 @@
 TopDomStudy
 ===========
 
+Version: 0.0.0-9016 [2019-11-26]
+
+ * ...
+ 
+BUG FIXES:
+
+ * split_by_celltype_chromosome() required more than one chromosomes.
+
+
 Version: 0.0.0-9015 [2019-10-29]
 
 NEW FEATURES:
