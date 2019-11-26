@@ -6,11 +6,18 @@
 %\VignetteKeyword{package}
 %\VignetteKeyword{vignette}
 
-In this work, we study the human HAP1 cell types part of the Ramani et al. (2017) data set. For simplicity and memory performance, we focus on Chromosomes 12, 16, and 22.  The purpose of this document is to show how the three files:
+In this work, we study the human HAP1 cell types part of the Ramani et al. (2017) data set. In addition to provide a set of R functions to help reproduce the results in our study, this package also provides a set of pre-processed data files to simply reproducibility:
 
- 1. human,HAP1,unique,chr=12.rds (6.5 MB; 537,659 reads)
- 2. human,HAP1,unique,chr=16.rds (3.3 MB; 265,621 reads)
- 3. human,HAP1,unique,chr=22.rds (1.4 MB; 112,704 reads)
+  1. human,HAP1,unique,chr=1.rds  (6.5 MB; 537,659 reads)
+  2. human,HAP1,unique,chr=2.rds  (...)
+     ...
+ 12. human,HAP1,unique,chr=12.rds (6.5 MB; 537,659 reads)
+     ...
+ 16. human,HAP1,unique,chr=16.rds (3.3 MB; 265,621 reads)
+     ...
+ 22. human,HAP1,unique,chr=22.rds (1.4 MB; 112,704 reads)
+
+This document describes how these data files where produced.
 
 in the `system.file("compiledData", package="TomDopStudy")` folder, which are used for this study, were generated from the Ramani et al. (2017) data set.
 
@@ -128,22 +135,18 @@ In R, call:
 ```r
 files <- TopDomStudy::split_by_celltype_chromosome(
            celltypes=list(human="HAP1"),
-	   chromosomes=c(12,16,22),
+	   chromosomes=1:22,
            path="compiledData")
-print(files)
-# $human
-# $human$HAP1
-#                                      chr=12 
-# "compiledData/human,HAP1,unique,chr=12.rds" 
-#                                      chr=16 
-# "compiledData/human,HAP1,unique,chr=16.rds" 
-#                                      chr=22 
-# "compiledData/human,HAP1,unique,chr=22.rds"
+str(files)
+## List of 1
+##  $ human:List of 1
+##   ..$ HAP1: Named chr [1:22] "compiledData/human,HAP1,unique,chr=1.rds" "compiledData/human,HAP1,unique,chr=2.rds" "compiledData/human,HAP1,unique,chr=3.rds" "compiledData/human,HAP1,unique,chr=4.rds" ...
+##   .. ..- attr(*, "names")= chr [1:22] "chr=1" "chr=2" "chr=3" "chr=4" ...
 ```
 
 _Comment_: This step takes less than a minute to complete.
 
-The latter three RDS files correspond to the three files that are installed with this package in folder `system.file("compiledData", package="TomDopStudy")`.  The content of these files look like:
+The `compiles/human,HAP1,unique,chr=*.rds` files correspond to the RDS files that are installed with this package in folder `system.file("compiledData", package="TomDopStudy")`.  The content of these files look like:
 ```r
 > data <- readRDS("compiledData/human,HAP1,unique,chr=22.rds")
 > tibble::as_tibble(data)
