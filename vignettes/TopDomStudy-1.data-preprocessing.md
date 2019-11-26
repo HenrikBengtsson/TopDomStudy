@@ -8,14 +8,52 @@
 
 In this work, we study the human HAP1 cell types part of the Ramani et al. (2017) data set. In addition to provide a set of R functions to help reproduce the results in our study, this package also provides a set of pre-processed data files to simply reproducibility:
 
-  1. human,HAP1,unique,chr=1.rds  (6.5 MB; 537,659 reads)
-  2. human,HAP1,unique,chr=2.rds  (...)
-     ...
- 12. human,HAP1,unique,chr=12.rds (6.5 MB; 537,659 reads)
-     ...
- 16. human,HAP1,unique,chr=16.rds (3.3 MB; 265,621 reads)
-     ...
- 22. human,HAP1,unique,chr=22.rds (1.4 MB; 112,704 reads)
+<!--
+path <- system.file("compiledData", package="TomDopStudy")
+path <- "inst/compiledData"
+filenames <- dir(path = path, pattern = ",chr=.+[.]rds$")
+pathnames <- file.path(path, filenames)
+sizes <- sapply(pathnames, FUN = file.size)
+nreads <- sapply(pathnames, FUN = function(f) nrow(readRDS(f)))
+chrs <- sub(".*,chr=(.+)[.]rds$", "\\1", filenames)
+files <- data.frame(chromosome = chrs, size = sizes, reads = nreads, stringsAsFactors = FALSE, filename = filenames)
+files <- files[gtools::mixedorder(files$chromosome),]
+rownames(files) <- NULL
+-->
+
+<!--
+tbl <- files[,c("chromosome", "size", "reads")]
+tbl$chromosome <- sprintf("Chr %s", tbl$chromosome)
+tbl <- rbind(tbl, list("total", sum(tbl$size), sum(tbl$reads)))
+colnames(tbl) <- c("Chromosome", "File size (bytes)", "Number of Read Pairs")
+knitr::kable(tbl, format.args = list(big.mark = ','))
+-->
+
+|Chromosome | File size (bytes)| Number of Read Pairs|
+|:----------|-----------------:|--------------------:|
+|Chr 1      |        10,897,300|              898,587|
+|Chr 2      |        11,749,566|              972,893|
+|Chr 3      |         9,790,836|              812,916|
+|Chr 4      |         8,987,704|              744,741|
+|Chr 5      |         8,446,368|              696,648|
+|Chr 6      |         8,005,164|              662,910|
+|Chr 7      |         7,183,925|              591,839|
+|Chr 8      |         6,909,628|              569,888|
+|Chr 9      |         5,056,207|              417,634|
+|Chr 10     |         6,207,292|              508,691|
+|Chr 11     |         6,366,477|              524,712|
+|Chr 12     |         6,498,021|              537,659|
+|Chr 13     |         4,516,108|              372,950|
+|Chr 14     |         4,206,679|              345,941|
+|Chr 15     |         4,599,528|              400,169|
+|Chr 16     |         3,302,761|              265,621|
+|Chr 17     |         3,390,448|              274,831|
+|Chr 18     |         3,526,220|              290,220|
+|Chr 19     |         2,342,704|              186,474|
+|Chr 20     |         2,846,595|              232,448|
+|Chr 21     |         1,466,148|              118,787|
+|Chr 22     |         1,397,216|              112,704|
+|total      |       127,692,895|           10,539,263|
 
 This document describes how these data files where produced.
 
