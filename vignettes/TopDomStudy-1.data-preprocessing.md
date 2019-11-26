@@ -16,14 +16,14 @@ in the `system.file("compiledData", package="TomDopStudy")` folder, which are us
 
 The Ramani data set is published on NCBI's Gene Expression Omnibus (GEO) in the GEO series [GSE84920] \(titled 'Massively multiplex single-cell Hi-C'\), which contains:
 
-| GEO Sample          | GEO Title                         | Cell Types
-| ------------------- | --------------------------------- | ------------
-| [GSM2254215]        | Combinatorial scHi-C Library ML1  | human ('HAP1', 'HeLa'), mouse ('MEF', 'Patski')
-| [GSM2254216]        | Combinatorial scHi-C Library ML2  | human ('HAP1', 'HeLa'), mouse ('MEF', 'Patski')
-| [GSM2254217]        | Combinatorial scHi-C Library ML3  | human ('GM12878', 'K562'), mouse ('MEF', 'Patski')
-| [GSM2254218]        | Combinatorial scHi-C Library PL1  | human ('HAP1', 'HeLa'), mouse ('MEF', 'Patski')
-| [GSM2254219]        | Combinatorial scHi-C Library PL2  | human ('HAP1', 'HeLa'), mouse ('MEF', 'Patski')
-| [GSM2438426]**      | Combinatorial scHi-C Library ML4  | human ('Asynchronous', 'Nocadazole'), mouse ('Patski')
+| GEO Sample      | GEO Title                        | Cell Types
+| --------------- | -------------------------------- | ------------------------------------------------------
+| [GSM2254215]    | Combinatorial scHi-C Library ML1 | human ('HAP1', 'HeLa'), mouse ('MEF', 'Patski')
+| [GSM2254216]    | Combinatorial scHi-C Library ML2 | human ('HAP1', 'HeLa'), mouse ('MEF', 'Patski')
+| [GSM2254217]    | Combinatorial scHi-C Library ML3 | human ('GM12878', 'K562'), mouse ('MEF', 'Patski')
+| [GSM2254218]    | Combinatorial scHi-C Library PL1 | human ('HAP1', 'HeLa'), mouse ('MEF', 'Patski')
+| [GSM2254219]    | Combinatorial scHi-C Library PL2 | human ('HAP1', 'HeLa'), mouse ('MEF', 'Patski')
+| [GSM2438426](*) | Combinatorial scHi-C Library ML4 | human ('Asynchronous', 'Nocadazole'), mouse ('Patski')
 
 
 
@@ -100,7 +100,7 @@ print(files)
 # GSM2254218_PL1 "compiledData/GSM2254218_PL1,human,unique.rds"
 ```
 
-_Comment_: This step make take a few hours to complete.
+_Comment_: This step takes a few hours to complete.
 
 
 ## Step 3. Split Human Data by Cell Type
