@@ -5,20 +5,45 @@
 \alias{gg_overlap_score_summary_vs_bin_size}
 \title{Plots TopDom Overlap Scores and Lengths as a Function of Sample Fraction or Bin Size}
 \usage{
-gg_overlap_score_summary_vs_fraction(dataset, chromosome, bin_size, rhos,
-  window_size = 5L, nsamples = 50L, weights = c("by_length",
-  "uniform"), domain_length = NULL, signals = c("mean",
-  "test_len_q0.50"), rho_lim = c(0, 1/2), length_lim = c(0, 2e+06),
-  rel_heights = c(4, 1), line_col = "black", fig_path = "figures",
-  skip = FALSE, ..., verbose = TRUE)
+gg_overlap_score_summary_vs_fraction(
+  dataset,
+  chromosome,
+  bin_size,
+  rhos,
+  window_size = 5L,
+  nsamples = 50L,
+  weights = c("by_length", "uniform"),
+  domain_length = NULL,
+  signals = c("mean", "test_len_q0.50"),
+  rho_lim = c(0, 1/2),
+  length_lim = c(0, 2e+06),
+  rel_heights = c(4, 1),
+  line_col = "black",
+  fig_path = "figures",
+  skip = FALSE,
+  ...,
+  verbose = TRUE
+)
 
-gg_overlap_score_summary_vs_bin_size(dataset, chromosome, bin_sizes, rho,
-  window_size = 5L, nsamples = 50L, weights = c("by_length",
-  "uniform"), domain_length = NULL, signals = c("mean",
-  "test_len_q0.50"), bin_size_lim = c(0, max(bin_sizes)),
-  length_lim = c(0, 2e+06), rel_heights = c(4, 1),
-  line_col = "black", fig_path = "figures", skip = FALSE, ...,
-  verbose = TRUE)
+gg_overlap_score_summary_vs_bin_size(
+  dataset,
+  chromosome,
+  bin_sizes,
+  rho,
+  window_size = 5L,
+  nsamples = 50L,
+  weights = c("by_length", "uniform"),
+  domain_length = NULL,
+  signals = c("mean", "test_len_q0.50"),
+  bin_size_lim = c(0, max(bin_sizes)),
+  length_lim = c(0, 2e+06),
+  rel_heights = c(4, 1),
+  line_col = "black",
+  fig_path = "figures",
+  skip = FALSE,
+  ...,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{dataset}{(character string) The name of the data set.}

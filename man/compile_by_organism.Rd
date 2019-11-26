@@ -4,8 +4,12 @@
 \alias{compile_by_organism}
 \title{Compile Ramani HiC Data Files into Data Frames stored in RDS files}
 \usage{
-compile_by_organism(samples, organisms = c("human", "mouse"),
-  path = file.path("hicData", "GSE84920"), path_dest = "compiledData")
+compile_by_organism(
+  samples,
+  organisms = c("human", "mouse"),
+  path = file.path("hicData", "GSE84920"),
+  path_dest = "compiledData"
+)
 }
 \arguments{
 \item{samples}{A character vector of K sample names.}

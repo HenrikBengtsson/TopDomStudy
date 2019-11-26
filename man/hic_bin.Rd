@@ -4,8 +4,13 @@
 \alias{hic_bin}
 \title{Bins HiC Reads in a Data Frame into Chromosome-Pair Count Matrices}
 \usage{
-hic_bin(data, bin_size, intra_only = FALSE, known_chrs = c(1:22, "X",
-  "Y", "M"), progress = TRUE)
+hic_bin(
+  data,
+  bin_size,
+  intra_only = FALSE,
+  known_chrs = c(1:22, "X", "Y", "M"),
+  progress = TRUE
+)
 }
 \arguments{
 \item{data}{An N-by-K data.frame with

@@ -4,8 +4,14 @@
 \alias{sample_partitions_similar_weights}
 \title{Generate Random, Non-Overlapping Similarly-Weighted Partitions of Indices}
 \usage{
-sample_partitions_similar_weights(w, fraction = NULL, size = NULL,
-  w_tolerance = 0.01, max_rejections = 100L, warn = TRUE)
+sample_partitions_similar_weights(
+  w,
+  fraction = NULL,
+  size = NULL,
+  w_tolerance = 0.01,
+  max_rejections = 100L,
+  warn = TRUE
+)
 }
 \arguments{
 \item{w}{Numeric vector of \code{n} non-negative, finite weights.

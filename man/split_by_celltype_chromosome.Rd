@@ -4,9 +4,12 @@
 \alias{split_by_celltype_chromosome}
 \title{Split Per-Cell Type Compiled File Data into Per Chromosome}
 \usage{
-split_by_celltype_chromosome(celltypes = list(human = c("HAP1", "HeLa",
-  "GM12878", "K562", "Asynchronous", "Nocadazole"), mouse = c("MEF",
-  "Patski")), chromosomes = 1:23, path = "compiledData")
+split_by_celltype_chromosome(
+  celltypes = list(human = c("HAP1", "HeLa", "GM12878", "K562", "Asynchronous",
+    "Nocadazole"), mouse = c("MEF", "Patski")),
+  chromosomes = 1:23,
+  path = "compiledData"
+)
 }
 \arguments{
 \item{celltypes}{A named list of character vectors.}

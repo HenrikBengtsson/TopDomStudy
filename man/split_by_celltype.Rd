@@ -4,9 +4,11 @@
 \alias{split_by_celltype}
 \title{Split Per-Organism Compiled File Data into Subsets of Cell Types}
 \usage{
-split_by_celltype(celltypes = list(human = c("HAP1", "HeLa", "GM12878",
-  "K562", "Asynchronous", "Nocadazole"), mouse = c("MEF", "Patski")),
-  path = "compiledData")
+split_by_celltype(
+  celltypes = list(human = c("HAP1", "HeLa", "GM12878", "K562", "Asynchronous",
+    "Nocadazole"), mouse = c("MEF", "Patski")),
+  path = "compiledData"
+)
 }
 \arguments{
 \item{celltypes}{A named list of character vectors.}

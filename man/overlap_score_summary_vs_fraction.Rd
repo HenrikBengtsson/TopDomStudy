@@ -4,10 +4,18 @@
 \alias{overlap_score_summary_vs_fraction}
 \title{Calculate and Summarize TopDom Overlap Scores as Function of Sample Fraction}
 \usage{
-overlap_score_summary_vs_fraction(dataset, chromosomes, bin_sizes, rhos,
-  window_size = 5L, nsamples = 50L, weights = c("by_length",
-  "uniform"), domain_length = NULL, fig_path = "figures",
-  verbose = FALSE)
+overlap_score_summary_vs_fraction(
+  dataset,
+  chromosomes,
+  bin_sizes,
+  rhos,
+  window_size = 5L,
+  nsamples = 50L,
+  weights = c("by_length", "uniform"),
+  domain_length = NULL,
+  fig_path = "figures",
+  verbose = FALSE
+)
 }
 \arguments{
 \item{dataset}{(character string) The name of the data set.}
