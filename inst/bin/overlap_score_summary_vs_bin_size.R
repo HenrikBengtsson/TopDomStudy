@@ -41,7 +41,7 @@ domain_length <- NULL
 
 done <- overlap_score_summary_vs_bin_size(
   dataset       = "human,HAP1",
-  chromosomes   = c("12", "16", "22"),
+  chromosomes   = c("1", "12", "16", "22"),
   bin_sizes     = bin_sizes,
   rhos          = rhos,
   window_size   = 5L,
