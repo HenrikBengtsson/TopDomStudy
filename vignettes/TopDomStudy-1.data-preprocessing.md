@@ -6,7 +6,10 @@
 %\VignetteKeyword{package}
 %\VignetteKeyword{vignette}
 
-In this work, we study the human HAP1 cell types part of the Ramani et al. (2017) data set. In addition to provide a set of R functions to help reproduce the results in our study, this package also provides a set of pre-processed data files to simply reproducibility:
+In this work, we study the human HAP1 cell types part of the Ramani et al. (2017) data set. In addition to provide a set of R functions to help reproduce the results in our study, this package also provides a set of pre-processed data files to simply reproducibility in the `system.file("compiledData", package="TomDopStudy")` folder, which are used for this study, were generated from the Ramani et al. (2017) data set.
+This document describes how these data files where produced.
+
+## Overview
 
 <!--
 path <- system.file("compiledData", package="TomDopStudy")
@@ -60,22 +63,81 @@ knitr::kable(tbl, format.args = list(big.mark = ","))
 |Chr 22     |          34.9|        1,718|           112,704|            1.4|
 |Chr total  |              |             |        10,539,263|          127.7|
 
-This document describes how these data files where produced.
+_Table S1: Summary of HiC read pair data across chromosomes._
 
-in the `system.file("compiledData", package="TomDopStudy")` folder, which are used for this study, were generated from the Ramani et al. (2017) data set.
+
+## Distribution of cell sizes
+
+<!--
+cell_sizes <- lapply(data, FUN = function(x) {
+  t <- table(x$cell_id)
+  t <- t[t > 0]
+  t <- sort(t, decreasing=TRUE)
+  t
+})
+
+distr <- lapply(cell_sizes, FUN = function(sizes) {
+  summary(as.integer(sizes))
+})
+distr <- do.call(rbind, distr)
+distr <- as.data.frame(distr)
+distr <- lapply(distr, FUN = round, digits = 1L) 
+tbl <- files[,c("chromosome", "cells")]
+tbl <- cbind(tbl, distr)
+tbl$chromosome <- sprintf("Chr %s", tbl$chromosome)
+colnames(tbl)[1:2] <- c("Chromosome", "Unique Cells")
+options(knitr.kable.NA = "")
+knitr::kable(tbl, format.args = list(big.mark = ","))
+-->
+
+|Chromosome | Unique Cells| Min.| 1st Qu.| Median|  Mean| 3rd Qu.|   Max.|
+|:----------|------------:|----:|-------:|------:|-----:|-------:|------:|
+|Chr 1      |        1,872|    1|    98.0|  252.0| 480.0|   580.0| 15,326|
+|Chr 2      |        1,882|    1|    61.8|  150.0| 280.7|   340.0|  8,494|
+|Chr 3      |        1,854|    1|    64.0|  154.0| 288.6|   353.0|  8,915|
+|Chr 4      |        1,837|    1|    62.0|  156.0| 290.5|   350.0|  9,048|
+|Chr 5      |        1,833|    1|    51.0|  120.0| 209.4|   254.0|  5,850|
+|Chr 6      |        1,861|    1|    44.0|  105.0| 192.8|   234.8|  6,081|
+|Chr 7      |        1,847|    1|    47.0|  116.5| 221.8|   273.2|  6,552|
+|Chr 8      |        1,815|    1|    32.0|   79.0| 148.8|   181.0|  4,757|
+|Chr 9      |        1,797|    1|    32.0|   78.0| 154.1|   187.0|  5,054|
+|Chr 10     |        1,812|    1|    39.0|   94.0| 165.3|   198.2|  4,679|
+|Chr 11     |        1,818|    1|    21.0|   51.0| 106.2|   125.0|  3,641|
+|Chr 12     |        1,851|    1|   105.0|  279.0| 516.9|   629.0| 16,057|
+|Chr 13     |        1,781|    1|    30.0|   71.0| 132.3|   161.0|  4,105|
+|Chr 14     |        1,794|    1|    17.0|   38.0|  68.1|    82.0|  1,982|
+|Chr 15     |        1,804|    1|    13.0|   32.0|  65.6|    78.0|  2,108|
+|Chr 16     |        1,785|    1|    96.2|  235.0| 438.5|   539.5| 13,581|
+|Chr 17     |        1,783|    1|    90.0|  225.0| 405.4|   485.0| 11,867|
+|Chr 18     |        1,756|    1|    84.0|  210.0| 380.1|   463.0| 11,455|
+|Chr 19     |        1,756|    1|    76.0|  194.0| 356.2|   434.0| 10,870|
+|Chr 20     |        1,757|    1|    69.0|  173.0| 320.4|   394.0|  9,905|
+|Chr 21     |        1,745|    1|    69.0|  173.0| 314.0|   377.0|  8,993|
+|Chr 22     |        1,718|    1|    53.0|  124.0| 232.4|   278.0|  7,068|
+
+_Table S2: Summary of number of read pairs per unique cell across chromosomes._
+
+
+
+![](/home/hb/sf/TopDomStudy/figures/human,HAP1,Chr1,cell_size,histogram.png)
+
+_Figure S1: Histogram of human HAP1 cell sizes (number of read-pairs per cell) on Chr 1._
+
+
+
 
 The Ramani data set is published on NCBI's Gene Expression Omnibus (GEO) in the GEO series [GSE84920] \(titled 'Massively multiplex single-cell Hi-C'\), which contains:
 
-| GEO Sample      | GEO Title                        | Cell Types
-| --------------- | -------------------------------- | ------------------------------------------------------
-| [GSM2254215]    | Combinatorial scHi-C Library ML1 | human ('HAP1', 'HeLa'), mouse ('MEF', 'Patski')
-| [GSM2254216]    | Combinatorial scHi-C Library ML2 | human ('HAP1', 'HeLa'), mouse ('MEF', 'Patski')
-| [GSM2254217]    | Combinatorial scHi-C Library ML3 | human ('GM12878', 'K562'), mouse ('MEF', 'Patski')
-| [GSM2254218]    | Combinatorial scHi-C Library PL1 | human ('HAP1', 'HeLa'), mouse ('MEF', 'Patski')
-| [GSM2254219]    | Combinatorial scHi-C Library PL2 | human ('HAP1', 'HeLa'), mouse ('MEF', 'Patski')
-| [GSM2438426](*) | Combinatorial scHi-C Library ML4 | human ('Asynchronous', 'Nocadazole'), mouse ('Patski')
+| GEO Sample      | GEO Title                        | Cell Types                                             |
+| --------------- | -------------------------------- | ------------------------------------------------------ |
+| [GSM2254215]    | Combinatorial scHi-C Library ML1 | human ('HAP1', 'HeLa'), mouse ('MEF', 'Patski')        |
+| [GSM2254216]    | Combinatorial scHi-C Library ML2 | human ('HAP1', 'HeLa'), mouse ('MEF', 'Patski')        |
+| [GSM2254217]    | Combinatorial scHi-C Library ML3 | human ('GM12878', 'K562'), mouse ('MEF', 'Patski')     |
+| [GSM2254218]    | Combinatorial scHi-C Library PL1 | human ('HAP1', 'HeLa'), mouse ('MEF', 'Patski')        |
+| [GSM2254219]    | Combinatorial scHi-C Library PL2 | human ('HAP1', 'HeLa'), mouse ('MEF', 'Patski')        |
+| [GSM2438426](*) | Combinatorial scHi-C Library ML4 | human ('Asynchronous', 'Nocadazole'), mouse ('Patski') |
 
-
+_Table S3: Overview of the content in the six GEO samples part of GEO series GSE84920._
 
 ## Step 1. Downloading Raw Data
 
