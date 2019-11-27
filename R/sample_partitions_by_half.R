@@ -35,35 +35,35 @@ sample_partitions_by_half <- function(n, fraction, warn = TRUE) {
 
 
 
-#' Generate Random, Non-Overlapping Similarly-Weighted Partitions of Indices
+#' Generate Random, Non-Overlapping, Similarly-Weighted, Two-Set Partition of Indices
 #'
 #' @param w Numeric vector of `n` non-negative, finite weights.
-#'          Weights are normalized such that `sum(w)` equals one.
+#' Weights are normalized such that `sum(w)` equals one.
 #'
-#' @param fraction A numeric in (0,1] specifying the size of each partition
-#'                 relative to `n`.
+#' @param fraction A numeric in (0,1/2] specifying the size of the second
+#' set relative to `n`.
 #'
 #' @param w_tolerance Maximum allowed difference between target weight of
-#'        each partition (e.g. `fraction * 1`) and the actual total weight
-#'        of the partion (i.e. `sum(w[partition])`.  If _all_ partions are
-#'        within the tolerance, the sample is accepted, otherwise rejected.
+#' each of the two sets (e.g. `fraction * 1`) and the actual total weight
+#' of the sets (i.e. `sum(w[set])`.  If _both_ sets are within the tolerance,
+#' the partition is accepted, otherwise rejected.
 #'
 #' @param max_rejections The maximum number of rejections before giving up.
 #'
 #' @param warn If `TRUE`, a warning is produced if the partitions produced
 #'             are not of equal size.
 #'
-#' @return A list of random non-overlapping (disjoint) partitions where each
-#' element holds indices in \eqn{{1, 2, ..., n}} and where the union of all
-#' partitions is \eqn{{1, 2, ..., n}}.  Attribute `weights` gives the total
-#' normalized weight of each partition.  Attribute `count` gives the number
-#' of internal samples produced before arriving at an accepted sample.
-#' If no accepted sample was found, the `NA` is returned
-#' (with `count` attribute set).
+#' @return A list of two random non-overlapping (disjoint) sets where each
+#' element holds indices in \eqn{{1, 2, ..., n}} and where their union is
+#' \eqn{{1, 2, ..., n}}.  Attribute `weights` gives the total normalized
+#' weight of each set.
+#' If no accepted sample was found, then `NA` is returned.
+#' Attribute `count` gives the number of internal samples produced before
+#' arriving at an accepted or rejected partition.
 #'
 #' @importFrom parallel splitIndices
 #' @export
-sample_partitions_similar_weights_by_half <- function(w, fraction = NULL, w_tolerance = 0.01, max_rejections = 100L, warn = TRUE) {
+sample_partitions_similar_weights_by_half <- function(w, fraction, w_tolerance = 0.01, max_rejections = 100L, warn = TRUE) {
   stop_if_not(is.numeric(w), length(w) > 0, !anyNA(w), all(w > 0))
   stop_if_not(is.numeric(w_tolerance), length(w_tolerance) == 1L,
               !is.na(w_tolerance), w_tolerance >= 0, w_tolerance <= 1)
@@ -77,12 +77,20 @@ sample_partitions_similar_weights_by_half <- function(w, fraction = NULL, w_tole
   n <- length(w)
 
   parts <- sample_partitions_similar_weights(w = w, fraction = 1/2, w_tolerance = w_tolerance, max_rejections = max_rejections, warn = warn)
+
+  ## Failed to find a solution?
   if (!is.list(parts) && is.na(parts)) return(parts)
 
+  ## Sanity check
+  stop_if_not(length(parts) == 2L)
+
+  ## Down-sample test set?
   idxs <- parts[[2]]
   nidxs <- length(idxs)
   size <- min(round(fraction * n), nidxs)
-  parts[[2]] <- idxs[sample.int(nidxs, size = size)]
+  idxs <- idxs[sample.int(nidxs, size = size)]
+  parts[[2]] <- idxs
+  
   names(parts) <- c("reference", sprintf("fraction=%g", fraction))
   attr(parts, "fraction") <- fraction
   attr(parts, "n") <- n

@@ -1,12 +1,12 @@
-#' Generate Random, Non-Overlapping Partitions of Cells
+#' Generate Random, Non-Overlapping Partition of Cells
 #'
-#' @param reads A data.frame of reads.
+#' @param reads A data.frame of \eqn{n} reads.
 #'
 #' @param \dots Argument passed to [sample_partitions_similar_weights].
 #'
-#' @return A list of random non-overlapping (disjoint) partitions where each
+#' @return A list of random non-overlapping (disjoint) partition where each
 #' element holds indices in \eqn{{1, 2, ..., n}} and where the union of all
-#' partitions is \eqn{{1, 2, ..., n}}.
+#' parts is \eqn{{1, 2, ..., n}}.
 #'
 #' @references
 #' https://github.com/HenrikBengtsson/SegalM_2017-FISH/issues/16
@@ -18,13 +18,13 @@ sample_partitions_by_cells <- function(reads, ...) {
   ## Drop non-existing cell_id:s due to empty levels
   cell_weights <- cell_weights[cell_weights > 0]
 
-  ## Partion cells into partions of roughly equal-sized reads
+  ## Partion cells into parts of roughly equal-sized reads
   cell_partitions <- sample_partitions_similar_weights(cell_weights, ...)
   if (length(cell_partitions) == 1L && is.na(cell_partitions)) {
     stop(sprintf("Failed to identify cell partitioning (cell_weights = %g) after %d rejected attempts", cell_weights, attr(cell_partitions, "count")))
   }
   
-  ## Convert into cell partions into read partitions
+  ## Convert cell partion into read partition
   read_partitions <- lapply(cell_partitions, FUN = function(idxs) {
     which(reads$cell_id %in% names(cell_weights)[idxs])
   })
@@ -37,40 +37,59 @@ sample_partitions_by_cells <- function(reads, ...) {
 }
 
 
-#' Generate Random, Non-Overlapping Partitions of Cells By Half
+#' Generate Random, Non-Overlapping Two-Set Partition of Cells By Half
 #'
-#' @param reads A data.frame of reads.
+#' @param reads A data.frame with \eqn{n} reads from \eqn{C} cells.
 #'
-#' @param \dots Argument passed to [sample_partitions_similar_weights_by_half].
+#' @param fraction A numeric in (0,1/2] specifying the size of each part
+#' relative to \eqn{n}.
 #'
-#' @return A list of random non-overlapping (disjoint) partitions where each
-#' element holds indices in \eqn{{1, 2, ..., n}} and where the union of all
-#' partitions is \eqn{{1, 2, ..., n}}.
+#' @param w_tolerance Maximum allowed difference between target weight of
+#' each part (e.g. `fraction * 1`) and the actual total weight of the part
+#' (i.e. `sum(w[part])`.  There is a one-to-one relationship between
+#' weight tolerance and read-count tolerance.  The effective read-count
+#' tolerance can be calculated as `fraction * n`.
+#' If _all_ parts are within the tolerance, the sampled partition is accepted,
+#' otherwise it is rejected.
+#'
+#' @param max_rejections The maximum number of rejections before giving up.
+#'
+#' @param warn If `TRUE`, a warning is produced if the parts produced
+#' are not of equal size.
+#'
+#' @param \dots Additional argument passed to
+#' [sample_partitions_similar_weights_by_half].
+#'
+#' @return A list of \eqn{P} random non-overlapping (disjoint) parts where
+#' each element holds indices in \eqn{{1, 2, ..., n}} and where the union of all
+#' part is \eqn{{1, 2, ..., n}}.
 #'
 #' @references
 #' https://github.com/HenrikBengtsson/SegalM_2017-FISH/issues/16
 #'
 #' @export
-sample_partitions_by_cells_by_half <- function(reads, ...) {
+sample_partitions_by_cells_by_half <- function(reads, fraction = NULL, w_tolerance = 0.01, max_rejections = 100L, warn = TRUE, ...) {
   stop_if_not("cell_id" %in% colnames(reads))
   cell_weights <- table(reads$cell_id)
   ## Drop non-existing cell_id:s due to empty levels
   cell_weights <- cell_weights[cell_weights > 0]
 
   ## Partion cells into partions of roughly equal-sized reads
-  cell_partitions <- sample_partitions_similar_weights_by_half(cell_weights, ...)
-  if (length(cell_partitions) == 1L && is.na(cell_partitions)) {
-    stop(sprintf("Failed to identify cell partitioning (cell_weights = %g) after %d rejected attempts", cell_weights, attr(cell_partitions, "count")))
+  cell_sets <- sample_partitions_similar_weights_by_half(cell_weights, fraction = fraction, w_tolerance = w_tolerance, max_rejections = max_rejections, warn = warn, ...)
+  if (length(cell_sets) == 1L && is.na(cell_sets)) {
+    stop(sprintf("Failed to identify a cell partition (cell_weights = %g) after %d rejected attempts", cell_weights, attr(cell_sets, "count")))
   }
+  stop_if_not(length(cell_sets) == 2L)
   
-  ## Convert into cell partions into read partitions
-  read_partitions <- lapply(cell_partitions, FUN = function(idxs) {
-    which(reads$cell_id %in% names(cell_weights)[idxs])
+  ## Convert cell partition into read partition
+  read_sets <- lapply(cell_sets, FUN = function(cell_idxs) {
+    which(reads$cell_id %in% names(cell_weights)[cell_idxs])
   })
 
   ## Sanity check
-  idxs <- unlist(read_partitions)
-  stop_if_not(all(idxs >= 1L), all(idxs <= nrow(reads)))
+  stop_if_not(length(read_sets) == 2L)
+  read_idxs <- unlist(read_sets)
+  stop_if_not(all(read_idxs >= 1L), all(read_idxs <= nrow(reads)))
   
-  read_partitions
+  read_sets
 }

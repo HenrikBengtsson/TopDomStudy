@@ -2,27 +2,27 @@
 % Please edit documentation in R/sample_partitions.R
 \name{sample_partitions}
 \alias{sample_partitions}
-\title{Generate Random, Non-Overlapping Partitions of Indices}
+\title{Generate Random, Non-Overlapping Partition of Indices}
 \usage{
 sample_partitions(n, fraction = NULL, size = NULL, warn = TRUE)
 }
 \arguments{
 \item{n}{Number of elements to partition.}
 
-\item{fraction}{A numeric in (0,1] specifying the size of each partition
+\item{fraction}{A numeric in (0,1] specifying the size of each set
 relative to \code{n}.  If \code{NULL}, argument \code{size} is used.}
 
 \item{size}{An integer in \eqn{{1, 2, ..., n}} specifying the size of each
-partition.  If \code{NULL}, argument \code{fraction} is used.}
+set.  If \code{NULL}, argument \code{fraction} is used.}
 
-\item{warn}{If \code{TRUE}, a warning is produced if the partitions produced
-are not of equal size.}
+\item{warn}{If \code{TRUE}, a warning is produced if the sets produced are not
+of equal size.}
 }
 \value{
-A list of random non-overlapping (disjoint) partitions where each
+A list of random non-overlapping (disjoint) sets where each
 element holds indices in \eqn{{1, 2, ..., n}} and where the union of all
-partitions is \eqn{{1, 2, ..., n}}.
+sets is \eqn{{1, 2, ..., n}}.
 }
 \description{
-Generate Random, Non-Overlapping Partitions of Indices
+Generate Random, Non-Overlapping Partition of Indices
 }
