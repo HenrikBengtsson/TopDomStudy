@@ -13,47 +13,52 @@ path <- system.file("compiledData", package="TomDopStudy")
 path <- "inst/compiledData"
 filenames <- dir(path = path, pattern = ",chr=.+[.]rds$")
 pathnames <- file.path(path, filenames)
-sizes <- sapply(pathnames, FUN = file.size)
-nreads <- sapply(pathnames, FUN = function(f) nrow(readRDS(f)))
 chrs <- sub(".*,chr=(.+)[.]rds$", "\\1", filenames)
-files <- data.frame(chromosome = chrs, size = sizes, reads = nreads, stringsAsFactors = FALSE, filename = filenames)
+sizes <- sapply(pathnames, FUN = file.size)
+data <- lapply(pathnames, FUN = readRDS)
+bps <- sapply(data, FUN = function(df) max(df$end_b) - min(df$start_a))
+nreads <- sapply(data, FUN = nrow)
+ncells <- sapply(data, FUN = function(df) length(unique(df$cell_id)))
+files <- data.frame(chromosome = chrs, bps = bps, cells = ncells, reads = nreads, size = sizes, filename = filenames, stringsAsFactors = FALSE)
 files <- files[gtools::mixedorder(files$chromosome),]
 rownames(files) <- NULL
--->
 
-<!--
-tbl <- files[,c("chromosome", "size", "reads")]
+tbl <- files[,c("chromosome", "bps", "cells", "reads", "size")]
+total <- list("total", NA_real_, NA_integer_, sum(tbl$reads), sum(tbl$size))
+tbl <- rbind(tbl, total)
 tbl$chromosome <- sprintf("Chr %s", tbl$chromosome)
-tbl <- rbind(tbl, list("total", sum(tbl$size), sum(tbl$reads)))
-colnames(tbl) <- c("Chromosome", "File size (bytes)", "Number of Read Pairs")
-knitr::kable(tbl, format.args = list(big.mark = ','))
+tbl$bps <- round(tbl$bps/1e6, digits=1L)
+tbl$size <- round(tbl$size/1e6, digits=1L)
+colnames(tbl) <- c("Chromosome", "Length (Mbps)", "Unique Cells", "Unique Read Pairs", "File size (MB)")
+options(knitr.kable.NA = "")
+knitr::kable(tbl, format.args = list(big.mark = ","))
 -->
 
-|Chromosome | File size (bytes)| Number of Read Pairs|
-|:----------|-----------------:|--------------------:|
-|Chr 1      |        10,897,300|              898,587|
-|Chr 2      |        11,749,566|              972,893|
-|Chr 3      |         9,790,836|              812,916|
-|Chr 4      |         8,987,704|              744,741|
-|Chr 5      |         8,446,368|              696,648|
-|Chr 6      |         8,005,164|              662,910|
-|Chr 7      |         7,183,925|              591,839|
-|Chr 8      |         6,909,628|              569,888|
-|Chr 9      |         5,056,207|              417,634|
-|Chr 10     |         6,207,292|              508,691|
-|Chr 11     |         6,366,477|              524,712|
-|Chr 12     |         6,498,021|              537,659|
-|Chr 13     |         4,516,108|              372,950|
-|Chr 14     |         4,206,679|              345,941|
-|Chr 15     |         4,599,528|              400,169|
-|Chr 16     |         3,302,761|              265,621|
-|Chr 17     |         3,390,448|              274,831|
-|Chr 18     |         3,526,220|              290,220|
-|Chr 19     |         2,342,704|              186,474|
-|Chr 20     |         2,846,595|              232,448|
-|Chr 21     |         1,466,148|              118,787|
-|Chr 22     |         1,397,216|              112,704|
-|total      |       127,692,895|           10,539,263|
+|Chromosome | Length (Mbps)| Unique Cells| Unique Read Pairs| File size (MB)|
+|:----------|-------------:|------------:|-----------------:|--------------:|
+|Chr 1      |         249.1|        1,872|           898,587|           10.9|
+|Chr 2      |         243.2|        1,882|           972,893|           11.7|
+|Chr 3      |         197.9|        1,854|           812,916|            9.8|
+|Chr 4      |         191.0|        1,837|           744,741|            9.0|
+|Chr 5      |         180.8|        1,833|           696,648|            8.4|
+|Chr 6      |         170.8|        1,861|           662,910|            8.0|
+|Chr 7      |         159.1|        1,847|           591,839|            7.2|
+|Chr 8      |         146.1|        1,815|           569,888|            6.9|
+|Chr 9      |         141.1|        1,797|           417,634|            5.1|
+|Chr 10     |         135.4|        1,812|           508,691|            6.2|
+|Chr 11     |         134.8|        1,818|           524,712|            6.4|
+|Chr 12     |         133.8|        1,851|           537,659|            6.5|
+|Chr 13     |          96.1|        1,781|           372,950|            4.5|
+|Chr 14     |          88.3|        1,794|           345,941|            4.2|
+|Chr 15     |          82.5|        1,804|           400,169|            4.6|
+|Chr 16     |          90.2|        1,785|           265,621|            3.3|
+|Chr 17     |          81.2|        1,783|           274,831|            3.4|
+|Chr 18     |          78.0|        1,756|           290,220|            3.5|
+|Chr 19     |          59.0|        1,756|           186,474|            2.3|
+|Chr 20     |          62.9|        1,757|           232,448|            2.8|
+|Chr 21     |          38.7|        1,745|           118,787|            1.5|
+|Chr 22     |          34.9|        1,718|           112,704|            1.4|
+|Chr total  |              |             |        10,539,263|          127.7|
 
 This document describes how these data files where produced.
 
