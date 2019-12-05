@@ -75,6 +75,7 @@ cell_sizes <- lapply(data, FUN = function(x) {
   t <- sort(t, decreasing=TRUE)
   t
 })
+names(cell_sizes) <- sprintf("Chr %s", files$chromosome)
 
 distr <- lapply(cell_sizes, FUN = function(sizes) {
   summary(as.integer(sizes))
@@ -118,10 +119,50 @@ knitr::kable(tbl, format.args = list(big.mark = ","))
 _Table S2: Summary of number of read pairs per unique cell across chromosomes._
 
 
-
 ![](/home/hb/sf/TopDomStudy/figures/human,HAP1,Chr1,cell_size,histogram.png)
 
 _Figure S1: Histogram of human HAP1 cell sizes (number of read-pairs per cell) on Chr 1._
+
+
+<!--
+single_read_cell_stats <- lapply(cell_sizes, FUN = function(n) { is_single <- (n == 1L); c(n_cells=length(n), single_cells=sum(is_single), prop_single_cells=sum(is_single)/length(n), n_reads=sum(n), prop_single_reads=sum(n[is_single])/sum(n)) })
+tbl <- do.call(rbind, single_read_cell_stats)
+tbl <- cbind(data.frame(chromosome = rownames(tbl), stringsAsFactors = FALSE), tbl)
+rownames(tbl) <- NULL
+colnames(tbl)[1:6] <- c("Chromosome", "Unique Cells", "Single-Read Cells", "Fraction Single-Read Cells", "Read Pairs", "Fraction Single Reads")
+cols <- c("Fraction Single-Read Cells", "Fraction Single Reads")
+tbl[cols] <- lapply(tbl[cols], FUN = signif, digits = 2L)
+options(knitr.kable.NA = "")
+knitr::kable(tbl, format.args = list(big.mark = ","))
+-->
+
+|Chromosome | Unique Cells| Single-Read Cells| Fraction Single-Read Cells| Read Pairs| Fraction Single Reads|
+|:----------|------------:|-----------------:|--------------------------:|----------:|---------------------:|
+|Chr 1      |        1,872|               126|                      0.067|    898,587|               0.00014|
+|Chr 2      |        1,812|                87|                      0.048|    508,691|               0.00017|
+|Chr 3      |        1,818|                95|                      0.052|    524,712|               0.00018|
+|Chr 4      |        1,851|               115|                      0.062|    537,659|               0.00021|
+|Chr 5      |        1,781|                59|                      0.033|    372,950|               0.00016|
+|Chr 6      |        1,794|                73|                      0.041|    345,941|               0.00021|
+|Chr 7      |        1,804|                78|                      0.043|    400,169|               0.00019|
+|Chr 8      |        1,785|                62|                      0.035|    265,621|               0.00023|
+|Chr 9      |        1,783|                66|                      0.037|    274,831|               0.00024|
+|Chr 10     |        1,756|                44|                      0.025|    290,220|               0.00015|
+|Chr 11     |        1,756|                60|                      0.034|    186,474|               0.00032|
+|Chr 12     |        1,882|               135|                      0.072|    972,893|               0.00014|
+|Chr 13     |        1,757|                51|                      0.029|    232,448|               0.00022|
+|Chr 14     |        1,745|                46|                      0.026|    118,787|               0.00039|
+|Chr 15     |        1,718|                46|                      0.027|    112,704|               0.00041|
+|Chr 16     |        1,854|               126|                      0.068|    812,916|               0.00015|
+|Chr 17     |        1,837|                97|                      0.053|    744,741|               0.00013|
+|Chr 18     |        1,833|               102|                      0.056|    696,648|               0.00015|
+|Chr 19     |        1,861|               115|                      0.062|    662,910|               0.00017|
+|Chr 20     |        1,847|               117|                      0.063|    591,839|               0.00020|
+|Chr 21     |        1,815|                90|                      0.050|    569,888|               0.00016|
+|Chr 22     |        1,797|                75|                      0.042|    417,634|               0.00018|
+
+_Table S3: Summary of cells with a single read pair._
+
 
 
 
