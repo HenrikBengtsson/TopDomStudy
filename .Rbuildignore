@@ -9,3 +9,4 @@
 ^figures
 ^last[.]dump
 [.]png$
+^Makefile$

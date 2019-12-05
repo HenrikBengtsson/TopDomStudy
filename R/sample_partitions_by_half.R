@@ -41,7 +41,8 @@ sample_partitions_by_half <- function(n, fraction, warn = TRUE) {
 #' Weights are normalized such that `sum(w)` equals one.
 #'
 #' @param fraction A numeric in (0,1/2] specifying the size of the second
-#' set relative to `n`.
+#' set relative to `n`.  If `fraction = 1/2`, then there will be no down
+#' sampling performed and the two 50%-sized sets are returned as is.
 #'
 #' @param w_tolerance Maximum allowed difference between target weight of
 #' each of the two sets (e.g. `fraction * 1`) and the actual total weight
@@ -85,11 +86,13 @@ sample_partitions_similar_weights_by_half <- function(w, fraction, w_tolerance =
   stop_if_not(length(parts) == 2L)
 
   ## Down-sample test set?
-  idxs <- parts[[2]]
-  nidxs <- length(idxs)
-  size <- min(round(fraction * n), nidxs)
-  idxs <- idxs[sample.int(nidxs, size = size)]
-  parts[[2]] <- idxs
+  if (fraction < 1/2) {
+    idxs <- parts[[2]]
+    nidxs <- length(idxs)
+    size <- min(round(fraction * n), nidxs)
+    idxs <- idxs[sample.int(nidxs, size = size)]
+    parts[[2]] <- idxs
+  }
   
   names(parts) <- c("reference", sprintf("fraction=%g", fraction))
   attr(parts, "fraction") <- fraction
