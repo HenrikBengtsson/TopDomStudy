@@ -6,7 +6,7 @@
 \usage{
 sample_partitions_by_cells_by_half(
   reads,
-  fraction = NULL,
+  fraction,
   w_tolerance = 0.01,
   max_rejections = 100L,
   warn = TRUE,

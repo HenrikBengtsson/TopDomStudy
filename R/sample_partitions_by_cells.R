@@ -67,15 +67,19 @@ sample_partitions_by_cells <- function(reads, ...) {
 #' @references
 #' https://github.com/HenrikBengtsson/SegalM_2017-FISH/issues/16
 #'
+#' @importFrom utils str
 #' @export
-sample_partitions_by_cells_by_half <- function(reads, fraction = NULL, w_tolerance = 0.01, max_rejections = 100L, warn = TRUE, ...) {
+sample_partitions_by_cells_by_half <- function(reads, fraction, w_tolerance = 0.01, max_rejections = 100L, warn = TRUE, ...) {
   stop_if_not("cell_id" %in% colnames(reads))
+  stop_if_not(is.numeric(fraction), length(fraction) == 1L, !is.na(fraction),
+              fraction > 0, fraction <= 1/2)
+
   cell_weights <- table(reads$cell_id)
   ## Drop non-existing cell_id:s due to empty levels
   cell_weights <- cell_weights[cell_weights > 0]
 
-  ## Partion cells into partions of roughly equal-sized reads
-  cell_sets <- sample_partitions_similar_weights_by_half(cell_weights, fraction = fraction, w_tolerance = w_tolerance, max_rejections = max_rejections, warn = warn, ...)
+  ## Partion cells into two partions that have approximately the same number of reads
+  cell_sets <- sample_partitions_similar_weights_by_half(cell_weights, fraction = 1/2, w_tolerance = w_tolerance, max_rejections = max_rejections, warn = warn, ...)
   if (length(cell_sets) == 1L && is.na(cell_sets)) {
     stop(sprintf("Failed to identify a cell partition (cell_weights = %g) after %d rejected attempts", cell_weights, attr(cell_sets, "count")))
   }
@@ -87,9 +91,36 @@ sample_partitions_by_cells_by_half <- function(reads, fraction = NULL, w_toleran
   })
 
   ## Sanity check
+  n_sets <- lengths(read_sets)
+  n_total <- sum(n_sets)
+  props <- n_sets / n_total
+  stop_if_not(all(abs(props - 1/2) <= w_tolerance))
+
+  ## Down-sample test set?
+  if (fraction < 1/2) {
+    size <- min(floor(fraction * n_total), n_sets[2])
+    read_idxs <- read_sets[[2]]
+    read_idxs <- read_idxs[sample.int(n_sets[2], size = size)]
+    read_sets[[2]] <- read_idxs
+    read_idxs <- NULL
+    
+    ## Sanity check
+    n_sets <- lengths(read_sets)
+    props <- n_sets / n_total
+    if (abs(props[2] - fraction) > w_tolerance) {
+      str(list(read_sets = read_sets, n_sets = n_sets, props = props, fraction = fraction, n_sets = n_sets, n_total = n_total, w_tolerance = w_tolerance))
+    }
+    stop_if_not(abs(props[2] - fraction) <= w_tolerance)
+  }
+
+  ## Sanity check
   stop_if_not(length(read_sets) == 2L)
   read_idxs <- unlist(read_sets)
   stop_if_not(all(read_idxs >= 1L), all(read_idxs <= nrow(reads)))
+  read_idxs <- NULL
+  n_sets <- lengths(read_sets)
+  props <- n_sets / n_total
+  stop_if_not(all(abs(props - c(1/2, fraction)) <= w_tolerance))
   
   read_sets
 }

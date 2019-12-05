@@ -17,7 +17,8 @@ sample_partitions_similar_weights_by_half(
 Weights are normalized such that \code{sum(w)} equals one.}
 
 \item{fraction}{A numeric in (0,1/2] specifying the size of the second
-set relative to \code{n}.}
+set relative to \code{n}.  If \code{fraction = 1/2}, then there will be no down
+sampling performed and the two 50\%-sized sets are returned as is.}
 
 \item{w_tolerance}{Maximum allowed difference between target weight of
 each of the two sets (e.g. \code{fraction * 1}) and the actual total weight
