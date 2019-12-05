@@ -7,13 +7,13 @@ NEW FEATURES:
 
  * sample_partitions_similar_weights_by_half(..., fraction = 1/2) will return
    the two parts as-is, i.e. no downsampling is performed when fraction == 1/2.
-   Now it is asserted that the sizes of the returned read-pair index sets are
-   within the requested tolerance.
  
 BUG FIXES:
 
  * sample_partitions_by_cells_by_half(..., fraction) would return a test set
    where 'fraction' of the *cells* were downsampled instead of the *reads*.
+   Now it is asserted that the sizes of the returned read-pair index sets are
+   within the requested tolerance of the 50% reference and 'fraction'.
  
  * split_by_celltype_chromosome() required more than one chromosomes.
 
