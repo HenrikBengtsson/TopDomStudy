@@ -36,6 +36,7 @@
 #' @importFrom ggplot2 aes aes_string coord_cartesian element_blank
 #'             geom_boxplot geom_jitter geom_text ggplot ggsave ggtitle
 #'             element_text scale_x_continuous stat_summary theme xlab ylab ylim
+#' @importFrom scales percent_format
 #' @importFrom cowplot plot_grid
 #' @importFrom utils file_test
 #' @export
@@ -136,7 +137,7 @@ gg_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size, 
       gg <- gg + theme(axis.text.x=element_blank(), axis.ticks.x=element_blank())
       gg <- gg + xlab("")
     } else {
-      gg <- gg + scale_x_continuous(labels = scales::percent_format(accuracy = 2L))
+      gg <- gg + scale_x_continuous(labels = percent_format(accuracy = 2L))
       gg <- gg + xlab("sample fraction")
     }
     if (signal %in% length_signals) {
@@ -184,6 +185,7 @@ gg_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size, 
 #' @importFrom ggplot2 aes aes_string coord_cartesian element_blank
 #'             geom_boxplot geom_jitter geom_text ggplot ggsave ggtitle
 #'             element_text scale_x_continuous stat_summary theme xlab ylab ylim
+#' @importFrom scales percent_format
 #' @importFrom cowplot plot_grid
 #' @importFrom utils file_test
 #'
@@ -252,11 +254,9 @@ gg_overlap_score_summary_vs_bin_size <- function(dataset, chromosome, bin_sizes,
   }
 
   summary <- read_overlap_score_summary_vs_bin_size(dataset, chromosome = chromosome, bin_sizes = bin_sizes, rho = rho, window_size = window_size, nsamples = nsamples, weights = weights, domain_length = domain_length, ..., verbose = verbose)
-  summary[["bin_size"]] <- summary[["bin_size"]] / 1000
-
   bin_size <- NULL; rm(list = "bin_size") ## To please R CMD check
 
-  dw <- diff(range(bin_sizes)) / 1000 / length(bin_sizes)
+  dw <- diff(range(bin_sizes)) / length(bin_sizes)
 
   signal_label <- names(known_signals)[signals[1] == known_signals]
   params <- c(sprintf("estimator: %s", signal_label),
@@ -286,6 +286,7 @@ gg_overlap_score_summary_vs_bin_size <- function(dataset, chromosome, bin_sizes,
       gg <- gg + geom_text_top_left(sprintf("Chr %s", chromosome), size=5)
       gg <- gg + geom_text_top_right(sprintf("%.0f%%", 100*rho), size=5)
     } else {
+      gg <- gg + scale_x_continuous(labels = function(x) sprintf("%.0f", x/1000))
       gg <- gg + xlab("bin size (kbp)")
     }
     if (signal %in% length_signals) {
@@ -301,7 +302,7 @@ gg_overlap_score_summary_vs_bin_size <- function(dataset, chromosome, bin_sizes,
     gg <- gg + theme(axis.title = element_text(size = 13))
 
     ## xlim and ylim must be set at the same time
-    gg <- gg + coord_cartesian(xlim = bin_size_lim / 1000, ylim = ylim)
+    gg <- gg + coord_cartesian(xlim = bin_size_lim, ylim = ylim)
 
     ggs[[signal]] <- gg    
   }
@@ -322,7 +323,11 @@ gg_overlap_score_summary_vs_bin_size <- function(dataset, chromosome, bin_sizes,
 
 
 
-geom_text_top_left <- function(label, size=5, hjust=-0.1, vjust=+1.5) {
+#' @importFrom ggplot2 geom_text aes
+geom_text_top_left <- function(label, size=5.0, hjust=-0.1, vjust=+1.5) {
+  ## To please R CMD check
+  xpos <- ypos <- NULL
+  
   annotations <- data.frame(
     label = label,
     xpos = -Inf, ypos = +Inf,
@@ -331,7 +336,11 @@ geom_text_top_left <- function(label, size=5, hjust=-0.1, vjust=+1.5) {
   geom_text(data=annotations, aes(x=xpos, y=ypos, hjust=hjust, vjust=vjust, label=label), size=size)
 }
 
-geom_text_top_right <- function(label, size=5, hjust=+1.1, vjust=+1.5) {
+#' @importFrom ggplot2 geom_text aes
+geom_text_top_right <- function(label, size=5.0, hjust=+1.1, vjust=+1.5) {
+  ## To please R CMD check
+  xpos <- ypos <- NULL
+  
   annotations <- data.frame(
     label = label,
     xpos = +Inf, ypos = +Inf,
