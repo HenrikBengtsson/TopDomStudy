@@ -262,7 +262,7 @@ gg_overlap_score_summary_vs_bin_size <- function(dataset, chromosome, bin_sizes,
   params <- c(sprintf("estimator: %s", signal_label),
               sprintf("weights: %s", weights),
               sprintf("domains: %.0f-%.0f", domain_length[1], domain_length[2]))
-  subtitle <- sprintf("chromosome %s, fraction=%.3f, window size=%d (%d samples)\n[%s]",
+  subtitle <- sprintf("chromosome %s, fraction=%.3f, window size=%d (%d samples) [%s]",
                        chromosome, rho, window_size, nsamples, paste(params, collapse = "; "))
 
   ggs <- list()
