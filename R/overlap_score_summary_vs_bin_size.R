@@ -2,6 +2,11 @@
 #' @importFrom utils file_test
 #' @importFrom R.cache loadCache saveCache
 read_overlap_score_summary_vs_bin_size <- function(dataset, chromosome, bin_sizes, rho, window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, path = "overlapScoreSummary", force = FALSE, ..., verbose = FALSE) {
+  chromosome <- as.integer(chromosome)
+  bin_sizes <- as.integer(bin_sizes)
+  rho <- as.numeric(rho)
+  window_size <- as.integer(window_size)
+  nsamples <- as.integer(nsamples)
   weights <- match.arg(weights)
   
   if (!file_test("-d", path)) {
@@ -31,7 +36,7 @@ read_overlap_score_summary_vs_bin_size <- function(dataset, chromosome, bin_size
     message("- nsamples: ", nsamples)
   }
 
-  key <- list(dataset = dataset, chromosome = chromosome, bin_sizes = bin_sizes, rho = rho, window_size = window_size, nsamples = nsamples, weights = weights, domain_length = domain_length)
+  key <- list(dataset = dataset, chromosome = chromosome, bin_sizes = sort(bin_sizes), rho = rho, window_size = window_size, nsamples = nsamples, weights = weights, domain_length = domain_length)
   dirs <- c("TopDomStudy", dataset)
   if (!force) {
     summary <- loadCache(key = key, dirs = dirs)

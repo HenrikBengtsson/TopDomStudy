@@ -1,9 +1,11 @@
 TopDomStudy
 ===========
 
-Version: 0.0.0-9017 [2019-12-17]
+Version: 0.0.0-9017 [2019-12-18]
 
 NEW FEATURES:
+
+ * Add gg_overlap_score_summary_vs_tad_length().
 
  * Clarified textual annotations in the overlap-score profile plots.
 

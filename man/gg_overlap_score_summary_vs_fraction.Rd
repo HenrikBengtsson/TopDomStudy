@@ -3,6 +3,7 @@
 \name{gg_overlap_score_summary_vs_fraction}
 \alias{gg_overlap_score_summary_vs_fraction}
 \alias{gg_overlap_score_summary_vs_bin_size}
+\alias{gg_overlap_score_summary_vs_tad_length}
 \title{Plots TopDom Overlap Scores and Lengths as a Function of Sample Fraction or Bin Size}
 \usage{
 gg_overlap_score_summary_vs_fraction(
@@ -38,6 +39,24 @@ gg_overlap_score_summary_vs_bin_size(
   bin_size_lim = c(0, max(bin_sizes)),
   length_lim = c(0, 2000),
   rel_heights = c(4, 1),
+  line_col = "black",
+  fig_path = "figures",
+  skip = FALSE,
+  ...,
+  verbose = TRUE
+)
+
+gg_overlap_score_summary_vs_tad_length(
+  dataset,
+  chromosome,
+  bin_sizes,
+  rhos,
+  window_size = 5L,
+  nsamples = 50L,
+  weights = c("by_length", "uniform"),
+  domain_length = NULL,
+  signals = c("mean", "test_len_q0.50"),
+  tad_length_lim = c(0, 2e+06),
   line_col = "black",
   fig_path = "figures",
   skip = FALSE,
@@ -86,6 +105,8 @@ of the two figures.  Passed to \link[cowplot:plot_grid]{cowplot::plot_grid} as i
 \item{verbose}{(logical) If \code{TRUE}, verbose output is produced.}
 
 \item{bin_sizes}{(numeric vector) The set of bin sizes (in bps) to process.}
+
+\item{tad_length_lim}{The range of the TAD lengths to be displayed.}
 
 \item{\ldots}{Not used.}
 }
