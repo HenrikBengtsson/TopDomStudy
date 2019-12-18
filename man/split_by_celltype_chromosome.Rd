@@ -7,7 +7,7 @@
 split_by_celltype_chromosome(
   celltypes = list(human = c("HAP1", "HeLa", "GM12878", "K562", "Asynchronous",
     "Nocadazole"), mouse = c("MEF", "Patski")),
-  chromosomes = 1:23,
+  chromosomes = 1:25,
   path = "compiledData"
 )
 }

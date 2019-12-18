@@ -18,6 +18,7 @@
 #' @importFrom ggplot2 aes aes_string geom_boxplot geom_jitter ggplot ggsave ggtitle stat_summary xlab ylab ylim
 #' @importFrom tibble as_tibble
 #' @importFrom utils file_test
+#' @importFrom R.cache loadCache saveCache
 #' @export
 overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, rhos, window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, fig_path = "figures", verbose = FALSE) {
   weights <- match.arg(weights)
@@ -127,7 +128,8 @@ overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, r
 
 #' @importFrom tibble as_tibble
 #' @importFrom utils file_test
-read_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size, rhos, window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, path = "overlapScoreSummary", ..., verbose = FALSE) {
+#' @importFrom R.cache loadCache saveCache
+read_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size, rhos, window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, path = "overlapScoreSummary", force = FALSE, ..., verbose = FALSE) {
   weights <- match.arg(weights)
   
   if (!file_test("-d", path)) {
@@ -155,6 +157,18 @@ read_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size
     message("- window_size: ", window_size)
     message("- weights: ", weights)
     message("- nsamples: ", nsamples)
+  }
+
+  key <- list(dataset = dataset, chromosome = chromosome, bin_size = bin_size, rhos = rhos, window_size = window_size, nsamples = nsamples, weights = weights, domain_length = domain_length)
+  dirs <- c("TopDomStudy", dataset)
+  if (!force) {
+    summary <- loadCache(key = key, dirs = dirs)
+    if (!is.null(summary)) {
+      if (verbose) {
+        message("read_overlap_score_summary_vs_fraction() ... cached")
+      }
+      return(summary)
+    }
   }
 
   summary <- list()
@@ -187,6 +201,8 @@ read_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size
   summary <- as_tibble(summary)
   
   if (verbose) mprint(summary)
+
+  saveCache(summary, key = key, dirs = dirs)
 
   if (verbose) message("read_overlap_score_summary_vs_fraction() ... done")
 

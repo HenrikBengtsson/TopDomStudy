@@ -1,6 +1,7 @@
 #' @importFrom tibble as_tibble
 #' @importFrom utils file_test
-read_overlap_score_summary_vs_bin_size <- function(dataset, chromosome, bin_sizes, rho, window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, path = "overlapScoreSummary", ..., verbose = FALSE) {
+#' @importFrom R.cache loadCache saveCache
+read_overlap_score_summary_vs_bin_size <- function(dataset, chromosome, bin_sizes, rho, window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, path = "overlapScoreSummary", force = FALSE, ..., verbose = FALSE) {
   weights <- match.arg(weights)
   
   if (!file_test("-d", path)) {
@@ -30,6 +31,18 @@ read_overlap_score_summary_vs_bin_size <- function(dataset, chromosome, bin_size
     message("- nsamples: ", nsamples)
   }
 
+  key <- list(dataset = dataset, chromosome = chromosome, bin_sizes = bin_sizes, rho = rho, window_size = window_size, nsamples = nsamples, weights = weights, domain_length = domain_length)
+  dirs <- c("TopDomStudy", dataset)
+  if (!force) {
+    summary <- loadCache(key = key, dirs = dirs)
+    if (!is.null(summary)) {
+      if (verbose) {
+        message("read_overlap_score_summary_vs_bin_size() ... cached")
+      }
+      return(summary)
+    }
+  }
+  
   summary <- list()
   for (bb in seq_along(bin_sizes)) {
     bin_size <- bin_sizes[bb]
@@ -60,6 +73,8 @@ read_overlap_score_summary_vs_bin_size <- function(dataset, chromosome, bin_size
   summary <- as_tibble(summary)
   
   if (verbose) mprint(summary)
+
+  saveCache(summary, key = key, dirs = dirs)
 
   if (verbose) message("read_overlap_score_summary_vs_bin_size() ... done")
 

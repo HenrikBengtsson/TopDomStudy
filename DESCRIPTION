@@ -20,6 +20,7 @@ Imports:
     future.apply,
     parallel,
     progressr,
+    R.cache,
     ramani,
     scales,
     tibble,

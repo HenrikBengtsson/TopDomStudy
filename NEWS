@@ -7,7 +7,10 @@ NEW FEATURES:
 
  * Clarified textual annotations in the overlap-score profile plots.
 
- * Added human HAP1 HiC read-pair data for Chromosomes 23-25.
+ * Add human HAP1 HiC read-pair data for Chromosomes 23-25.
+
+ * Now overlap_score_summary_vs_{bin_sizes,fraction}() cache the summary
+   results to file.
 
 BUG FIXES:
 
