@@ -6,7 +6,7 @@ known_celltypes <- list(
   human = c("HAP1", "HeLa", "GM12878", "K562", "Asynchronous", "Nocadazole"),
   mouse = c("MEF", "Patski")
 )
-known_chromosomes <- 1:22
+known_chromosomes <- 1:25
 
 celltypes <- list(
   human = c("HAP1")

@@ -6,6 +6,12 @@ Version: 0.0.0-9017 [2019-12-17]
 NEW FEATURES:
 
  * Clarified textual annotations in the overlap-score profile plots.
+
+ * Added human HAP1 HiC read-pair data for Chromosomes 23-25.
+
+BUG FIXES:
+
+ * Package did not handle chromosomes 23-25.
  
  
 Version: 0.0.0-9016 [2019-12-05]

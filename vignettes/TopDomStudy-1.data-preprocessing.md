@@ -61,7 +61,10 @@ knitr::kable(tbl, format.args = list(big.mark = ","))
 |Chr 20     |          62.9|        1,757|           232,448|            2.8|
 |Chr 21     |          38.7|        1,745|           118,787|            1.5|
 |Chr 22     |          34.9|        1,718|           112,704|            1.4|
-|Chr total  |              |             |        10,539,263|          127.7|
+|Chr 23     |         153.6|        1,827|           557,273|            6.8|
+|Chr 24     |           0.1|            8|                 8|            0.0|
+|Chr 25     |           0.0|           24|                83|            0.0|
+|Chr total  |              |             |        11,096,627|          134.5|
 
 _Table S1: Summary of HiC read pair data across chromosomes._
 
@@ -115,6 +118,9 @@ knitr::kable(tbl, format.args = list(big.mark = ","))
 |Chr 20     |        1,757|    1|    69.0|  173.0| 320.4|   394.0|  9,905|
 |Chr 21     |        1,745|    1|    69.0|  173.0| 314.0|   377.0|  8,993|
 |Chr 22     |        1,718|    1|    53.0|  124.0| 232.4|   278.0|  7,068|
+|Chr 23     |        1,827|    1|    69.0|  173.0| 320.4|   394.0|  9,905|
+|Chr 24     |            8|    1|    69.0|  173.0| 314.0|   377.0|  8,993|
+|Chr 25     |           24|    1|    53.0|  124.0| 232.4|   278.0|  7,068|
 
 _Table S2: Summary of number of read pairs per unique cell across chromosomes._
 
@@ -160,6 +166,9 @@ knitr::kable(tbl, format.args = list(big.mark = ","))
 |Chr 20     |        1,847|               117|                      0.063|    591,839|               0.00020|
 |Chr 21     |        1,815|                90|                      0.050|    569,888|               0.00016|
 |Chr 22     |        1,797|                75|                      0.042|    417,634|               0.00018|
+|Chr 23     |        1,847|               117|                      0.063|    591,839|               0.00020|
+|Chr 24     |        1,815|                90|                      0.050|    569,888|               0.00016|
+|Chr 25     |        1,797|                75|                      0.042|    417,634|               0.00018|
 
 _Table S3: Summary of cells with a single read pair._
 
@@ -281,13 +290,13 @@ In R, call:
 ```r
 files <- TopDomStudy::split_by_celltype_chromosome(
            celltypes=list(human="HAP1"),
-	   chromosomes=1:22,
+	   chromosomes=1:25,
            path="compiledData")
 str(files)
 ## List of 1
 ##  $ human:List of 1
-##   ..$ HAP1: Named chr [1:22] "compiledData/human,HAP1,unique,chr=1.rds" "compiledData/human,HAP1,unique,chr=2.rds" "compiledData/human,HAP1,unique,chr=3.rds" "compiledData/human,HAP1,unique,chr=4.rds" ...
-##   .. ..- attr(*, "names")= chr [1:22] "chr=1" "chr=2" "chr=3" "chr=4" ...
+##   ..$ HAP1: Named chr [1:25] "compiledData/human,HAP1,unique,chr=1.rds" "compiledData/human,HAP1,unique,chr=2.rds" "compiledData/human,HAP1,unique,chr=3.rds" "compiledData/human,HAP1,unique,chr=4.rds" ...
+##   .. ..- attr(*, "names")= chr [1:25] "chr=1" "chr=2" "chr=3" "chr=4" ...
 ```
 
 _Comment_: This step takes less than a minute to complete.

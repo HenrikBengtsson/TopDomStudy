@@ -43,7 +43,7 @@ split_by_celltype_chromosome <- function(celltypes = list(
                                 human = c("HAP1", "HeLa", "GM12878", "K562",
 				          "Asynchronous", "Nocadazole"),
                                 mouse = c("MEF", "Patski")
-			     ), chromosomes = 1:23, path = "compiledData") {
+			     ), chromosomes = 1:25, path = "compiledData") {
   stopifnot(is.list(celltypes), !is.null(names(celltypes)),
             names(celltypes) %in% c("human", "mouse"),
             all(vapply(celltypes, FUN = anyDuplicated, FUN.VALUE = 0L) == 0L))
@@ -60,6 +60,8 @@ split_by_celltype_chromosome <- function(celltypes = list(
     y
   })
 
+  chr_names <- c(as.character(1:22), "X", "Y", "M")
+  
   organisms <- names(celltypes)
   for (org in organisms) {
     message(sprintf("Organism %s ...", sQuote(org)))
@@ -82,7 +84,7 @@ split_by_celltype_chromosome <- function(celltypes = list(
       }
       
       data <- readRDS(pathname_celltype)
-      
+
       for (chr in chromosomes) {
         chr_tag <- sprintf("chr=%s", chr)
         message(sprintf("Chromosome %s (%s) ...", sQuote(chr), sQuote(chr_tag)))
@@ -96,8 +98,8 @@ split_by_celltype_chromosome <- function(celltypes = list(
           res[[org]][[celltype]][chr_tag] <- pathname_chr
           next
 	}
-  
-        rows <- which(data$chr_a == chr & data$chr_b == chr)
+
+        rows <- which(data$chr_a == chr_names[chr] & data$chr_b == chr_names[chr])
         
         ## Nothing to save?
         if (length(rows) == 0L) next
