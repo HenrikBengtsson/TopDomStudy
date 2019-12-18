@@ -162,7 +162,7 @@ gg_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size, 
 
   if (!is.null(fig_pathname)) {
     if (verbose) suppressMessages <- identity
-    suppressMessages(ggsave(res, filename = fig_pathname), scale = getOption("TopDomStudy.ggsave.scale" = 0.80), dpi = getOption("TopDomStudy.ggsave.dpi" = 360))
+    suppressMessages(ggsave(res, filename = fig_pathname,, scale = getOption("TopDomStudy.ggsave.scale", 0.80), dpi = getOption("TopDomStudy.ggsave.dpi", 360)))
     attr(res, "fig_pathname") <- normalizePath(fig_pathname)
     if (verbose) message(" - Figure written: ", fig_pathname)
   }
@@ -311,7 +311,7 @@ gg_overlap_score_summary_vs_bin_size <- function(dataset, chromosome, bin_sizes,
 
   if (!is.null(fig_pathname)) {
     if (verbose) suppressMessages <- identity
-    suppressMessages(ggsave(res, filename = fig_pathname), scale = getOption("TopDomStudy.ggsave.scale" = 0.80), dpi = getOption("TopDomStudy.ggsave.dpi" = 360))
+    suppressMessages(ggsave(res, filename = fig_pathname, scale = getOption("TopDomStudy.ggsave.scale", 0.80), dpi = getOption("TopDomStudy.ggsave.dpi", 360)))
     attr(res, "fig_pathname") <- normalizePath(fig_pathname)
     if (verbose) message(" - Figure written: ", fig_pathname)
   }
