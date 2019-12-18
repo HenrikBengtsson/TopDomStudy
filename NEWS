@@ -12,7 +12,10 @@ NEW FEATURES:
 BUG FIXES:
 
  * Package did not handle chromosomes 23-25.
- 
+
+ * The 'Data Preprocessing' vignette had a bug causing chromosome data to be
+   out of order for some of the tables.
+
  
 Version: 0.0.0-9016 [2019-12-05]
 
