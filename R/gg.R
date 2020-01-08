@@ -40,7 +40,7 @@
 #' @importFrom cowplot plot_grid
 #' @importFrom utils file_test
 #' @export
-gg_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size, rhos, window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, signals = c("mean", "test_len_q0.50"), rho_lim = c(0, 1/2), length_lim = c(0, 2e3), rel_heights = c(4,1), line_col = "black", fig_path = "figures", skip = FALSE, ..., verbose = TRUE) {
+gg_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size, rhos, window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, signals = c("mean", "test_len_q0.50"), rho_lim = c(0, 1/2), length_lim = c(0, 2e3), rel_heights = c(4,1), labels = c("chromosome"), line_col = "black", fig_path = "figures", skip = FALSE, ..., verbose = TRUE) {
   avg_signals <- c(mean = "mean", median = "`50%`", "q25" = "`25%`", "q75" = "`75%`")
   length_signals <- c(
     "reference Q25 length"    = "ref_len_q0.25",
@@ -132,7 +132,7 @@ gg_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size, 
     
     if (ss == 1L) {                              
       gg <- gg + ggtitle(label = NULL, subtitle = subtitle) + theme(plot.subtitle = element_text(size = 8))
-      gg <- gg + geom_text_top_left(sprintf("Chr %s", chromosome), size=5)
+      if ("chromosome" %in% labels) gg <- gg + geom_text_top_left(sprintf("Chr %s", chromosome), size=5)
       gg <- gg + geom_text_top_right(sprintf("%.0f kbp", bin_size/1000), size=5)
       gg <- gg + theme(axis.text.x=element_blank(), axis.ticks.x=element_blank())
       gg <- gg + xlab("")
@@ -190,7 +190,7 @@ gg_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size, 
 #' @importFrom utils file_test
 #'
 #' @export
-gg_overlap_score_summary_vs_bin_size <- function(dataset, chromosome, bin_sizes, rho, window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, signals = c("mean", "test_len_q0.50"), bin_size_lim = c(0, max(bin_sizes)), length_lim = c(0, 2e3), rel_heights = c(4,1), line_col = "black", fig_path = "figures", skip = FALSE, ..., verbose = TRUE) {
+gg_overlap_score_summary_vs_bin_size <- function(dataset, chromosome, bin_sizes, rho, window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, signals = c("mean", "test_len_q0.50"), bin_size_lim = c(0, max(bin_sizes)), length_lim = c(0, 2e3), rel_heights = c(4,1), labels = c("chromosome"), line_col = "black", fig_path = "figures", skip = FALSE, ..., verbose = TRUE) {
   avg_signals <- c(mean = "mean", median = "`50%`", "q25" = "`25%`", "q75" = "`75%`")
   length_signals <- c(
     "reference Q25 length"    = "ref_len_q0.25",
@@ -283,7 +283,7 @@ gg_overlap_score_summary_vs_bin_size <- function(dataset, chromosome, bin_sizes,
       gg <- gg + ggtitle(label = NULL, subtitle = subtitle) + theme(plot.subtitle = element_text(size = 8))
       gg <- gg + xlab("")
       gg <- gg + theme(axis.text.x=element_blank(), axis.ticks.x=element_blank())
-      gg <- gg + geom_text_top_left(sprintf("Chr %s", chromosome), size=5)
+      if ("chromosome" %in% labels) gg <- gg + geom_text_top_left(sprintf("Chr %s", chromosome), size=5)
       gg <- gg + geom_text_top_right(sprintf("%.0f%%", 100*rho), size=5)
     } else {
       gg <- gg + scale_x_continuous(labels = function(x) sprintf("%.0f", x/1000))
@@ -363,7 +363,7 @@ geom_text_top_right <- function(label, size=5.0, hjust=+1.1, vjust=+1.5) {
 #' @importFrom utils file_test
 #'
 #' @export
-gg_overlap_score_summary_vs_tad_length <- function(dataset, chromosome, bin_sizes, rhos, window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, signals = c("mean", "test_len_q0.50"), tad_length_lim = c(0, 2e6), line_col = "black", fig_path = "figures", skip = FALSE, ..., verbose = TRUE) {
+gg_overlap_score_summary_vs_tad_length <- function(dataset, chromosome, bin_sizes, rhos, window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, signals = c("mean", "test_len_q0.50"), tad_length_lim = c(0, 2e6), labels = c("chromosome"), line_col = "black", fig_path = "figures", skip = FALSE, ..., verbose = TRUE) {
   avg_signals <- c(mean = "mean", median = "`50%`", "q25" = "`25%`", "q75" = "`75%`")
   length_signals <- c(
     "reference Q25 length"    = "ref_len_q0.25",
@@ -457,7 +457,7 @@ gg_overlap_score_summary_vs_tad_length <- function(dataset, chromosome, bin_size
     
   gg <- gg + ggtitle(label = NULL, subtitle = subtitle) + theme(plot.subtitle = element_text(size = 8))
 #  gg <- gg + theme(axis.text.x=element_blank(), axis.ticks.x=element_blank())
-  gg <- gg + geom_text_top_left(sprintf("Chr %s", chromosome), size=5)
+  if ("chromosome" %in% labels) gg <- gg + geom_text_top_left(sprintf("Chr %s", chromosome), size=5)
   gg <- gg + scale_x_continuous(labels = function(x) sprintf("%.0f", x/1000))
   gg <- gg + xlab("TAD length (kbp)")
   ylim <- c(0, 1)

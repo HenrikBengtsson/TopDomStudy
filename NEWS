@@ -1,10 +1,13 @@
 TopDomStudy
 ===========
 
-Version: 0.0.0-9017 [2019-12-18]
+Version: 0.0.0-9017 [2020-01-07]
 
 NEW FEATURES:
 
+ * All gg_overlap_score_summary_vs_*() function gained argument 'labels'
+   to control what is annotated in the plot.
+   
  * Add gg_overlap_score_summary_vs_tad_length().
 
  * Clarified textual annotations in the overlap-score profile plots.
