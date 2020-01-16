@@ -16,6 +16,8 @@
 #' @param rel_heights (numeric vector of length two) The relative height
 #' of the two figures.  Passed to [cowplot::plot_grid] as is.
 #'
+#' @param labels (character vector).  Enable or disable some labels.
+#'
 #' @param line_col The color of the profile curve.
 #'
 #' @param fig_path If non-NULL, a PNG image is written to this path.

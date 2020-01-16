@@ -99,6 +99,8 @@ plotted in the top and bottom panels.}
 \item{rel_heights}{(numeric vector of length two) The relative height
 of the two figures.  Passed to \link[cowplot:plot_grid]{cowplot::plot_grid} as is.}
 
+\item{labels}{(character vector).  Enable or disable some labels.}
+
 \item{line_col}{The color of the profile curve.}
 
 \item{fig_path}{If non-NULL, a PNG image is written to this path.}
