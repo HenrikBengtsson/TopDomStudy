@@ -13,17 +13,26 @@ read_topdom_domains <- function(pathname, format = c("tibble", "data.frame")) {
   format <- match.arg(format)
   stopifnot(file_test("-f", pathname))
 
-  seed <- gsub(".*,seed=([a-z0-9]+),.*", "\\1", pathname)
+  fraction <- gsub(".*,fraction=([0-9.]+),.*", "\\1", basename(pathname))
+  stopifnot(nzchar(fraction))
+  fraction <- as.numeric(fraction)
+  stopifnot(is.numeric(fraction), length(fraction) == 1L, is.finite(fraction),
+            fraction > 0, fraction <= 1/2)
+  
+  seed <- gsub(".*,seed=([a-z0-9]+),.*", "\\1", basename(pathname))
   stopifnot(nzchar(seed))
   seed <- eval(parse(text = sprintf("0x%s", seed)))
   stopifnot(is.numeric(seed), length(seed) == 1L, is.finite(seed))
   
   data <- readRDS(pathname)
+  
+  config <- attributes(data)[c("bin_size", "min_cell_size", "window_size", "partition_by", "seed")]
+  config$seed <- seed
+  config$fraction <- fraction
+  config <- config[c("bin_size", "fraction", "min_cell_size", "window_size", "partition_by", "seed")]
 
   topdom <- data[["fraction=0.5"]]
   td <- topdom$domain
-  config <- attributes(data)[c("bin_size", "min_cell_size", "window_size", "partition_by", "seed")]
-  config$seed <- seed
   data <- cbind(td, config)
   stopifnot(is.data.frame(data), nrow(data) == nrow(td))
   
