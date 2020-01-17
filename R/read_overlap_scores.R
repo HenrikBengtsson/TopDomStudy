@@ -1,10 +1,11 @@
 #' Read TopDom Regions from TopDomStudy Files
 #'
-#' @param pathname (character string) A \file{*,topdom.rds} file.
+#' @param pathname (character string) A \file{*.rds} file.
 #'
 #' @param format (character string) The returned format.
 #'
-#' @return A data frame with one TopDom domain per row.
+#' @return A data frame with TopDom domains with one overlap score and
+#' one length per domain.
 #'
 #' @importFrom utils file_test
 #' @importFrom tibble as_tibble
@@ -13,13 +14,13 @@ read_topdom_regions <- function(pathname, format = c("tibble", "data.frame")) {
   format <- match.arg(format)
   stopifnot(file_test("-f", pathname))
 
-  fraction <- gsub(".*,fraction=([0-9.]+).*", "\\1", basename(pathname))
+  fraction <- gsub(".*,fraction=([0-9.]+),.*", "\\1", basename(pathname))
   stopifnot(nzchar(fraction))
   fraction <- as.numeric(fraction)
   stopifnot(is.numeric(fraction), length(fraction) == 1L, is.finite(fraction),
             fraction > 0, fraction <= 1/2)
   
-  seed <- gsub(".*,seed=([a-z0-9]+),.*", "\\1", basename(pathname))
+  seed <- gsub(".*,seed=([a-z0-9]+).*", "\\1", basename(pathname))
   stopifnot(nzchar(seed))
   seed <- eval(parse(text = sprintf("0x%s", seed)))
   stopifnot(is.numeric(seed), length(seed) == 1L, is.finite(seed))
@@ -32,7 +33,7 @@ read_topdom_regions <- function(pathname, format = c("tibble", "data.frame")) {
   config <- config[c("bin_size", "fraction", "min_cell_size", "window_size", "partition_by", "seed")]
 
   topdom <- data[["fraction=0.5"]]
-  td <- topdom$domain
+  td <- topdom[[1]][,1:2]
   data <- cbind(td, config)
   stopifnot(is.data.frame(data), nrow(data) == nrow(td))
   
