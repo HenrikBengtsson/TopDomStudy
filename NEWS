@@ -1,9 +1,11 @@
 TopDomStudy
 ===========
 
-Version: 0.0.0-9018 [2020-01-16]
+Version: 0.0.0-9018 [2020-01-17]
 
-* Add read_topdom_domains().
+* Add import_topdom_regions().
+
+* Add read_topdom_regions().
 
 
 Version: 0.0.0-9017 [2020-01-07]
