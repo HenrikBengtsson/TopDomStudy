@@ -10,7 +10,7 @@
 #' @importFrom utils file_test
 #' @importFrom tibble as_tibble
 #' @export
-read_topdom_regions <- function(pathname, format = c("tibble", "data.frame")) {
+read_topdom_overlap_scores <- function(pathname, format = c("tibble", "data.frame")) {
   format <- match.arg(format)
   stopifnot(file_test("-f", pathname))
 
@@ -27,14 +27,21 @@ read_topdom_regions <- function(pathname, format = c("tibble", "data.frame")) {
   
   data <- read_rds(pathname)
   
-  config <- attributes(data)[c("bin_size", "min_cell_size", "window_size", "partition_by", "seed")]
+  config <- attributes(data)[c("chromosome", "bin_size", "min_cell_size", "window_size", "partition_by", "seed")]
   config$seed <- seed
   config$fraction <- fraction
-  config <- config[c("bin_size", "fraction", "min_cell_size", "window_size", "partition_by", "seed")]
+  config <- config[c("chromosome", "bin_size", "fraction", "min_cell_size", "window_size", "partition_by", "seed")]
 
   topdom <- data[["fraction=0.5"]]
-  td <- topdom[[1]][,1:2]
-  data <- cbind(td, config)
+
+  if (inherits(topdom, "try-error")) {
+    td <- data.frame(best_score = double(0L), best_length = integer(0L))
+    config <- as.data.frame(config)
+    config <- config[integer(0L), ]
+  } else {
+    td <- topdom[[1]][,1:2]
+  }
+  data <- cbind(chr = config[[1L]], td, config[-1L])
   stopifnot(is.data.frame(data), nrow(data) == nrow(td))
   
   if (format == "tibble") {

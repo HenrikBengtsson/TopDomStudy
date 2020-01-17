@@ -3,7 +3,7 @@ TopDomStudy
 
 Version: 0.0.0-9018 [2020-01-17]
 
-* Add import_topdom_regions().
+* Add import_topdom_regions() and import_topdom_overlap_scores().
 
 * Add read_topdom_regions() and read_topdom_scores() for extracting
   a subset of the file data as data frames.
