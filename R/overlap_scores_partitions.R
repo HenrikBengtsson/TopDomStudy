@@ -275,35 +275,32 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by, rho, nsampl
             stopifnot(length(ok) == length(tds))
             ref <- which(ok)[1]
           }
-  
-          td_ref <- tds[[ref]]
-  
+
+          params <- list(
+            bin_size            = bin_size,
+            chromosome          = chr,
+            min_cell_size       = min_cell_size,
+            window_size         = window_size,
+            partition_by        = partition_by,
+            reference_partition = ref,
+            seed                = seed
+	  )
+	  
           if (save_topdom) {
             tt <- tds
-            attr(tt, "bin_size") <- bin_size
-            attr(tt, "chromosome") <- chr
-            attr(tt, "min_cell_size") <- min_cell_size
-            attr(tt, "window_size") <- window_size
-            attr(tt, "reference_partition") <- ref
-            attr(tt, "seed") <- seed
-            attr(tt, "reference") <- ref
-            attr(tt, "partition_by") <- partition_by
+	    for (name in names(params)) attr(tt, name) <- params[[name]]
+	    ## BACKWARD COMPATIBILITY (removed 2020-02-04)
+            ## attr(tt, "reference") <- params[["reference_partition"]]
             pathname2 <- sprintf("%s,topdom.rds", tools::file_path_sans_ext(pathname))
             saveRDS(tt, file = pathname2)
             tt <- NULL
           }
  
+          td_ref <- tds[[ref]]
           overlaps <- lapply(tds, FUN = function(td) Try(overlapScores)(td, reference = td_ref))
           stopifnot(is.list(overlaps), length(overlaps) == length(tds))
           tds <- NULL ## Not needed anymore
-          attr(overlaps, "bin_size") <- bin_size
-          attr(overlaps, "chromosome") <- chr
-          attr(overlaps, "min_cell_size") <- min_cell_size
-          attr(overlaps, "window_size") <- window_size
-          attr(overlaps, "partition_by") <- partition_by
-          attr(overlaps, "reference_partition") <- ref
-          attr(overlaps, "seed") <- seed
-          
+          for (name in names(params)) attr(overlaps, name) <- params[[name]]
           saveRDS(overlaps, file = pathname)
           if (verbose) print(overlaps)
   
