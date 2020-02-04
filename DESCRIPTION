@@ -35,7 +35,6 @@ VignetteBuilder:
     TopDomStudy
 Remotes:
     github::HenrikBengtsson/TopDom,
-    github::HenrikBengtsson/ramani,
-    github::HenrikBengtsson/progressr
+    github::HenrikBengtsson/ramani
 RoxygenNote: 7.0.2
 Roxygen: list(markdown = TRUE)
