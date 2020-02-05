@@ -1,5 +1,5 @@
-dataset <- "human,HAP1,unique,chr=22"
-pathname <- system.file("compiledData", sprintf("%s.rds", dataset), package = "TopDomStudy")
+dataset <- "human,HAP1,unique"
+pathname <- system.file("compiledData", sprintf("%s,chr=22.rds", dataset), package = "TopDomStudy")
 reads <- read_rds(pathname)
 print(reads)
 
