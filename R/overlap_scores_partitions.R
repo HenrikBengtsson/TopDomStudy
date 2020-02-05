@@ -29,8 +29,6 @@
 #' @param path_out The root folder that will contain the `overlapScoreData/` folder
 #'        to which RDS files are written.
 #'
-#' @param save_topdom ...
-#'
 #' @param mainseed ...
 #'
 #' @param as Should values or pathnames be returned?
@@ -58,7 +56,7 @@
 overlap_scores_partitions <- function(reads, bin_size, partition_by, rho, nsamples = 100L, seed = TRUE,
                                       chrs = NULL, min_cell_size = 1L, dataset, cell_ids = NULL,
                                       window_size = 5L,
-                                      path_out = ".", save_topdom = TRUE, mainseed = 0xBEEF, force = FALSE,
+                                      path_out = ".", mainseed = 0xBEEF, force = FALSE,
                                       as = c("pathname", "value"),
                                       verbose = FALSE) {
   ## To please R CMD check
@@ -107,16 +105,14 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by, rho, nsampl
 
   ## FIXME: Export make_rng_seeds()
   if (is.list(seed)) {
-    stop_if_not(length(seeds) == nsamples)
     seeds <- seed
   } else {
     seeds <- future.apply:::make_rng_seeds(nsamples, seed = mainseed)
   }
+  stop_if_not(length(seeds) == nsamples)
   seed_tags <- sprintf("seed=%s", sapply(seeds, FUN = crc32))
 
   as <- match.arg(as)
-
-  tds <- topdom_partitions(reads, bin_size = bin_size, rho = rho, partition_by= partition_by, nsamples = nsamples, seed = TRUE, chrs = chrs, min_cell_size = min_cell_size, dataset = dataset, cell_ids = cell_ids, window_size = window_size, mainseed = mainseed, force = FALSE, verbose = verbose)
 
   dataset_out <- paste(c(dataset, cell_ids_tag, bin_size_tag, partition_by_tag, min_cell_size_tag, window_size_tag, rho_tag, mainseed_tag), collapse = ",")
   path_out <- file.path("overlapScoreData", dataset_out)
@@ -163,6 +159,9 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by, rho, nsampl
     res[[chr]][sample_idxs] <- NA_character_
   
     if (verbose) mprintf(" - Number of (remaining) samples to process for chromosome %s (%s): %d", chr, chr_tag, length(sample_idxs))
+
+    ## Always fit TopDom first
+    tds <- topdom_partitions(reads, chrs = chr, bin_size = bin_size, rho = rho, partition_by= partition_by, nsamples = nsamples, min_cell_size = min_cell_size, dataset = dataset, cell_ids = cell_ids, window_size = window_size, seed = seeds, mainseed = mainseed, force = FALSE, verbose = verbose)
 
     res[[chr]] %<-% {
       if (is.function(reads)) reads <- reads()
@@ -224,52 +223,42 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by, rho, nsampl
           message("- Random seed:")
           mstr(seed)
         }
+
+        ## Identify TopDom fit
+        set <- basename(dirname(pathname))
+        filename <- basename(pathname)
+        path2 <- file.path("topdomData", set)
+        stop_if_not(file_test("-d", path2))
+        pathname2 <- file.path(path2, filename)
+        stop_if_not(file_test("-f", pathname2))
         
         res_kk[[bb]] %<-% {
           if (verbose) mprintf(" - Random, disjoint partitioning of %s", partition_by)
-  
-          if (partition_by == "reads") {
-            reads_partitions <- sample_partitions(nrow(reads), fraction = rho)
-          } else if (partition_by == "cells") {
-            reads_partitions <- sample_partitions_by_cells(reads, fraction = rho)
-          } else if (partition_by == "reads_by_half") {
-            reads_partitions <- sample_partitions_by_half(nrow(reads), fraction = rho)
-          } else if (partition_by == "cells_by_half") {
-            reads_partitions <- sample_partitions_by_cells_by_half(reads, fraction = rho)
-          }
-          reads_partitions <- lapply(reads_partitions, FUN = function(partition) reads[partition, ])
+          if (verbose) mprintf(" - Reading TopDom fit: ", sQuote(pathname2))
+          tds <- read_rds(pathname2)
+          params <- list(
+            chromosome    = attr(tds, "chromosome"),
+            bin_size      = attr(tds, "bin_size"),
+            fraction      = attr(tds, "fraction"),
+            min_cell_size = attr(tds, "min_cell_size"),
+            window_size   = attr(tds, "window_size"),
+            partition_by  = attr(tds, "partition_by"),
+            mainseed      = attr(tds, "mainseed"),
+            seed          = attr(tds, "seed")
+          )
 
-          if (verbose) { mprintf("reads_partitions:"); mstr(reads_partitions) }
-
-          ## TopDom on each partition
-          tds <- lapply(reads_partitions, FUN = function(reads_pp) {
-            counts <- {
-              counts <- hic_bin(reads_pp, intra_only = TRUE, bin_size = bin_size, progress = FALSE)
-              stopifnot(is.list(counts), length(counts) == 1L, all(names(counts) == chr))
-              counts <- as_TopDomData(counts)
-              counts
-            }
-            if (verbose) { mprintf("counts:"); mstr(counts) }
-            stopifnot(is.list(counts), length(counts) == length(chr), all(names(counts) == chr))
-  
-            ## Used to be Try(TopDom), because:
-            ## 1. https://github.com/HenrikBengtsson/TopDom/issues/4
-            ## 2. https://github.com/HenrikBengtsson/TopDom/issues/8
-            tds <- future_lapply(counts, FUN = TopDom, window.size = window_size)
-            if (verbose) { mprintf("tds:"); mstr(tds) }
-            stopifnot(is.list(tds), length(tds) == 1L, all(names(tds) == chr))
-            
-            tds_chr <- tds[[chr]]
-            if (verbose) { mprintf("tds_chr:"); mstr(tds_chr) }
-            if (save_topdom) attr(tds_chr, "counts") <- counts
-
-            counts <- NULL ## Not needed anymore
-
-            tds_chr
-          })
-  
-          read_partitions <- NULL ## Not needed anymore
-
+	  if (verbose) mstr(list(params = params, seed = seed))
+	  
+          ## Sanity check
+          stop_if_not(params$chromosome    == chr,
+                      params$bin_size      == bin_size,
+                      params$fraction      == rho,
+                      params$min_cell_size == min_cell_size,
+                      params$window_size   == window_size,
+                      params$partition_by  == partition_by,
+                      params$mainseed      == mainseed,
+                      all(params$seed == seed))
+ 
           if (partition_by %in% c("reads_by_half", "cells_by_half")) {
             ref <- 1L
           } else {
@@ -279,30 +268,11 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by, rho, nsampl
             ref <- which(ok)[1]
           }
 
-          params <- list(
-            bin_size            = bin_size,
-            chromosome          = chr,
-            min_cell_size       = min_cell_size,
-            window_size         = window_size,
-            partition_by        = partition_by,
-            reference_partition = ref,
-            seed                = seed
-	  )
-	  
-          if (save_topdom) {
-            tt <- tds
-	    for (name in names(params)) attr(tt, name) <- params[[name]]
-	    ## BACKWARD COMPATIBILITY (removed 2020-02-04)
-            ## attr(tt, "reference") <- params[["reference_partition"]]
-            pathname2 <- sprintf("%s,topdom.rds", tools::file_path_sans_ext(pathname))
-            saveRDS(tt, file = pathname2)
-            tt <- NULL
-          }
- 
           td_ref <- tds[[ref]]
           overlaps <- lapply(tds, FUN = function(td) Try(overlapScores)(td, reference = td_ref))
           stopifnot(is.list(overlaps), length(overlaps) == length(tds))
           tds <- NULL ## Not needed anymore
+          params$reference_partition <- ref
           for (name in names(params)) attr(overlaps, name) <- params[[name]]
           saveRDS(overlaps, file = pathname)
           if (verbose) mprint(overlaps)

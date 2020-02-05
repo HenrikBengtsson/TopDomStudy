@@ -28,8 +28,6 @@
 #'
 #' @param path_out The root folder where to write output.
 #'
-#' @param save_topdom ...
-#'
 #' @param mainseed ...
 #'
 #' @param as Should values or pathnames be returned?
@@ -59,7 +57,7 @@
 topdom_partitions <- function(reads, bin_size, partition_by, rho, nsamples = 100L, seed = TRUE,
                               chrs = NULL, min_cell_size = 1L, dataset, cell_ids = NULL,
                               window_size = 5L,
-                              path_out = "topdomData", save_topdom = TRUE, mainseed = 0xBEEF, force = FALSE,
+                              path_out = "topdomData", mainseed = 0xBEEF, force = FALSE,
                               as = c("pathname", "value"),
                               verbose = FALSE) {
   ## To please R CMD check
@@ -108,11 +106,11 @@ topdom_partitions <- function(reads, bin_size, partition_by, rho, nsamples = 100
   
   ## FIXME: Export make_rng_seeds()
   if (is.list(seed)) {
-    stop_if_not(length(seeds) == nsamples)
     seeds <- seed
   } else {
     seeds <- future.apply:::make_rng_seeds(nsamples, seed = mainseed)
   }
+  stop_if_not(length(seeds) == nsamples)
   seed_tags <- sprintf("seed=%s", sapply(seeds, FUN = crc32))
 
   as <- match.arg(as)
@@ -132,7 +130,7 @@ topdom_partitions <- function(reads, bin_size, partition_by, rho, nsamples = 100
   for (cc in seq_along(chrs)) {
     chr <- chrs[cc]
     chr_tag <- sprintf("chr=%s", chr)
-    if (verbose) mprintf("Chromosome #%d (%s) of %d ...", cc, chr_tag, length(chrs))
+    if (verbose) mprintf("topdom_partitions(): Chromosome #%d (%s) of %d ...", cc, chr_tag, length(chrs))
 
     ## Find all input files for this chromosome
     pathnames <- file.path(path_out, sapply(1:nsamples, function(bb) {
@@ -156,7 +154,7 @@ topdom_partitions <- function(reads, bin_size, partition_by, rho, nsamples = 100
     
     ## Already done?
     if (length(sample_idxs) == 0L) {
-      if (verbose) mprintf("Chromosome #%d (%s) of %d ... ALREADY DONE", cc, chr_tag, length(chrs))
+      if (verbose) mprintf("topdom_partitions(): Chromosome #%d (%s) of %d ... ALREADY DONE", cc, chr_tag, length(chrs))
       next
     }
     res[[chr]][sample_idxs] <- NA_character_
@@ -209,11 +207,11 @@ topdom_partitions <- function(reads, bin_size, partition_by, rho, nsamples = 100
       for (kk in seq_along(sample_idxs)) {
         bb <- sample_idxs[kk]
         pathname <- pathnames[bb]
-        if (verbose) mprintf("Sample #%d (%s) of %d ...", kk, seed_tags[bb], length(sample_idxs))
+        if (verbose) mprintf("topdom_partitions(): Sample #%d (%s) of %d ...", kk, seed_tags[bb], length(sample_idxs))
     
         ## Already done? (should not happen, but just in case)
         if (!force && file_test("-f", pathname)) {
-          if (verbose) mprintf("Sample #%d (%s) of %d ... ALREADY DONE", kk, seed_tags[bb], length(sample_idxs))
+          if (verbose) mprintf("topdom_partitions(): Sample #%d (%s) of %d ... ALREADY DONE", kk, seed_tags[bb], length(sample_idxs))
           next
         }
         if (verbose) message("- Output pathname: ", pathname)
@@ -272,11 +270,13 @@ topdom_partitions <- function(reads, bin_size, partition_by, rho, nsamples = 100
   
           read_partitions <- NULL ## Not needed anymore
 
-          attr(tds, "bin_size") <- bin_size
           attr(tds, "chromosome") <- chr
+          attr(tds, "bin_size") <- bin_size
+          attr(tds, "fraction") <- rho
           attr(tds, "min_cell_size") <- min_cell_size
           attr(tds, "window_size") <- window_size
           attr(tds, "partition_by") <- partition_by
+          attr(tds, "mainseed") <- mainseed
           attr(tds, "seed") <- seed
           attr(tds, "processing_time") <- dt
 	  if (verbose) {
@@ -290,7 +290,7 @@ topdom_partitions <- function(reads, bin_size, partition_by, rho, nsamples = 100
           pathname
         } %seed% seed %label% paste(c(chr_tag, sprintf("sample=%d", kk)), collapse = "-")
   
-        if (verbose) mprintf("Sample #%d (%s) of %d ... DONE", kk, seed_tags[bb], length(sample_idxs))
+        if (verbose) mprintf("topdom_partitions(): Sample #%d (%s) of %d ... DONE", kk, seed_tags[bb], length(sample_idxs))
       } ## for (kk ...)
   
       reads <- NULL  ## Not needed anymore
@@ -309,7 +309,7 @@ topdom_partitions <- function(reads, bin_size, partition_by, rho, nsamples = 100
       value
     } %label% chr_tag
   
-    if (verbose) mprintf("Chromosome #%d (%s) of %d ... DONE", cc, chr_tag, length(chrs))
+    if (verbose) mprintf("topdom_partitions(): Chromosome #%d (%s) of %d ... DONE", cc, chr_tag, length(chrs))
   } ## for (chr ...)
   
   ## Resolve everything

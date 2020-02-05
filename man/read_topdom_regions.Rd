@@ -7,7 +7,7 @@
 read_topdom_regions(pathname, format = c("tibble", "data.frame"))
 }
 \arguments{
-\item{pathname}{(character string) A \file{*,topdom.rds} file.}
+\item{pathname}{(character string) A \file{*.rds} file.}
 
 \item{format}{(character string) The returned format.}
 }

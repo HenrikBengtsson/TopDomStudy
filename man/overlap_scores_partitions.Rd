@@ -17,7 +17,6 @@ overlap_scores_partitions(
   cell_ids = NULL,
   window_size = 5L,
   path_out = ".",
-  save_topdom = TRUE,
   mainseed = 48879,
   force = FALSE,
   as = c("pathname", "value"),
@@ -53,8 +52,6 @@ Defaults to \code{5L}, which is the same as the default in TopDom.}
 
 \item{path_out}{The root folder that will contain the \verb{overlapScoreData/} folder
 to which RDS files are written.}
-
-\item{save_topdom}{...}
 
 \item{mainseed}{...}
 

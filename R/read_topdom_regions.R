@@ -1,6 +1,6 @@
 #' Read TopDom Regions from TopDomStudy Files
 #'
-#' @param pathname (character string) A \file{*,topdom.rds} file.
+#' @param pathname (character string) A \file{*.rds} file.
 #'
 #' @param format (character string) The returned format.
 #'

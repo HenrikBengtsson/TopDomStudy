@@ -55,6 +55,7 @@ import_topdom_overlap_scores <- function(pattern = "human,HAP1,unique,bin_size=.
       next
     }
     pathnames <- dir(file.path(path, set), pattern = "[.]rds$", recursive = TRUE, full.names = TRUE)
+    ## BACKWARD COMPATIBILITY: Drop any *,topdom.rds files
     pathnames <- grep(",topdom[.]rds$", pathnames, invert = TRUE, value = TRUE)
     data_kk <- future_lapply(pathnames, FUN = read_topdom_overlap_scores)
     data_kk <- do.call(rbind, data_kk)

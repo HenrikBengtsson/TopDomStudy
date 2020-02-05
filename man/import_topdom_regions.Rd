@@ -7,7 +7,7 @@
 import_topdom_regions(
  
     pattern = "human,HAP1,unique,bin_size=.*,partition_by=cells_by_half,min_cell_size=2,window_size=.*,fraction=.*,mainseed=0xBEEF",
-  path = "overlapScoreData",
+  path = "topdomData",
   skip = TRUE,
   save_individual = TRUE
 )
@@ -29,7 +29,7 @@ The pathname of the saved \file{*,test-topdom.rds} file in the
 \code{path} folder.
 }
 \description{
-This script will read all available \file{overlapScoreData/*/*,topdom.rds}
+This script will read all available \file{topdomData/*/*.rds}
 files, extract the TopDom regions for the test samples (but not the
 reference) and convert to a data.frame with additional columns on parameter
 settings and RNG seeds appended.  All these data.frames are stacked into one

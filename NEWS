@@ -6,6 +6,7 @@ Version: 0.0.0-9019 [2020-02-04]
 NEW FEATURES:
 
  * Add topdom_partitions() which writes to topdomData/ by default.
+   overlap_scores_partitions() uses topdom_partitions() internally.
  
 BUG FIXES:
 

@@ -12,7 +12,14 @@ print(dt)
 ## TopDom data
 pathname_oss <- res[["22"]][1]
 oss <- read_rds(pathname_oss)
-pathname_td <- paste0(tools::file_path_sans_ext(pathname_oss), ",topdom.rds")
+
+## Identify TopDom fit
+set <- basename(dirname(pathname_oss))
+filename <- basename(pathname_oss)
+path_td <- file.path("topdomData", set)
+stop_if_not(file_test("-d", path_td))
+pathname_td <- file.path(path_td, filename)
+stop_if_not(file_test("-f", pathname_td))
 tds <- read_rds(pathname_td)
 print(tds)
 

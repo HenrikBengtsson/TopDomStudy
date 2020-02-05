@@ -17,7 +17,6 @@ topdom_partitions(
   cell_ids = NULL,
   window_size = 5L,
   path_out = "topdomData",
-  save_topdom = TRUE,
   mainseed = 48879,
   force = FALSE,
   as = c("pathname", "value"),
@@ -52,8 +51,6 @@ be included. Cells with less reads are dropped.}
 Defaults to \code{5L}, which is the same as the default in TopDom.}
 
 \item{path_out}{The root folder where to write output.}
-
-\item{save_topdom}{...}
 
 \item{mainseed}{...}
 
