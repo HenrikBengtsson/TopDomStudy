@@ -4,6 +4,7 @@
 ^([.]travis|appveyor)[.]yml$
 ^incl
 ^.local
+^topdomData
 ^overlapScoreData
 ^overlapScoreSummary
 ^figures

@@ -1,4 +1,4 @@
-#' Calculates TopDom Overlap Scores Across Partitions
+#' Fit TopDom Across Partitions
 #'
 #' @param reads A [base::data.frame].
 #'
@@ -26,8 +26,7 @@
 #'
 #' @param dataset (optional) ...
 #'
-#' @param path_out The root folder that will contain the `overlapScoreData/` folder
-#'        to which RDS files are written.
+#' @param path_out The root folder where to write output.
 #'
 #' @param save_topdom ...
 #'
@@ -49,18 +48,20 @@
 #'  3. per random sample, across partitions (argument `partition_by`)
 #'     - typically two ('reference' and one more)
 #'
+#' @example incl/topdom_partitions.R
+#'
 #' @importFrom future value %<-% %label% %seed%
 #' @importFrom future.apply future_lapply
 #' @importFrom listenv listenv
 #' @importFrom utils file_test str
-#' @importFrom TopDom overlapScores TopDom
+#' @importFrom TopDom TopDom
 #' @export
-overlap_scores_partitions <- function(reads, bin_size, partition_by, rho, nsamples = 100L, seed = TRUE,
-                                      chrs = NULL, min_cell_size = 1L, dataset, cell_ids = NULL,
-                                      window_size = 5L,
-                                      path_out = ".", save_topdom = TRUE, mainseed = 0xBEEF, force = FALSE,
-                                      as = c("pathname", "value"),
-                                      verbose = FALSE) {
+topdom_partitions <- function(reads, bin_size, partition_by, rho, nsamples = 100L, seed = TRUE,
+                              chrs = NULL, min_cell_size = 1L, dataset, cell_ids = NULL,
+                              window_size = 5L,
+                              path_out = "topdomData", save_topdom = TRUE, mainseed = 0xBEEF, force = FALSE,
+                              as = c("pathname", "value"),
+                              verbose = FALSE) {
   ## To please R CMD check
   cell_id <- chr_a <- NULL; rm(list = c("cell_id", "chr_a"))
   
@@ -116,7 +117,7 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by, rho, nsampl
   as <- match.arg(as)
 
   dataset_out <- paste(c(dataset, cell_ids_tag, bin_size_tag, partition_by_tag, min_cell_size_tag, window_size_tag, rho_tag, mainseed_tag), collapse = ",")
-  path_out <- file.path("overlapScoreData", dataset_out)
+  path_out <- file.path(path_out, dataset_out)
   dir.create(path_out, recursive = TRUE, showWarnings = FALSE)
   stop_if_not(file_test("-d", path_out))
 
@@ -199,7 +200,7 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by, rho, nsampl
   
       ## Subset by chromosome
       reads <- subset(reads, chr_a %in% chr)
-      if (verbose) print(reads)
+      if (verbose) mprint(reads)
   
       res_kk <- listenv()
   
@@ -239,6 +240,7 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by, rho, nsampl
           if (verbose) { mprintf("reads_partitions:"); mstr(reads_partitions) }
 
           ## TopDom on each partition
+          t0 <- Sys.time()
           tds <- lapply(reads_partitions, FUN = function(reads_pp) {
             counts <- {
               counts <- hic_bin(reads_pp, intra_only = TRUE, bin_size = bin_size, progress = FALSE)
@@ -248,61 +250,41 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by, rho, nsampl
             }
             if (verbose) { mprintf("counts:"); mstr(counts) }
             stopifnot(is.list(counts), length(counts) == length(chr), all(names(counts) == chr))
-  
-            ## Used to be Try(TopDom), because:
-            ## 1. https://github.com/HenrikBengtsson/TopDom/issues/4
-            ## 2. https://github.com/HenrikBengtsson/TopDom/issues/8
+
+            t0 <- Sys.time()
             tds <- future_lapply(counts, FUN = TopDom, window.size = window_size)
+            dt <- Sys.time() - t0
             if (verbose) { mprintf("tds:"); mstr(tds) }
             stopifnot(is.list(tds), length(tds) == 1L, all(names(tds) == chr))
             
             tds_chr <- tds[[chr]]
+
             if (verbose) { mprintf("tds_chr:"); mstr(tds_chr) }
-            if (save_topdom) attr(tds_chr, "counts") <- counts
+            attr(tds_chr, "counts") <- counts
+            attr(tds_chr, "processing_time") <- dt
 
             counts <- NULL ## Not needed anymore
 
             tds_chr
           })
+          dt <- Sys.time() - t0
   
           read_partitions <- NULL ## Not needed anymore
 
-          if (partition_by %in% c("reads_by_half", "cells_by_half")) {
-            ref <- 1L
-          } else {
-            ## Find first TopDom fit that didn't produce an error
-            ok <- unlist(lapply(tds, FUN = function(td) !inherits(td, "try-error")))
-            stopifnot(length(ok) == length(tds))
-            ref <- which(ok)[1]
-          }
-
-          params <- list(
-            bin_size            = bin_size,
-            chromosome          = chr,
-            min_cell_size       = min_cell_size,
-            window_size         = window_size,
-            partition_by        = partition_by,
-            reference_partition = ref,
-            seed                = seed
-	  )
+          attr(tds, "bin_size") <- bin_size
+          attr(tds, "chromosome") <- chr
+          attr(tds, "min_cell_size") <- min_cell_size
+          attr(tds, "window_size") <- window_size
+          attr(tds, "partition_by") <- partition_by
+          attr(tds, "seed") <- seed
+          attr(tds, "processing_time") <- dt
+	  if (verbose) {
+	    message("Saving to file: ", sQuote(pathname))
+	    mstr(tds)
+	  }
 	  
-          if (save_topdom) {
-            tt <- tds
-	    for (name in names(params)) attr(tt, name) <- params[[name]]
-	    ## BACKWARD COMPATIBILITY (removed 2020-02-04)
-            ## attr(tt, "reference") <- params[["reference_partition"]]
-            pathname2 <- sprintf("%s,topdom.rds", tools::file_path_sans_ext(pathname))
-            saveRDS(tt, file = pathname2)
-            tt <- NULL
-          }
- 
-          td_ref <- tds[[ref]]
-          overlaps <- lapply(tds, FUN = function(td) Try(overlapScores)(td, reference = td_ref))
-          stopifnot(is.list(overlaps), length(overlaps) == length(tds))
-          tds <- NULL ## Not needed anymore
-          for (name in names(params)) attr(overlaps, name) <- params[[name]]
-          saveRDS(overlaps, file = pathname)
-          if (verbose) mprint(overlaps)
+          saveRDS(tds, file = pathname)
+          tds <- NULL
   
           pathname
         } %seed% seed %label% paste(c(chr_tag, sprintf("sample=%d", kk)), collapse = "-")
@@ -333,4 +315,4 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by, rho, nsampl
   res <- as.list(res)
 
   res
-} ## overlap_scores_partitions()
+} ## topdom_partitions()

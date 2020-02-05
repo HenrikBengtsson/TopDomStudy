@@ -1,12 +1,21 @@
 TopDomStudy
 ===========
 
+Version: 0.0.0-9019 [2020-02-04]
+
+NEW FEATURES:
+
+ * Add topdom_partitions() which writes to topdomData/ by default.
+ 
+
 Version: 0.0.0-9018 [2020-02-04]
 
-* Add import_topdom_regions() and import_topdom_overlap_scores().
+NEW FEATURES:
 
-* Add read_topdom_regions() and read_topdom_scores() for extracting
-  a subset of the file data as data frames.
+ * Add import_topdom_regions() and import_topdom_overlap_scores().
+ 
+ * Add read_topdom_regions() and read_topdom_scores() for extracting
+   a subset of the file data as data frames.
 
 
 Version: 0.0.0-9017 [2020-01-07]

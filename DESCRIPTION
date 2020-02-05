@@ -1,5 +1,5 @@
 Package: TopDomStudy
-Version: 0.0.0-9018
+Version: 0.0.0-9019
 Title: TopDom Study by Segal et al.
 Description: Utility functions for the TopDom-related study by Segal et al. (2017).
 Authors@R: c(
@@ -8,10 +8,10 @@ Authors@R: c(
 License: GPL (>= 3)
 Depends:
     R (>= 3.5.0),
-    TopDom (>= 0.8.0)
+    TopDom (>= 0.8.2)
 Imports:
     cowplot,
-    digest (>= 0.6.18),
+    digest,
     dplyr,
     ggplot2,
     listenv,
