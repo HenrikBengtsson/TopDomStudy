@@ -101,19 +101,22 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by, rho, nsampl
   }
   rho_tag <- sprintf("fraction=%.3f", rho)
   ## Random seeds (use the same for all chromosomes, i.e. invariant to chromosome)
+
+  stop_if_not(mainseed == 0xBEEF)
+  mainseed_tag <- "mainseed=0xBEEF"
+
   ## FIXME: Export make_rng_seeds()
   if (is.list(seed)) {
     stop_if_not(length(seeds) == nsamples)
     seeds <- seed
   } else {
-    seeds <- future.apply:::make_rng_seeds(nsamples, seed = seed)
+    seeds <- future.apply:::make_rng_seeds(nsamples, seed = mainseed)
   }
   seed_tags <- sprintf("seed=%s", sapply(seeds, FUN = crc32))
 
-  stop_if_not(mainseed == 0xBEEF)
-  mainseed_tag <- "mainseed=0xBEEF"
-
   as <- match.arg(as)
+
+  tds <- topdom_partitions(reads, bin_size = bin_size, rho = rho, partition_by= partition_by, nsamples = nsamples, seed = TRUE, chrs = chrs, min_cell_size = min_cell_size, dataset = dataset, cell_ids = cell_ids, window_size = window_size, mainseed = mainseed, force = FALSE, verbose = verbose)
 
   dataset_out <- paste(c(dataset, cell_ids_tag, bin_size_tag, partition_by_tag, min_cell_size_tag, window_size_tag, rho_tag, mainseed_tag), collapse = ",")
   path_out <- file.path("overlapScoreData", dataset_out)

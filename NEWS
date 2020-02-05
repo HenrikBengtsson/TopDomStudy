@@ -7,6 +7,11 @@ NEW FEATURES:
 
  * Add topdom_partitions() which writes to topdomData/ by default.
  
+BUG FIXES:
+
+ * overlap_scores_partitions() did not use 'mainseed' as the initial seed
+   when seed = TRUE.
+ 
 
 Version: 0.0.0-9018 [2020-02-04]
 

@@ -10,6 +10,6 @@ for (partition_by in c("reads", "cells", "reads_by_half", "cells_by_half")) {
   print(res)
 
   ## Calling it a second time should skip already existing results (on file)
-  res2 <- overlap_scores_partitions(reads = reads, dataset = dateset, bin_size = 100000, partition_by = partition_by, min_cell_size = 2L, rho = 1/4, nsamples = 2L, chrs = "22", seed = TRUE, mainseed = 0xBEEF, force = FALSE, verbose = TRUE)
+  res2 <- overlap_scores_partitions(reads = reads, dataset = dataset, bin_size = 100000, partition_by = partition_by, min_cell_size = 2L, rho = 1/4, nsamples = 2L, chrs = "22", seed = TRUE, mainseed = 0xBEEF, force = FALSE, verbose = TRUE)
   print(res2)
 }

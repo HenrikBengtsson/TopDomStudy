@@ -102,17 +102,18 @@ topdom_partitions <- function(reads, bin_size, partition_by, rho, nsamples = 100
   }
   rho_tag <- sprintf("fraction=%.3f", rho)
   ## Random seeds (use the same for all chromosomes, i.e. invariant to chromosome)
+  
+  stop_if_not(mainseed == 0xBEEF)
+  mainseed_tag <- "mainseed=0xBEEF"
+  
   ## FIXME: Export make_rng_seeds()
   if (is.list(seed)) {
     stop_if_not(length(seeds) == nsamples)
     seeds <- seed
   } else {
-    seeds <- future.apply:::make_rng_seeds(nsamples, seed = seed)
+    seeds <- future.apply:::make_rng_seeds(nsamples, seed = mainseed)
   }
   seed_tags <- sprintf("seed=%s", sapply(seeds, FUN = crc32))
-
-  stop_if_not(mainseed == 0xBEEF)
-  mainseed_tag <- "mainseed=0xBEEF"
 
   as <- match.arg(as)
 
