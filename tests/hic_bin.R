@@ -15,7 +15,7 @@ stopifnot(
   names(counts) == "22",
   is.matrix(counts[[1]]),
   is.integer(counts[[1]]),
-  is.list(attr(counts[[1]], "bins"))
+  is.list(attr(counts[[1]], "bins", exact = TRUE))
 )
 
 message("- Coercing to list of TopDomData objects")

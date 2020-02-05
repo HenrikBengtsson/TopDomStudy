@@ -21,7 +21,7 @@ sample_partitions_by_cells <- function(reads, ...) {
   ## Partion cells into parts of roughly equal-sized reads
   cell_partitions <- sample_partitions_similar_weights(cell_weights, ...)
   if (length(cell_partitions) == 1L && is.na(cell_partitions)) {
-    stop(sprintf("Failed to identify cell partitioning (cell_weights = %g) after %d rejected attempts", cell_weights, attr(cell_partitions, "count")))
+    stop(sprintf("Failed to identify cell partitioning (cell_weights = %g) after %d rejected attempts", cell_weights, attr(cell_partitions, "count", exact = TRUE)))
   }
   
   ## Convert cell partion into read partition
@@ -81,7 +81,7 @@ sample_partitions_by_cells_by_half <- function(reads, fraction, w_tolerance = 0.
   ## Partion cells into two partions that have approximately the same number of reads
   cell_sets <- sample_partitions_similar_weights_by_half(cell_weights, fraction = 1/2, w_tolerance = w_tolerance, max_rejections = max_rejections, warn = warn, ...)
   if (length(cell_sets) == 1L && is.na(cell_sets)) {
-    stop(sprintf("Failed to identify a cell partition (cell_weights = %g) after %d rejected attempts", cell_weights, attr(cell_sets, "count")))
+    stop(sprintf("Failed to identify a cell partition (cell_weights = %g) after %d rejected attempts", cell_weights, attr(cell_sets, "count", exact = TRUE)))
   }
   stop_if_not(length(cell_sets) == 2L)
   

@@ -26,7 +26,8 @@ print(tds)
 stopifnot(length(tds) == length(oss))
 
 ## The reference partition
-td_ref <- tds[[attributes(tds)$reference_partition]]
+ref <- attr(oss, "reference_partition", exact = TRUE)
+td_ref <- tds[[ref]]
 
 for (kk in seq_along(tds)) {
   td <- tds[[kk]]

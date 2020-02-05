@@ -237,14 +237,14 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by, rho, nsampl
           if (verbose) mprintf(" - Reading TopDom fit: ", sQuote(pathname2))
           tds <- read_rds(pathname2)
           params <- list(
-            chromosome    = attr(tds, "chromosome"),
-            bin_size      = attr(tds, "bin_size"),
-            fraction      = attr(tds, "fraction"),
-            min_cell_size = attr(tds, "min_cell_size"),
-            window_size   = attr(tds, "window_size"),
-            partition_by  = attr(tds, "partition_by"),
-            mainseed      = attr(tds, "mainseed"),
-            seed          = attr(tds, "seed")
+            chromosome    = attr(tds, "chromosome", exact = TRUE),
+            bin_size      = attr(tds, "bin_size", exact = TRUE),
+            fraction      = attr(tds, "fraction", exact = TRUE),
+            min_cell_size = attr(tds, "min_cell_size", exact = TRUE),
+            window_size   = attr(tds, "window_size", exact = TRUE),
+            partition_by  = attr(tds, "partition_by", exact = TRUE),
+            mainseed      = attr(tds, "mainseed", exact = TRUE),
+            seed          = attr(tds, "seed", exact = TRUE)
           )
 
 	  if (verbose) mstr(list(params = params, seed = seed))

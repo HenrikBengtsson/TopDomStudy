@@ -36,7 +36,7 @@ overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, r
   window_size <- as.integer(window_size)
   window_size_tag <- sprintf("window_size=%d", window_size)
 
-  domain_length <- attr(pathnames, "domain_length")
+  domain_length <- attr(pathnames, "domain_length", exact = TRUE)
   if (!is.null(domain_length)) {
     stop_if_not(is.numeric(domain_length), length(domain_length) == 2L, !anyNA(domain_length), all(domain_length > 0))
     domain_length_tag <- sprintf("domain_length=%.0f-%.0f", domain_length[1], domain_length[2])
