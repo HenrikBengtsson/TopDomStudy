@@ -8,7 +8,7 @@ Authors@R: c(
 License: GPL (>= 3)
 Depends:
     R (>= 3.5.0),
-    TopDom (>= 0.8.2)
+    TopDom (>= 0.9.0)
 Imports:
     cowplot,
     digest,
