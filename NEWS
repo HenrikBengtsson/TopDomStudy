@@ -1,6 +1,13 @@
 TopDomStudy
 ===========
 
+Version: 0.0.0-9020 [2020-02-20]
+ 
+BUG FIXES:
+
+ * import_topdom_regions() failed to parse the 'seed' from the filename.
+ 
+
 Version: 0.0.0-9019 [2020-02-19]
 
 NEW FEATURES:

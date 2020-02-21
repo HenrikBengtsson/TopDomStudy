@@ -19,8 +19,8 @@ read_topdom_regions <- function(pathname, format = c("tibble", "data.frame")) {
   stopifnot(is.numeric(fraction), length(fraction) == 1L, is.finite(fraction),
             fraction > 0, fraction <= 1/2)
   
-  seed <- gsub(".*,seed=([a-z0-9]+),.*", "\\1", basename(pathname))
-  stopifnot(nzchar(seed))
+  seed <- gsub(".*,seed=([a-z0-9]+).*", "\\1", basename(pathname))
+  stopifnot(nzchar(seed), grepl("^[a-z0-9]+$", seed))
   seed <- eval(parse(text = sprintf("0x%s", seed)))
   stopifnot(is.numeric(seed), length(seed) == 1L, is.finite(seed))
   
