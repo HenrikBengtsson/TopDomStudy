@@ -104,7 +104,7 @@ split_by_celltype <- function(celltypes = list(
       data <- arrange(data, chr_a, start_a, chr_b, start_b)
       
       p(sprintf("Saving (%s,%s)", sQuote(org), sQuote(celltype)))
-      saveRDS(data, file = pathname_celltype)
+      save_rds(data, pathname_celltype)
 
       ## Not needed anymore
       data <- NULL

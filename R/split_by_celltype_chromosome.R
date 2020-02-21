@@ -106,7 +106,7 @@ split_by_celltype_chromosome <- function(celltypes = list(
         
         data_chr <- data[rows, , drop = FALSE]
         data <- data[-rows, , drop = FALSE]
-        saveRDS(data_chr, file = pathname_chr)
+        save_rds(data_chr, pathname_chr)
 
         ## Not needed anymore
         data_chr <- NULL

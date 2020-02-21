@@ -298,7 +298,7 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by, reference_t
           params$reference_type <- reference_type
           params$reference_partition <- ref
           for (name in names(params)) attr(overlaps, name) <- params[[name]]
-          saveRDS(overlaps, file = pathname)
+          save_rds(overlaps, pathname)
           if (verbose) mprint(overlaps)
   
           pathname

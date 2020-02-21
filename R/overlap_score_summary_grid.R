@@ -219,7 +219,7 @@ overlap_score_summary_grid <- function(dataset, chromosomes, bin_sizes, rhos, wi
           if (verbose) message("Summary of overlap scores and reference domain lengths ... done")
 
           ## Save intermediate results to file
-          saveRDS(summary_kk, file = pathname_summary_kk)
+          save_rds(summary_kk, pathname_summary_kk)
           if (verbose) message("Saved pathname_summary_kk: ", pathname_summary_kk)
 
           pathname_summary_kk

@@ -9,6 +9,8 @@ NEW FEATURES:
    whether the reference domains should be based on the 50% ("half") reference
    set or a reference of the same sample fraction size ("self").
 
+ * Added internal save_rds() to save files atomatically.
+
 BUG FIXES:
 
  * import_topdom_regions() failed to parse the 'seed' from the filename.

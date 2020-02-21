@@ -227,7 +227,7 @@ compile_by_organism <- function(samples, organisms = c("human", "mouse"), path =
         filename <- sprintf("%s,%s.rds", sample, org)
         pathname <- file.path(path_dest, filename)
         p(sprintf("Saving to file: %s", filename))
-        saveRDS(data, file = pathname)
+        save_rds(data, pathname)
       
         ## Keep only unique read pairs
         p(sprintf("Dropping duplicated read pairs"))
@@ -237,7 +237,7 @@ compile_by_organism <- function(samples, organisms = c("human", "mouse"), path =
         filename <- sprintf("%s,%s,unique.rds", sample, org)
         pathname <- file.path(path_dest, filename)
         p(sprintf("Saving to file: %s", filename))
-        saveRDS(data, file = pathname)
+        save_rds(data, pathname)
   
         data <- NULL  ## Not needed anymore
         

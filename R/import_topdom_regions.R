@@ -58,7 +58,7 @@ import_topdom_regions <- function(pattern = "human,HAP1,unique,bin_size=.*,parti
     data_kk <- future_lapply(pathnames, FUN = read_topdom_regions)
     data_kk <- do.call(rbind, data_kk)
     print(data_kk)
-    if (save_individual) saveRDS(data_kk, file = pathname_kk)
+    if (save_individual) save_rds(data_kk, pathname_kk)
     data[[kk]] <- data_kk
     message(sprintf("Set #%d (%s) of %d ... saved", kk, set, length(sets)))
   }
@@ -66,7 +66,7 @@ import_topdom_regions <- function(pattern = "human,HAP1,unique,bin_size=.*,parti
   data <- do.call(rbind, data)
   o <- with(data, order(chr, bin_size, fraction, window_size, seed, from.id))
   data <- data[o, ]
-  saveRDS(data, file = pathname)
+  save_rds(data, pathname)
   
   pathname
 }

@@ -284,7 +284,7 @@ topdom_partitions <- function(reads, bin_size, partition_by, rho, nsamples = 100
 	    mstr(tds)
 	  }
 	  
-          saveRDS(tds, file = pathname)
+          save_rds(tds, pathname)
           tds <- NULL
   
           pathname

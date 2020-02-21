@@ -60,13 +60,13 @@ import_topdom_overlap_scores <- function(pattern = "human,HAP1,unique,bin_size=.
     data_kk <- future_lapply(pathnames, FUN = read_topdom_overlap_scores)
     data_kk <- do.call(rbind, data_kk)
     print(data_kk)
-    if (save_individual) saveRDS(data_kk, file = pathname_kk)
+    if (save_individual) save_rds(data_kk, pathname_kk)
     data[[kk]] <- data_kk
     message(sprintf("Set #%d (%s) of %d ... saved", kk, set, length(sets)))
   }
 
   data <- do.call(rbind, data)
-  saveRDS(data, file = pathname)
+  save_rds(data, pathname)
   
   pathname
 }
