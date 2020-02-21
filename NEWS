@@ -2,7 +2,13 @@ TopDomStudy
 ===========
 
 Version: 0.0.0-9020 [2020-02-20]
- 
+
+NEW FEATURES:
+
+ * overlap_scores_partitions() gained argument 'reference_type' to control
+   whether the reference domains should be based on the 50% ("half") reference
+   set or a reference of the same sample fraction size ("self").
+
 BUG FIXES:
 
  * import_topdom_regions() failed to parse the 'seed' from the filename.

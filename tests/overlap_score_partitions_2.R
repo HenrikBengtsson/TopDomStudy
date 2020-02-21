@@ -15,10 +15,12 @@ oss <- read_rds(pathname_oss)
 
 ## Identify TopDom fit
 set <- basename(dirname(pathname_oss))
-filename <- basename(pathname_oss)
 path_td <- file.path("topdomData", set)
 stop_if_not(file_test("-d", path_td))
-pathname_td <- file.path(path_td, filename)
+filename_td <- basename(pathname_oss)
+## Ad hoc /HB 2020-02-20
+filename_td <- gsub(",reference_type=[^,]+,", ",", filename_td)
+pathname_td <- file.path(path_td, filename_td)
 stop_if_not(file_test("-f", pathname_td))
 tds <- read_rds(pathname_td)
 print(tds)

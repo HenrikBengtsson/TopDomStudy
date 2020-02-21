@@ -177,12 +177,14 @@ overlap_score_summary_grid <- function(dataset, chromosomes, bin_sizes, rhos, wi
             z <- overlap_score_summary(oss, weights = weights, domain_length = domain_length)
             oss <- failed <- NULL
 
-            ## Identify TopDom fit
+            ## Locate TopDom fit results
             set <- basename(dirname(pathname))
-            filename <- basename(pathname)
             path_td <- file.path("topdomData", set)
             stop_if_not(file_test("-d", path_td))
-            pathname_td <- file.path(path_td, filename)
+            filename_td <- basename(pathname)
+            ## Ad hoc /HB 2020-02-20
+            filename_td <- gsub(",reference_type=[^,]+,", ",", filename_td)
+            pathname_td <- file.path(path_td, filename_td)
             stop_if_not(file_test("-f", pathname_td))
             td <- read_rds(pathname_td)
 

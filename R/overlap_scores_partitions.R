@@ -5,9 +5,12 @@
 #' @param bin_size A positive numeric.
 #'
 #' @param partition_by A string specifying how to partition;
-#'        one of `"reads"`, `"cells"`, `"reads_by_half"`, or `"cells_by_half"`.
+#'        one of `"reads"`, `"cells"`, `"reads_by_half"`, and `"cells_by_half"`.
 #'
-#' @param rho A numeric in \eqn{(0,1/2]} specifying the relative size of the partions.
+#' @param reference_type A string specifying what reference to use;
+#'        either `"half"` or `"self"`.
+#'
+#' @param rho A numeric in \eqn{(0,1/2]} specifying the relative size of the partitions.
 #'
 #' @param nsamples Number of random samples.
 #'
@@ -53,7 +56,8 @@
 #' @importFrom utils file_test str
 #' @importFrom TopDom overlapScores TopDom
 #' @export
-overlap_scores_partitions <- function(reads, bin_size, partition_by, rho, nsamples = 100L, seed = TRUE,
+overlap_scores_partitions <- function(reads, bin_size, partition_by, reference_type = c("half", "self"),
+                                      rho, nsamples = 100L, seed = TRUE,
                                       chrs = NULL, min_cell_size = 1L, dataset, cell_ids = NULL,
                                       window_size = 5L,
                                       path_out = ".", mainseed = 0xBEEF, force = FALSE,
@@ -65,6 +69,7 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by, rho, nsampl
   stop_if_not(is.data.frame(reads) || is.function(reads))
   stop_if_not(is.numeric(bin_size), length(bin_size) == 1L, !is.na(bin_size), bin_size > 0, is.finite(bin_size))
   partition_by <- match.arg(partition_by, choices = c("reads", "cells", "reads_by_half", "cells_by_half"))
+  reference_type <- match.arg(reference_type, choices = c("half", "self"))
   stopifnot(length(min_cell_size) == 1L, is.numeric(min_cell_size),
             !is.na(min_cell_size), min_cell_size >= 1L)
   stop_if_not(is.numeric(rho), length(rho) == 1L, !is.na(rho), rho > 0.0, rho <= 0.5)
@@ -92,6 +97,7 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by, rho, nsampl
   
   bin_size_tag <- sprintf("bin_size=%g", bin_size)
   partition_by_tag <- sprintf("partition_by=%s", partition_by)
+  reference_type_tag <- sprintf("reference_type=%s", reference_type)
   if (min_cell_size > 1L) {
     min_cell_size_tag <- sprintf("min_cell_size=%d", min_cell_size)
   } else {
@@ -132,11 +138,12 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by, rho, nsampl
     if (verbose) mprintf("Chromosome #%d (%s) of %d ...", cc, chr_tag, length(chrs))
 
     ## Find all input files for this chromosome
-    pathnames <- file.path(path_out, sapply(1:nsamples, function(bb) {
-      tags <- c(cell_ids_tag, chr_tag, bin_size_tag, partition_by_tag, min_cell_size_tag, window_size_tag, rho_tag, seed_tags[bb])
+    filenames <- sapply(1:nsamples, function(bb) {
+      tags <- c(cell_ids_tag, chr_tag, bin_size_tag, partition_by_tag, reference_type_tag, min_cell_size_tag, window_size_tag, rho_tag, seed_tags[bb])
       name <- paste(c(dataset, tags), collapse = ",")
       sprintf("%s.rds", name)
-    }))
+    })
+    pathnames <- file.path(path_out, filenames)
   
     res[[chr]] <- pathnames
   
@@ -161,7 +168,9 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by, rho, nsampl
     if (verbose) mprintf(" - Number of (remaining) samples to process for chromosome %s (%s): %d", chr, chr_tag, length(sample_idxs))
 
     ## Always fit TopDom first
-    tds <- topdom_partitions(reads, chrs = chr, bin_size = bin_size, rho = rho, partition_by= partition_by, nsamples = nsamples, min_cell_size = min_cell_size, dataset = dataset, cell_ids = cell_ids, window_size = window_size, seed = seeds, mainseed = mainseed, force = FALSE, verbose = verbose)
+    tds <- topdom_partitions(reads, chrs = chr, bin_size = bin_size, rho = rho, partition_by = partition_by, nsamples = nsamples, min_cell_size = min_cell_size, dataset = dataset, cell_ids = cell_ids, window_size = window_size, seed = seeds, mainseed = mainseed, force = FALSE, verbose = verbose)
+
+    utils::str(list(tags = c(cell_ids_tag, chr_tag, bin_size_tag, partition_by_tag, min_cell_size_tag, window_size_tag, rho_tag)))
 
     res[[chr]] %<-% {
       if (is.function(reads)) reads <- reads()
@@ -224,18 +233,20 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by, rho, nsampl
           mstr(seed)
         }
 
-        ## Identify TopDom fit
+        ## Locate TopDom fit results
         set <- basename(dirname(pathname))
-        filename <- basename(pathname)
-        path2 <- file.path("topdomData", set)
-        stop_if_not(file_test("-d", path2))
-        pathname2 <- file.path(path2, filename)
-        stop_if_not(file_test("-f", pathname2))
+        path_td <- file.path("topdomData", set)
+        stop_if_not(file_test("-d", path_td))
+        tags <- c(cell_ids_tag, chr_tag, bin_size_tag, partition_by_tag, min_cell_size_tag, window_size_tag, rho_tag, seed_tags[bb])
+        name <- paste(c(dataset, tags), collapse = ",")
+        filename_td <- sprintf("%s.rds", name)
+        pathname_td <- file.path(path_td, filename_td)
+        stop_if_not(file_test("-f", pathname_td))
         
         res_kk[[bb]] %<-% {
           if (verbose) mprintf(" - Random, disjoint partitioning of %s", partition_by)
-          if (verbose) mprintf(" - Reading TopDom fit: ", sQuote(pathname2))
-          tds <- read_rds(pathname2)
+          if (verbose) mprintf(" - Reading TopDom fit: ", sQuote(pathname_td))
+          tds <- read_rds(pathname_td)
           params <- list(
             chromosome    = attr(tds, "chromosome", exact = TRUE),
             bin_size      = attr(tds, "bin_size", exact = TRUE),
@@ -258,20 +269,35 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by, rho, nsampl
                       params$partition_by  == partition_by,
                       params$mainseed      == mainseed,
                       all(params$seed == seed))
- 
-          if (partition_by %in% c("reads_by_half", "cells_by_half")) {
-            ref <- 1L
-          } else {
+
+          ## Select reference
+          ref <- NA_integer_
+          if (reference_type == "half") {
+            if (partition_by %in% c("reads_by_half", "cells_by_half")) {
+              ref <- 1L
+            } else {
+              ## Find first TopDom fit that didn't produce an error
+              ok <- unlist(lapply(tds, FUN = function(td) !inherits(td, "try-error")))
+              stopifnot(length(ok) == length(tds))
+              ref <- which(ok)[1]
+            }
+	  } else if (reference_type == "self") {
+	    ## Drop default reference if it is a 50% reference
+            if (partition_by %in% c("reads_by_half", "cells_by_half")) {
+              tds <- tds[-1]
+	    }
             ## Find first TopDom fit that didn't produce an error
             ok <- unlist(lapply(tds, FUN = function(td) !inherits(td, "try-error")))
             stopifnot(length(ok) == length(tds))
             ref <- which(ok)[1]
-          }
-
+	  }
+          stopifnot(is.finite(ref), ref >= 1L, ref <= length(tds))
           td_ref <- tds[[ref]]
+	  
           overlaps <- lapply(tds, FUN = function(td) Try(overlapScores)(td, reference = td_ref))
           stopifnot(is.list(overlaps), length(overlaps) == length(tds))
           tds <- NULL ## Not needed anymore
+          params$reference_type <- reference_type
           params$reference_partition <- ref
           for (name in names(params)) attr(overlaps, name) <- params[[name]]
           saveRDS(overlaps, file = pathname)
