@@ -85,7 +85,7 @@ split_by_celltype <- function(celltypes = list(
       data <- future_lapply(pathnames_org, FUN = function(pathname) {
         name <- gsub(",.*", "", basename(pathname))
         message(sprintf("Sample: %s (%s)", name, pathname))
-        data <- readRDS(pathname)
+        data <- read_rds(pathname)
         type <- celltype
         data <- filter(data, celltype == type)
         

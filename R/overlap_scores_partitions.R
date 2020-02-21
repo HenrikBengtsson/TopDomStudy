@@ -170,8 +170,6 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by, reference_t
     ## Always fit TopDom first
     tds <- topdom_partitions(reads, chrs = chr, bin_size = bin_size, rho = rho, partition_by = partition_by, nsamples = nsamples, min_cell_size = min_cell_size, dataset = dataset, cell_ids = cell_ids, window_size = window_size, seed = seeds, mainseed = mainseed, force = FALSE, verbose = verbose)
 
-    utils::str(list(tags = c(cell_ids_tag, chr_tag, bin_size_tag, partition_by_tag, min_cell_size_tag, window_size_tag, rho_tag)))
-
     res[[chr]] %<-% {
       if (is.function(reads)) reads <- reads()
 

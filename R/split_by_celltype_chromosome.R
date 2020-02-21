@@ -83,7 +83,7 @@ split_by_celltype_chromosome <- function(celltypes = list(
         next
       }
       
-      data <- readRDS(pathname_celltype)
+      data <- read_rds(pathname_celltype)
 
       for (chr in chromosomes) {
         chr_tag <- sprintf("chr=%s", chr)
