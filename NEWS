@@ -13,6 +13,9 @@ SIGNIFICANT CHANGES:
  * Renamed file tag 'fraction=<size>' to 'test=<size>'.  This is to make room
    for a 'reference=<size>' tag, which this far has been implicit to 50%.
 
+ * Now list partion elements are named "reference" and "test".  Their sample
+   fractions are encoded in named integer attribute 'fraction' of length two.
+
 NEW FEATURES:
 
  * overlap_scores_partitions() gained argument 'reference_type' to control

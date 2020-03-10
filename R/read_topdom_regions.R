@@ -33,9 +33,9 @@ read_topdom_regions <- function(pathname, format = c("tibble", "data.frame")) {
 
   ## TODO: Drop support for '^fraction=..." /HB 2020-03-10
   if (any(grepl("^fraction=0.5$", names(data)))) {
-    .Deprecated(msg = "The 'fraction=0.5' name is deprecated; please use 'test=0.5' instead")
+    .Deprecated(msg = "The 'fraction=0.5' name is deprecated; please use 'test' instead")
   }
-  test_partition <- grep("^(fraction|test)=0.5$", names(data))
+  test_partition <- grep("^(fraction=0.5|test)$", names(data))
   stopifnot(length(test_partition) == 1L)
   topdom <- data[[test_partition]]
   

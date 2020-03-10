@@ -21,7 +21,7 @@ parts <- sample_partitions_by_half(n, fraction = c(reference = 1/2, test = 1/2))
 str(parts)
 idxs <- sort(unlist(parts, use.names = FALSE))
 stopifnot(
-  grepl("^reference", names(parts)[1]),
+  "reference" == names(parts)[1],
   length(parts) == 2L,
   length(idxs) == n,
   identical(idxs, seq_len(n)),
@@ -59,7 +59,7 @@ parts <- sample_partitions_similar_weights_by_half(w, fraction = c(reference = 1
 str(parts)
 idxs <- sort(unlist(parts, use.names = FALSE))
 stopifnot(
-  grepl("^reference", names(parts)[1]),
+  "reference" == names(parts)[1],
   length(parts) == 2L,
   length(idxs) == n,
   identical(idxs, seq_len(n)),
@@ -84,7 +84,7 @@ for (fraction in c(0.01, 0.2, 0.5)) {
   str(parts)
   idxs <- sort(unlist(parts, use.names = FALSE))
   stopifnot(
-    grepl("^reference", names(parts)[1]),
+    "reference" == names(parts)[1],
     length(parts) == 2L,
     all(parts[[1]] == parts0[[1]]),
     length(idxs) == (0.5 + fraction) * n
@@ -104,7 +104,7 @@ for (fraction in c(0.01, 0.2, 0.5)) {
   str(parts)
   idxs <- sort(unlist(parts, use.names = FALSE))
   stopifnot(
-    grepl("^reference", names(parts)[1]),
+    "reference" == names(parts)[1],
     length(parts) == 2L,
     all(parts[[1]] == parts0[[1]]),
     length(idxs) == (0.5 + fraction) * n

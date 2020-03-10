@@ -30,6 +30,7 @@ sample_partitions_by_half <- function(n, fraction, warn = TRUE) {
   }
   stopifnot(length(fraction) == 2L)
   if (is.null(names(fraction))) names(fraction) <- c("reference", "test")
+  stopifnot(all(names(fraction) == c("reference", "test")))
   
   parts <- sample_partitions(n = n, fraction = 1/2)
 
@@ -46,12 +47,12 @@ sample_partitions_by_half <- function(n, fraction, warn = TRUE) {
     }
   }
 
-  names(parts) <- sprintf("%s=%g", c("reference", "test"), fraction)
+  names(parts) <- c("reference", "test")
   attr(parts, "fraction") <- fraction
   attr(parts, "n") <- n
 
   ## Sanity check
-  stop_if_not(length(parts) == 2L)
+  stop_if_not(length(parts) == 2L, all(names(parts) == names(fraction)))
   
   parts
 }
@@ -103,6 +104,7 @@ sample_partitions_similar_weights_by_half <- function(w, fraction, w_tolerance =
   }
   stopifnot(length(fraction) == 2L)
   if (is.null(names(fraction))) names(fraction) <- c("reference", "test")
+  stopifnot(all(names(fraction) == c("reference", "test")))
 
   ## Normalize weights
   w <- w / sum(w)
@@ -126,12 +128,12 @@ sample_partitions_similar_weights_by_half <- function(w, fraction, w_tolerance =
     }
   }
   
-  names(parts) <- sprintf("%s=%g", c("reference", "test"), fraction)
+  names(parts) <- c("reference", "test")
   attr(parts, "fraction") <- fraction
   attr(parts, "n") <- n
 
   ## Sanity check
-  stop_if_not(length(parts) == 2L)
+  stop_if_not(length(parts) == 2L, all(names(parts) == names(fraction)))
 
   parts
 }
