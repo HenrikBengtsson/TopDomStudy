@@ -4,11 +4,24 @@
 \alias{overlap_scores_partitions}
 \title{Calculates TopDom Overlap Scores Across Partitions}
 \usage{
-overlap_scores_partitions(reads, bin_size, partition_by, rho,
-  nsamples = 100L, seed = TRUE, chrs = NULL, min_cell_size = 1L,
-  dataset, cell_ids = NULL, window_size = 5L, path_out = ".",
-  save_topdom = TRUE, mainseed = 48879, force = FALSE,
-  as = c("pathname", "value"), verbose = FALSE)
+overlap_scores_partitions(
+  reads,
+  bin_size,
+  partition_by,
+  rho,
+  nsamples = 100L,
+  seed = TRUE,
+  chrs = NULL,
+  min_cell_size = 1L,
+  dataset,
+  cell_ids = NULL,
+  window_size = 5L,
+  path_out = ".",
+  mainseed = 48879,
+  force = FALSE,
+  as = c("pathname", "value"),
+  verbose = FALSE
+)
 }
 \arguments{
 \item{reads}{A \link[base:data.frame]{base::data.frame}.}
@@ -16,9 +29,9 @@ overlap_scores_partitions(reads, bin_size, partition_by, rho,
 \item{bin_size}{A positive numeric.}
 
 \item{partition_by}{A string specifying how to partition;
-one of \code{"reads"}, \code{"cells"}, \code{"reads_by_half"}, or \code{"cells_by_half"}.}
+one of \code{"reads"}, \code{"cells"}, \code{"reads_by_half"}, and \code{"cells_by_half"}.}
 
-\item{rho}{A numeric in \eqn{(0,1/2]} specifying the relative size of the partions.}
+\item{rho}{A numeric in \eqn{(0,1/2]} specifying the relative size of the partitions.}
 
 \item{nsamples}{Number of random samples.}
 
@@ -37,10 +50,8 @@ be included. Cells with less reads are dropped.}
 \item{window_size}{A positive integer passed to \link[TopDom:TopDom]{TopDom::TopDom}.
 Defaults to \code{5L}, which is the same as the default in TopDom.}
 
-\item{path_out}{The root folder that will contain the \code{overlapScoreData/} folder
+\item{path_out}{The root folder that will contain the \verb{overlapScoreData/} folder
 to which RDS files are written.}
-
-\item{save_topdom}{...}
 
 \item{mainseed}{...}
 

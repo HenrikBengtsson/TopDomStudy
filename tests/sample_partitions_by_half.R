@@ -17,11 +17,11 @@ stopifnot(
 
 n <- 1000L
 set.seed(0xBEEF)
-parts <- sample_partitions_by_half(n, fraction = 0.5)
+parts <- sample_partitions_by_half(n, fraction = c(reference = 1/2, test = 1/2))
 str(parts)
 idxs <- sort(unlist(parts, use.names = FALSE))
 stopifnot(
-  names(parts)[1] == "reference",
+  "reference" == names(parts)[1],
   length(parts) == 2L,
   length(idxs) == n,
   identical(idxs, seq_len(n)),
@@ -29,8 +29,8 @@ stopifnot(
 )
 for (pp in 2:length(parts)) {
   stopifnot(length(
-    intersect(parts[[pp]], parts$reference)) == 0L,
-    length(parts[[pp]]) == length(parts$reference),
+    intersect(parts[[pp]], parts[[1]])) == 0L,
+    length(parts[[pp]]) == length(parts[[1]]),
     length(parts[[pp]]) == length(parts0[[pp]]),
     all(sort(parts[[pp]]) == sort(parts0[[pp]]))  ## note sort()
   )
@@ -55,11 +55,11 @@ stopifnot(
 )
 
 set.seed(0xBEEF)
-parts <- sample_partitions_similar_weights_by_half(w, fraction = 1/2, w_tolerance = 0.01)
+parts <- sample_partitions_similar_weights_by_half(w, fraction = c(reference = 1/2, test = 1/2), w_tolerance = 0.01)
 str(parts)
 idxs <- sort(unlist(parts, use.names = FALSE))
 stopifnot(
-  names(parts)[1] == "reference",
+  "reference" == names(parts)[1],
   length(parts) == 2L,
   length(idxs) == n,
   identical(idxs, seq_len(n)),
@@ -67,8 +67,8 @@ stopifnot(
 )
 for (pp in 2:length(parts)) {
   stopifnot(length(
-    intersect(parts[[pp]], parts$reference)) == 0L,
-    length(parts[[pp]]) == length(parts$reference),
+    intersect(parts[[pp]], parts[[1]])) == 0L,
+    length(parts[[pp]]) == length(parts[[1]]),
     length(parts[[pp]]) == length(parts0[[pp]]),
     all(sort(parts[[pp]]) == sort(parts0[[pp]]))  ## note sort()
   )
@@ -80,18 +80,18 @@ for (pp in 2:length(parts)) {
 ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 for (fraction in c(0.01, 0.2, 0.5)) {
   set.seed(0xBEEF)
-  parts <- sample_partitions_by_half(n, fraction = fraction)
+  parts <- sample_partitions_by_half(n, fraction = c(reference = 1/2, test = fraction))
   str(parts)
   idxs <- sort(unlist(parts, use.names = FALSE))
   stopifnot(
-    names(parts)[1] == "reference",
+    "reference" == names(parts)[1],
     length(parts) == 2L,
     all(parts[[1]] == parts0[[1]]),
     length(idxs) == (0.5 + fraction) * n
   )
   for (pp in 2:length(parts)) {
     stopifnot(
-      length(intersect(parts[[pp]], parts$reference)) == 0L,
+      length(intersect(parts[[pp]], parts[[1]])) == 0L,
       length(parts[[pp]]) == fraction * n
     )
   }
@@ -100,18 +100,18 @@ for (fraction in c(0.01, 0.2, 0.5)) {
 
 for (fraction in c(0.01, 0.2, 0.5)) {
   set.seed(0xBEEF)
-  parts <- sample_partitions_similar_weights_by_half(w, fraction = fraction, w_tolerance = 0.01)
+  parts <- sample_partitions_similar_weights_by_half(w, fraction = c(reference = 1/2, test = fraction), w_tolerance = 0.01)
   str(parts)
   idxs <- sort(unlist(parts, use.names = FALSE))
   stopifnot(
-    names(parts)[1] == "reference",
+    "reference" == names(parts)[1],
     length(parts) == 2L,
     all(parts[[1]] == parts0[[1]]),
     length(idxs) == (0.5 + fraction) * n
   )
   for (pp in 2:length(parts)) {
     stopifnot(
-      length(intersect(parts[[pp]], parts$reference)) == 0L,
+      length(intersect(parts[[pp]], parts[[1]])) == 0L,
       length(parts[[pp]]) == fraction * n
     )
   }

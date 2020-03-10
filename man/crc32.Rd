@@ -15,3 +15,4 @@ An eight-character string.
 \description{
 CRC32 Checksum of an Object
 }
+\keyword{internal}

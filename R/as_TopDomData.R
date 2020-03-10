@@ -15,7 +15,7 @@ as_TopDomData <- function(data) {
   for (kk in seq_along(data)) {
     chr <- chrs[kk]
     counts <- data[[kk]]
-    bins <- attr(counts, "bins")
+    bins <- attr(counts, "bins", exact = TRUE)
     stopifnot(!is.null(bins))
     attr(counts, "bins") <- NULL
 

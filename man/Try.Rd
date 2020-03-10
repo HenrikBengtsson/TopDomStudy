@@ -18,3 +18,4 @@ Tweaks a Function to be Evaluted using try()
 \details{
 The function  \link[base:stopifnot]{base::stopifnot}.
 }
+\keyword{internal}

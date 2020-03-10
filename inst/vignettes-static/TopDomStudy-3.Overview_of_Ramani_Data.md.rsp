@@ -1,0 +1,65 @@
+%\VignetteIndexEntry{TopDomStudy: Overview of the Ramani Data}
+%\VignetteAuthor{Henrik Bengtsson}
+%\VignetteEngine{R.rsp::rsp}
+%\VignetteEncoding{UTF-8}
+%\VignetteKeyword{R}
+%\VignetteKeyword{package}
+%\VignetteKeyword{vignette}
+
+<%
+library("tibble")
+library("dplyr")  ## filter(), group_by(), ...
+library("output")
+%>
+
+<% for (org in c("human", "mouse")) { %>
+# Organism: <%= org %>
+
+<%
+  pattern <- sprintf(",%s,unique[.]rds$", org)
+  files <- dir(path = "compiledData", pattern = pattern, full.names = TRUE)
+  mprint(files)
+%>
+  
+  <% for (file in files) { %>
+## Sample: <%= basename(file) %>
+
+<%
+    data <- readRDS(file)
+    mprint(data)
+    data <- filter(data, chr_a == chr_b)
+    data <- group_by(data, chr_a)
+%>
+	
+```r
+<% print(data) %>
+```
+  
+Chromosome summaries:
+<%  
+    chrs <- unique(data$chr_a)
+    chrs <- gtools::mixedsort(chrs) ## "human" ordering
+    stopifnot(length(chrs) <= 25)
+    
+    chr_stats <- lapply(chrs, FUN = function(chr) {
+      data_t <- filter(data, chr_a == chr)
+      len <- diff(range(c(range(data_t$start_a), range(data_t$start_b),
+                          range(data_t$end_a), range(data_t$end_b))))
+      tibble(chromosome =chr, length = len, count = nrow(data_t))			
+    })
+    chr_stats <- Reduce(rbind, chr_stats)
+    rownames(chr_stats) <- NULL
+    chr_stats <- mutate(chr_stats, per_100kb = count / (length / 100e3))
+%>
+```r	
+<% print(as.data.frame(chr_stats)) %>
+```
+    
+Cell types:
+```r
+<% print(table(data$celltype)) %>
+```
+
+  <% } %>
+<% } %>
+

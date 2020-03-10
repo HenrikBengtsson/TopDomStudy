@@ -1,10 +1,14 @@
+^CONDUCT[.]md$
 ^README[.]md$
 ^.(git|svn)
 ^([.]travis|appveyor)[.]yml$
 ^incl
 ^.local
+^run
+^topdomData
 ^overlapScoreData
 ^overlapScoreSummary
 ^figures
 ^last[.]dump
 [.]png$
+^Makefile$

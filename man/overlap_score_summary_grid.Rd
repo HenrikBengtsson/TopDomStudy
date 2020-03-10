@@ -4,9 +4,17 @@
 \alias{overlap_score_summary_grid}
 \title{Calculate and Summarize TopDom Overlap Scores Across Chromosomes, Bin Sizes, and Fractions}
 \usage{
-overlap_score_summary_grid(dataset, chromosomes, bin_sizes, rhos,
-  window_size = 5L, nsamples = 50L, weights = c("by_length",
-  "uniform"), domain_length = NULL, verbose = FALSE)
+overlap_score_summary_grid(
+  dataset,
+  chromosomes,
+  bin_sizes,
+  rhos,
+  window_size = 5L,
+  nsamples = 50L,
+  weights = c("by_length", "uniform"),
+  domain_length = NULL,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{dataset}{(character string) The name of the data set.}
@@ -34,7 +42,7 @@ Argument passed as is to \code{\link[=overlap_score_summary]{overlap_score_summa
 }
 \value{
 A three-dimensional character array of pathname names where the first
-dimension specify \code{chromosomes}, the second \code{bin_sizes}, and the third 'rhos'.
+dimension specify \code{chromosomes}, the second \code{bin_sizes}, and the third \code{rhos} (fractions).
 }
 \description{
 Calculate and Summarize TopDom Overlap Scores Across Chromosomes, Bin Sizes, and Fractions
@@ -52,27 +60,27 @@ The \pkg{future} framework is used to parallelize in three layers:
 }
 
 An example of a \code{\link[future:plan]{future::plan()}} setup for parallelization on the
-local machine is:\preformatted{ plan(list(
+local machine is:\if{html}{\out{<div class="r">}}\preformatted{ plan(list(
    chr_bin_rho = sequential,   ## across (chr, bin_size, rho)
    mono_chr    = sequential,   ## always a single chromosome
    samples     = multiprocess  ## across 1:nsamples
  ))
-}
+}\if{html}{\out{</div>}}
 
-Another is,\preformatted{ plan(list(
+Another is,\if{html}{\out{<div class="r">}}\preformatted{ plan(list(
    chr_bin_rho = multiprocess, ## across (chr, bin_size, rho)
    mono_chr    = sequential,   ## always a single chromosome
    samples     = sequential    ## across 1:nsamples
  ))
-}
+}\if{html}{\out{</div>}}
 
-For parallelization on a HPC cluster via a scheduler,\preformatted{ hpc_scheduler <- tweak(future.batchtools::batchtools_torque,
+For parallelization on a HPC cluster via a scheduler,\if{html}{\out{<div class="r">}}\preformatted{ hpc_scheduler <- tweak(future.batchtools::batchtools_torque,
                         resources = list(nodes="1:ppn=8", vmem="32gb"))
  plan(list(
    chr_bin_rho = hpc_scheduler,
    mono_chr    = sequential,
    samples     = multiprocess
  ))
-}
+}\if{html}{\out{</div>}}
 }
 

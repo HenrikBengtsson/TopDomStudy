@@ -4,8 +4,12 @@
 \alias{overlap_score_summary}
 \title{Summarizes the TopDom Best Scores across TopDomOverlapScores}
 \usage{
-overlap_score_summary(fit, weights = c("uniform", "by_length"),
-  domain_length = NULL, drop_reference = TRUE)
+overlap_score_summary(
+  fit,
+  weights = c("uniform", "by_length"),
+  domain_length = NULL,
+  drop_reference = TRUE
+)
 }
 \arguments{
 \item{fit}{A \link[base:list]{base::list} of K \code{TopDomOverlapScores} objects}

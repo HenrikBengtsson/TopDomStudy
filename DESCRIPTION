@@ -1,5 +1,5 @@
 Package: TopDomStudy
-Version: 0.0.0-9011
+Version: 0.0.1
 Title: TopDom Study by Segal et al.
 Description: Utility functions for the TopDom-related study by Segal et al. (2017).
 Authors@R: c(
@@ -8,23 +8,33 @@ Authors@R: c(
 License: GPL (>= 3)
 Depends:
     R (>= 3.5.0),
-    TopDom (>= 0.8.0)
+    TopDom (>= 0.9.0)
 Imports:
     cowplot,
-    digest (>= 0.6.18),
+    digest,
+    dplyr,
     ggplot2,
-    Hmisc,
     listenv,
     matrixStats,
     future,
     future.apply,
     parallel,
+    progressr,
+    R.cache,
+    ramani,
+    scales,
     tibble,
     stats,
     utils
 Suggests:
-    progressr
+    Hmisc,
+    progress,
+    tools,
+    commonmark
+VignetteBuilder:
+    TopDomStudy
 Remotes:
-    github::HenrikBengtsson/TopDom
-RoxygenNote: 6.1.1
+    github::HenrikBengtsson/TopDom,
+    github::HenrikBengtsson/ramani
+RoxygenNote: 7.0.2
 Roxygen: list(markdown = TRUE)

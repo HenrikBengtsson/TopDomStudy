@@ -24,7 +24,7 @@
 #' @param verbose (logical) If `TRUE`, verbose output is produced.
 #'
 #' @return A three-dimensional character array of pathname names where the first
-#' dimension specify `chromosomes`, the second `bin_sizes`, and the third 'rhos'.
+#' dimension specify `chromosomes`, the second `bin_sizes`, and the third `rhos` (fractions).
 #'
 #' @section Parallel processing:
 #' The \pkg{future} framework is used to parallelize in three layers:
@@ -66,12 +66,15 @@
 #' @importFrom future.apply future_lapply
 #' @export
 overlap_score_summary_grid <- function(dataset, chromosomes, bin_sizes, rhos, window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, verbose = FALSE) {
+  progressor <- import_progressor()
+
   chromosomes <- as.character(chromosomes)
   stopifnot(is.character(chromosomes), !anyNA(chromosomes))
   stopifnot(length(window_size) == 1L, is.numeric(window_size), !is.na(window_size), window_size >= 1L)
   window_size <- as.integer(window_size)
   window_size_tag <- sprintf("window_size=%d", window_size)
 
+  stopifnot(length(nsamples) == 1L, is.numeric(nsamples), !is.na(nsamples), nsamples >= 1L)
   nsamples_tag <- sprintf("nsamples=%d", nsamples)
 
   weights <- match.arg(weights)
@@ -109,7 +112,7 @@ overlap_score_summary_grid <- function(dataset, chromosomes, bin_sizes, rhos, wi
 
       for (rr in seq_along(rhos)) {
         rho <- rhos[rr]
-        rho_tag <- sprintf("fraction=%.3f", rho)
+        rho_tag <- sprintf("test=%.3f", rho)
         if (verbose) message(sprintf("Fraction #%d (%s with %s bps on Chr %s) of %d ...", rr, rho_tag, bin_size, chromosome, length(rhos)))
 
         if (is.character(domain_length) && domain_length == "ref_len_iqr") {
@@ -135,7 +138,7 @@ overlap_score_summary_grid <- function(dataset, chromosomes, bin_sizes, rhos, wi
         if (verbose) message("pathname_summary_kk: ", pathname_summary_kk)
 
         progress(message = paste(c(chromosome_tag, bin_size_tag, rho_tag), collapse=", "))
-	  
+
         ## Already processed?
         if (file_test("-f", pathname_summary_kk)) {
           dummy[[cc, bb, rr]] <- pathname_summary_kk
@@ -174,10 +177,17 @@ overlap_score_summary_grid <- function(dataset, chromosomes, bin_sizes, rhos, wi
             z <- overlap_score_summary(oss, weights = weights, domain_length = domain_length)
             oss <- failed <- NULL
 
-            pathname_td <- gsub("[.]rds$", ",topdom.rds", pathname)
+            ## Locate TopDom fit results
+            set <- basename(dirname(pathname))
+            path_td <- file.path("topdomData", set)
+            stop_if_not(file_test("-d", path_td))
+            filename_td <- basename(pathname)
+            pathname_td <- file.path(path_td, filename_td)
+            stop_if_not(file_test("-f", pathname_td))
             td <- read_rds(pathname_td)
 
-            ref <- which(names(td) == "reference")
+            ref <- grep("^reference", names(td))
+            stopifnot(length(ref) == 1L)
             sizes <- td[[ref]]$domain$size
             ## Filter by domain lengths?
             if (!is.null(domain_length)) {
@@ -208,7 +218,7 @@ overlap_score_summary_grid <- function(dataset, chromosomes, bin_sizes, rhos, wi
           if (verbose) message("Summary of overlap scores and reference domain lengths ... done")
 
           ## Save intermediate results to file
-          saveRDS(summary_kk, file = pathname_summary_kk)
+          save_rds(summary_kk, pathname_summary_kk)
           if (verbose) message("Saved pathname_summary_kk: ", pathname_summary_kk)
 
           pathname_summary_kk

@@ -1,6 +1,132 @@
 TopDomStudy
 ===========
 
+Version: 0.0.1 [2020-03-10]
+
+SIGNIFICANT CHANGES:
+
+ * Argument 'fraction' for sample_partitions_similar_weights_by_half(),
+   sample_partitions_by_half(), and sample_partitions_by_cells_by_half()
+   should now be a numeric vector of length two where the two elements
+   specify the sample fractions for the 'reference' and the 'test' partions.
+
+ * Renamed file tag 'fraction=<size>' to 'test=<size>'.  This is to make room
+   for a 'reference=<size>' tag, which this far has been implicit to 50%.
+
+ * Now list partion elements are named "reference" and "test".  Their sample
+   fractions are encoded in named integer attribute 'fraction' of length two.
+
+NEW FEATURES:
+
+ * overlap_scores_partitions() gained argument 'reference_type' to control
+   whether the reference domains should be based on the 50% ("half") reference
+   set or a reference of the same sample fraction size ("self").
+
+ * Added internal save_rds() to save files atomatically.
+
+BUG FIXES:
+
+ * import_topdom_regions() failed to parse the 'seed' from the filename.
+ 
+
+Version: 0.0.0-9019 [2020-02-19]
+
+NEW FEATURES:
+
+ * Add topdom_partitions() which writes to topdomData/ by default.
+   overlap_scores_partitions() uses topdom_partitions() internally.
+ 
+BUG FIXES:
+
+ * overlap_scores_partitions() did not use 'mainseed' as the initial seed
+   when seed = TRUE.
+ 
+
+Version: 0.0.0-9018 [2020-02-04]
+
+NEW FEATURES:
+
+ * Add import_topdom_regions() and import_topdom_overlap_scores().
+ 
+ * Add read_topdom_regions() and read_topdom_scores() for extracting
+   a subset of the file data as data frames.
+
+
+Version: 0.0.0-9017 [2020-01-07]
+
+NEW FEATURES:
+
+ * All gg_overlap_score_summary_vs_*() function gained argument 'labels'
+   to control what is annotated in the plot.
+   
+ * Add gg_overlap_score_summary_vs_tad_length().
+
+ * Clarified textual annotations in the overlap-score profile plots.
+
+ * Add human HAP1 HiC read-pair data for Chromosomes 23-25.
+
+ * Now overlap_score_summary_vs_{bin_sizes,fraction}() cache the summary
+   results to file.
+
+BUG FIXES:
+
+ * Package did not handle chromosomes 23-25.
+
+ * The 'Data Preprocessing' vignette had a bug causing chromosome data to be
+   out of order for some of the tables.
+
+ 
+Version: 0.0.0-9016 [2019-12-05]
+
+NEW FEATURES:
+
+ * sample_partitions_similar_weights_by_half(..., fraction = 1/2) will return
+   the two parts as-is, i.e. no downsampling is performed when fraction == 1/2.
+ 
+BUG FIXES:
+
+ * sample_partitions_by_cells_by_half(..., fraction) would return a test set
+   where 'fraction' of the *cells* were downsampled instead of the *reads*.
+   Now it is asserted that the sizes of the returned read-pair index sets are
+   within the requested tolerance of the 50% reference and 'fraction'.
+ 
+ * split_by_celltype_chromosome() required more than one chromosomes.
+
+
+Version: 0.0.0-9015 [2019-10-29]
+
+NEW FEATURES:
+
+ * Add gg_overlap_score_summary_vs_bin_size() with example.
+
+DOCUMENTATION:
+
+ * Add vignettes on 'Data Preprocessing', 'TopDom Overlap Score Summaries',
+   and 'Overview of the Ramani Data Set'.
+ 
+
+Version: 0.0.0-9014 [2019-09-24]
+
+NEW FEATURES:
+
+ * Add compile_by_organism() for filtering and compiling Ramain et al. (2017)
+   data by organism.  Added example script as well.
+ 
+ * Add split_by_celltype() for splitting compiled data by celltype.  Added
+   example script as well.
+ 
+ * Add split_by_celltype_chromosome() for splitting compiled data by celltype
+   and intra chromosomes.  Added example script as well.
+ 
+
+Version: 0.0.0-9012 [2019-07-03]
+
+BUG FIXES:
+
+ * Package would give an error if the 'progressr' package was not available.
+   Now it falls back to a dummy progressor function that voids all updates.
+ 
+
 Version: 0.0.0-9011 [2019-06-18]
 
 NEW FEATURES:

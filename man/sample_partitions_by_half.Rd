@@ -9,19 +9,23 @@ sample_partitions_by_half(n, fraction, warn = TRUE)
 \arguments{
 \item{n}{Number of elements to partition.}
 
-\item{fraction}{A numeric in (0,1/2] specifying the size of each partition
-relative to \code{n}.}
+\item{fraction}{A numeric of length two in (0,1/2] specifying the size of
+each partition relative to \code{n}, where the first element specifies the
+"reference" partition and the second the "test" partition.
+For backward compatible reasons, if of length one, then it's equivalent to
+specifying \code{fraction = c(reference = 1/2, test = fraction)}.}
 
 \item{warn}{If \code{TRUE}, a warning is produced if the partitions produced
 are not of equal size.}
 }
 \value{
-A list of disjoint random non-overlapping partitions where each
-element holds indices in \eqn{{1, 2, ..., n}}.
-The first element holds the \code{reference} partition \eqn{P_0.5} with \eqn{n/2}
-indices and the remaining elements holds partitions with indices in
+A list of two disjoint random non-overlapping partitions where each
+element holds indices in \eqn{{1, 2, ..., n}}.  The first element holds the
+'reference' partition and the second the 'test' partition.
+As an example, if \code{fraction[1] == 1/2}, then the reference partition
+\eqn{P_0.5} holds \eqn{n/2} indices and the test parition holds indices in
 \eqn{{1, 2, ..., n} \ P_0.5} where the size of the partitions corresponds
-to the sizes specified by \code{fraction}.
+to the sizes specified by \code{fraction[2]}.
 }
 \description{
 Generate Random, Non-Overlapping Partitions of Indices with Reference vs Rest

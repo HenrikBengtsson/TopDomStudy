@@ -2,22 +2,22 @@
 % Please edit documentation in R/sample_partitions_by_cells.R
 \name{sample_partitions_by_cells}
 \alias{sample_partitions_by_cells}
-\title{Generate Random, Non-Overlapping Partitions of Cells}
+\title{Generate Random, Non-Overlapping Partition of Cells}
 \usage{
 sample_partitions_by_cells(reads, ...)
 }
 \arguments{
-\item{reads}{A data.frame of reads.}
+\item{reads}{A data.frame of \eqn{n} reads.}
 
 \item{\dots}{Argument passed to \link{sample_partitions_similar_weights}.}
 }
 \value{
 A list of random non-overlapping (disjoint) partitions where each
 element holds indices in \eqn{{1, 2, ..., n}} and where the union of all
-partitions is \eqn{{1, 2, ..., n}}.
+parts is \eqn{{1, 2, ..., n}}.
 }
 \description{
-Generate Random, Non-Overlapping Partitions of Cells
+Generate Random, Non-Overlapping Partition of Cells
 }
 \references{
 https://github.com/HenrikBengtsson/SegalM_2017-FISH/issues/16

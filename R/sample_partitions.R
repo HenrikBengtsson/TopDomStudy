@@ -1,19 +1,19 @@
-#' Generate Random, Non-Overlapping Partitions of Indices
+#' Generate Random, Non-Overlapping Partition of Indices
 #'
 #' @param n Number of elements to partition.
 #'
-#' @param fraction A numeric in (0,1] specifying the size of each partition
+#' @param fraction A numeric in (0,1] specifying the size of each set
 #'                 relative to `n`.  If `NULL`, argument `size` is used.
 #'
 #' @param size An integer in \eqn{{1, 2, ..., n}} specifying the size of each
-#'             partition.  If `NULL`, argument `fraction` is used.
+#'             set.  If `NULL`, argument `fraction` is used.
 #'
-#' @param warn If `TRUE`, a warning is produced if the partitions produced
-#'             are not of equal size.
+#' @param warn If `TRUE`, a warning is produced if the sets produced are not
+#' of equal size.
 #'
-#' @return A list of random non-overlapping (disjoint) partitions where each
+#' @return A list of random non-overlapping (disjoint) sets where each
 #' element holds indices in \eqn{{1, 2, ..., n}} and where the union of all
-#' partitions is \eqn{{1, 2, ..., n}}.
+#' sets is \eqn{{1, 2, ..., n}}.
 #'
 #' @importFrom parallel splitIndices
 #' @export
@@ -46,7 +46,7 @@ sample_partitions <- function(n, fraction = NULL, size = NULL, warn = TRUE) {
     sizes <- unique(lengths(partitions))
     if (length(sizes) > 1L) {
       sizes <- sort(sizes)
-      warning(sprintf("sample_partitions(n = %g, ...) produced %d partitions of unequal sizes: %d and %d",
+      warning(sprintf("sample_partitions(n = %g, ...) produced %d sets of unequal sizes: %d and %d",
               n, length(partitions), sizes[1], sizes[2]))
     }
   }
@@ -56,32 +56,36 @@ sample_partitions <- function(n, fraction = NULL, size = NULL, warn = TRUE) {
 
 
 
-#' Generate Random, Non-Overlapping Similarly-Weighted Partitions of Indices
+#' Generate Random, Non-Overlapping Similarly-Weighted Partition of Indices
 #'
 #' @param w Numeric vector of `n` non-negative, finite weights.
 #'          Weights are normalized such that `sum(w)` equals one.
 #'
-#' @param fraction A numeric in (0,1] specifying the size of each partition
+#' @param fraction A numeric in (0,1] specifying the size of each set
 #'                 relative to `n`.  If `NULL`, argument `size` is used.
 #'
 #' @param size An integer in \eqn{{1, 2, ..., n}} specifying the size of each
-#'             partition.  If `NULL`, argument `fraction` is used.
+#'             set.  If `NULL`, argument `fraction` is used.
 #'
 #' @param w_tolerance Maximum allowed difference between target weight of
-#'        each partition (e.g. `fraction * 1`) and the actual total weight
-#'        of the partion (i.e. `sum(w[partition])`.  If _all_ partions are
-#'        within the tolerance, the sample is accepted, otherwise rejected.
+#'        each set (e.g. `fraction * 1`) and the actual total weight
+#'        of the set (i.e. `sum(w[set])`.  If _all_ sets are within
+#'        the tolerance, the sample is accepted, otherwise rejected.
 #'
 #' @param max_rejections The maximum number of rejections before giving up.
 #'
-#' @param warn If `TRUE`, a warning is produced if the partitions produced
+#' @param warn If `TRUE`, a warning is produced if the sets produced
 #'             are not of equal size.
 #'
-#' @return A list of random non-overlapping (disjoint) partitions where each
-#' element holds indices in \eqn{{1, 2, ..., n}} and where the union of all
-#' partitions is \eqn{{1, 2, ..., n}}.  Attribute `weights` gives the total
-#' normalized weight of each partition.  Attribute `count` gives the number
-#' of internal samples produced before arriving at an accepted sample.
+#' @return A list of \eqn{P} random non-overlapping (disjoint) sets where
+#' each element holds indices in \eqn{{1, 2, ..., n}} and where the union of
+#' all sets is \eqn{{1, 2, ..., n}}.
+#' Attribute `weights` is a numeric vector of length \eqn{P} where each element
+#' is he sum of all normalized weight of the corresponding set. The
+#' partition found is such that \eqn{|weight_i - 1/P| \leq w_{tolerance}|}
+#' is true for each set.
+#' Attribute `count` gives the number of internal samples produced before
+#' arriving at an accepted sample.
 #' If no accepted sample was found, the `NA` is returned
 #' (with `count` attribute set).
 #'
@@ -118,7 +122,7 @@ sample_partitions_similar_weights <- function(w, fraction = NULL, size = NULL, w
   ## Partioning
   pidxs <- splitIndices(nx = n, ncl = npartitions)
 
-  ## Target weight per partion
+  ## Target weight per set
   w_target <- 1 / npartitions
 
   idxs <- NULL
@@ -131,7 +135,7 @@ sample_partitions_similar_weights <- function(w, fraction = NULL, size = NULL, w
     ## Shuffle weights accordingly
     w_idxs <- w[idxs]
 
-    ## Calculate weights per partion
+    ## Calculate weights per set
     ws <- lapply(pidxs, FUN = function(partition) sum(w_idxs[partition]))
     ws <- unlist(ws, use.names = FALSE)
     ready <- all(abs(ws - w_target) <= w_tolerance)
@@ -140,6 +144,7 @@ sample_partitions_similar_weights <- function(w, fraction = NULL, size = NULL, w
 
   if (ready) {
     partitions <- lapply(pidxs, FUN = function(partition) idxs[partition])
+    stopifnot(length(ws) == length(partitions))
     attr(partitions, "weights") <- ws
   } else {
     partitions <- NA

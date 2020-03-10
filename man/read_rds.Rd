@@ -4,10 +4,12 @@
 \alias{read_rds}
 \title{Robustly Reads an RDS File}
 \usage{
-read_rds(pathname)
+read_rds(pathname, ...)
 }
 \arguments{
 \item{pathname}{RDS file to read.}
+
+\item{\ldots}{(optional) Additional arguments passed to \code{\link[base:readRDS]{base::readRDS()}}.}
 }
 \value{
 The \R object read.
@@ -19,3 +21,4 @@ Robustly Reads an RDS File
 Uses \link[base:readRDS]{base::readRDS} internally but gives a more informative error message
 on failure.
 }
+\keyword{internal}

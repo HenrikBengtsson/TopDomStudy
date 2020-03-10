@@ -7,6 +7,7 @@
 #' @return (invisibly) the value of the variable.
 #'
 #' @export
+#' @keywords internal
 `%<-?%` <- function(x, value) {
   target <- substitute(x)
   expr <- substitute(value)
@@ -36,6 +37,7 @@
 #' A bare bone, faster version of [base::stopifnot].
 #'
 #' @export
+#' @keywords internal
 stop_if_not <- function(...) {
   res <- list(...)
   for (ii in seq_along(res)) {
@@ -62,6 +64,7 @@ stop_if_not <- function(...) {
 #' The function  [base::stopifnot].
 #'
 #' @export
+#' @keywords internal
 ## https://github.com/HenrikBengtsson/r-ideas/issues/75
 Try <- function(fcn) function(...) try(fcn(...), silent = TRUE)
 
@@ -72,9 +75,9 @@ Try <- function(fcn) function(...) try(fcn(...), silent = TRUE)
 #'
 #' @return An eight-character string.
 #'
-#' @export
 #' @importFrom digest digest
 #' @export
+#' @keywords internal
 crc32 <- function(x) digest(x, algo = "crc32")
 
 
@@ -90,3 +93,15 @@ mstr <- function(..., appendLF = TRUE) {
   message(paste(capture.output(str(...)), collapse = "\n"), appendLF = appendLF)
 }
 
+
+## WORKAROUND: This will create a dummy progressor() until
+## the 'progressr' package is publicly available / installed.
+import_progressor <- function() {
+  if (requireNamespace("progressr", quietly = TRUE)) {
+    progressr::progressor
+  } else {
+    progressor <- function(...) {
+      function(...) invisible()
+    }
+  }
+}

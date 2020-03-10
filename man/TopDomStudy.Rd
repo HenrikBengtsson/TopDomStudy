@@ -3,7 +3,6 @@
 \docType{package}
 \name{TopDomStudy}
 \alias{TopDomStudy}
-\alias{TopDomStudy-package}
 \title{TopDomStudy: TopDom Study by Segal et al.}
 \description{
 Utility functions for the TopDom-related study by Segal et al.

@@ -9,6 +9,7 @@
 #'
 #' @importFrom future sequential
 #' @export
+#' @keywords internal
 maybe <- function(expr, substitute = TRUE, envir = parent.frame()) {
   if (substitute) expr <- substitute(expr)
   f <- sequential(expr, substitute = FALSE, envir = envir, lazy = TRUE)

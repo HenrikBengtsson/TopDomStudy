@@ -2,40 +2,50 @@
 % Please edit documentation in R/sample_partitions.R
 \name{sample_partitions_similar_weights}
 \alias{sample_partitions_similar_weights}
-\title{Generate Random, Non-Overlapping Similarly-Weighted Partitions of Indices}
+\title{Generate Random, Non-Overlapping Similarly-Weighted Partition of Indices}
 \usage{
-sample_partitions_similar_weights(w, fraction = NULL, size = NULL,
-  w_tolerance = 0.01, max_rejections = 100L, warn = TRUE)
+sample_partitions_similar_weights(
+  w,
+  fraction = NULL,
+  size = NULL,
+  w_tolerance = 0.01,
+  max_rejections = 100L,
+  warn = TRUE
+)
 }
 \arguments{
 \item{w}{Numeric vector of \code{n} non-negative, finite weights.
 Weights are normalized such that \code{sum(w)} equals one.}
 
-\item{fraction}{A numeric in (0,1] specifying the size of each partition
+\item{fraction}{A numeric in (0,1] specifying the size of each set
 relative to \code{n}.  If \code{NULL}, argument \code{size} is used.}
 
 \item{size}{An integer in \eqn{{1, 2, ..., n}} specifying the size of each
-partition.  If \code{NULL}, argument \code{fraction} is used.}
+set.  If \code{NULL}, argument \code{fraction} is used.}
 
 \item{w_tolerance}{Maximum allowed difference between target weight of
-each partition (e.g. \code{fraction * 1}) and the actual total weight
-of the partion (i.e. \code{sum(w[partition])}.  If \emph{all} partions are
-within the tolerance, the sample is accepted, otherwise rejected.}
+each set (e.g. \code{fraction * 1}) and the actual total weight
+of the set (i.e. \code{sum(w[set])}.  If \emph{all} sets are within
+the tolerance, the sample is accepted, otherwise rejected.}
 
 \item{max_rejections}{The maximum number of rejections before giving up.}
 
-\item{warn}{If \code{TRUE}, a warning is produced if the partitions produced
+\item{warn}{If \code{TRUE}, a warning is produced if the sets produced
 are not of equal size.}
 }
 \value{
-A list of random non-overlapping (disjoint) partitions where each
-element holds indices in \eqn{{1, 2, ..., n}} and where the union of all
-partitions is \eqn{{1, 2, ..., n}}.  Attribute \code{weights} gives the total
-normalized weight of each partition.  Attribute \code{count} gives the number
-of internal samples produced before arriving at an accepted sample.
+A list of \eqn{P} random non-overlapping (disjoint) sets where
+each element holds indices in \eqn{{1, 2, ..., n}} and where the union of
+all sets is \eqn{{1, 2, ..., n}}.
+Attribute \code{weights} is a numeric vector of length \eqn{P} where each element
+is he sum of all normalized weight of the corresponding set. The
+partition found is such that \eqn{|weight_i - 1/P| \leq w_{tolerance}|}
+is true for each set.
+Attribute \code{count} gives the number of internal samples produced before
+arriving at an accepted sample.
 If no accepted sample was found, the \code{NA} is returned
 (with \code{count} attribute set).
 }
 \description{
-Generate Random, Non-Overlapping Similarly-Weighted Partitions of Indices
+Generate Random, Non-Overlapping Similarly-Weighted Partition of Indices
 }

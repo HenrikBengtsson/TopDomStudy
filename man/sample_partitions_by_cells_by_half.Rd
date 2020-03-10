@@ -2,22 +2,49 @@
 % Please edit documentation in R/sample_partitions_by_cells.R
 \name{sample_partitions_by_cells_by_half}
 \alias{sample_partitions_by_cells_by_half}
-\title{Generate Random, Non-Overlapping Partitions of Cells By Half}
+\title{Generate Random, Non-Overlapping Two-Set Partition of Cells By Half}
 \usage{
-sample_partitions_by_cells_by_half(reads, ...)
+sample_partitions_by_cells_by_half(
+  reads,
+  fraction,
+  w_tolerance = 0.01,
+  max_rejections = 100L,
+  warn = TRUE,
+  ...
+)
 }
 \arguments{
-\item{reads}{A data.frame of reads.}
+\item{reads}{A data.frame with \eqn{n} reads from \eqn{C} cells.}
 
-\item{\dots}{Argument passed to \link{sample_partitions_similar_weights_by_half}.}
+\item{fraction}{A numeric of length two in (0,1/2] specifying the size of
+each partition relative to \code{n}, where the first element specifies the
+"reference" partition and the second the "test" partition.
+For backward compatible reasons, if of length one, then it's equivalent to
+specifying \code{fraction = c(reference = 1/2, test = fraction)}.}
+
+\item{w_tolerance}{Maximum allowed difference between target weight of
+each part (e.g. \code{fraction * 1}) and the actual total weight of the part
+(i.e. \code{sum(w[part])}.  There is a one-to-one relationship between
+weight tolerance and read-count tolerance.  The effective read-count
+tolerance can be calculated as \code{fraction * n}.
+If \emph{all} parts are within the tolerance, the sampled partition is accepted,
+otherwise it is rejected.}
+
+\item{max_rejections}{The maximum number of rejections before giving up.}
+
+\item{warn}{If \code{TRUE}, a warning is produced if the parts produced
+are not of equal size.}
+
+\item{\dots}{Additional argument passed to
+\link{sample_partitions_similar_weights_by_half}.}
 }
 \value{
-A list of random non-overlapping (disjoint) partitions where each
-element holds indices in \eqn{{1, 2, ..., n}} and where the union of all
-partitions is \eqn{{1, 2, ..., n}}.
+A list of two disjoint random non-overlapping partitions where each
+element holds indices in \eqn{{1, 2, ..., n}}.  The first element holds the
+'reference' partition and the second the 'test' partition.
 }
 \description{
-Generate Random, Non-Overlapping Partitions of Cells By Half
+Generate Random, Non-Overlapping Two-Set Partition of Cells By Half
 }
 \references{
 https://github.com/HenrikBengtsson/SegalM_2017-FISH/issues/16
