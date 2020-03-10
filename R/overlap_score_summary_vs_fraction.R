@@ -179,7 +179,7 @@ read_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size
   summary <- list()
   for (rr in seq_along(rhos)) {
     rho <- rhos[rr]
-    rho_tag <- sprintf("fraction=%.3f", rho)
+    rho_tag <- sprintf("test=%.3f", rho)
     if (verbose) message(sprintf("Fraction #%d (%s with %s bps on Chr %s) of %d ...", rr, rho_tag, bin_size, chromosome, length(rhos)))
 
     tags <- c(chromosome_tag, "cells_by_half", "avg_score", bin_size_tag, rho_tag, window_size_tag, domain_length_tag, weights_tag, nsamples_tag)

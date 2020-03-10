@@ -14,7 +14,7 @@ read_topdom_overlap_scores <- function(pathname, format = c("tibble", "data.fram
   format <- match.arg(format)
   stopifnot(file_test("-f", pathname))
 
-  fraction <- gsub(".*,fraction=([0-9.]+),.*", "\\1", basename(pathname))
+  fraction <- gsub(".*,test=([0-9.]+),.*", "\\1", basename(pathname))
   stopifnot(nzchar(fraction))
   fraction <- as.numeric(fraction)
   stopifnot(is.numeric(fraction), length(fraction) == 1L, is.finite(fraction),
@@ -32,8 +32,12 @@ read_topdom_overlap_scores <- function(pathname, format = c("tibble", "data.fram
   config$fraction <- fraction
   config <- config[c("chromosome", "bin_size", "fraction", "min_cell_size", "window_size", "partition_by", "seed")]
 
+  ## TODO: Drop support for '^fraction=..." /HB 2020-03-10
+  if (any(grepl("^fraction=0.5$", names(data)))) {
+    .Deprecated(msg = "The 'fraction=0.5' name is deprecated; please use 'test=0.5' instead")
+  }
   test_partition <- grep("^(fraction|test)=0.5$", names(data))
-  stopifnot(length(test_set) == 1L)
+  stopifnot(length(test_partition) == 1L)
   topdom <- data[[test_partition]]
 
   if (inherits(topdom, "try-error")) {

@@ -6,7 +6,7 @@
 \usage{
 import_topdom_regions(
  
-    pattern = "human,HAP1,unique,bin_size=.*,partition_by=cells_by_half,min_cell_size=2,window_size=.*,fraction=.*,mainseed=0xBEEF",
+    pattern = "human,HAP1,unique,bin_size=.*,partition_by=cells_by_half,min_cell_size=2,window_size=.*,test=.*,mainseed=0xBEEF",
   path = "topdomData",
   skip = TRUE,
   save_individual = TRUE

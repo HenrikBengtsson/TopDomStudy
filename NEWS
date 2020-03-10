@@ -10,6 +10,9 @@ SIGNIFICANT CHANGES:
    should now be a numeric vector of length two where the two elements
    specify the sample fractions for the 'reference' and the 'test' partions.
 
+ * Renamed file tag 'fraction=<size>' to 'test=<size>'.  This is to make room
+   for a 'reference=<size>' tag, which this far has been implicit to 50%.
+
 NEW FEATURES:
 
  * overlap_scores_partitions() gained argument 'reference_type' to control

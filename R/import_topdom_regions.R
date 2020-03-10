@@ -23,7 +23,7 @@
 #' @importFrom utils file_test
 #' @importFrom future.apply future_lapply
 #' @export
-import_topdom_regions <- function(pattern = "human,HAP1,unique,bin_size=.*,partition_by=cells_by_half,min_cell_size=2,window_size=.*,fraction=.*,mainseed=0xBEEF", path = "topdomData", skip = TRUE, save_individual = TRUE) {
+import_topdom_regions <- function(pattern = "human,HAP1,unique,bin_size=.*,partition_by=cells_by_half,min_cell_size=2,window_size=.*,test=.*,mainseed=0xBEEF", path = "topdomData", skip = TRUE, save_individual = TRUE) {
   stopifnot(file_test("-d", path))
   stopifnot(is.character(pattern), length(pattern) == 1L,
             !is.na(pattern), nzchar(pattern))
