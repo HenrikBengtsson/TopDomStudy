@@ -1,7 +1,14 @@
 TopDomStudy
 ===========
 
-Version: 0.0.0-9020 [2020-02-20]
+Version: 0.0.0-9020 [2020-03-10]
+
+SIGNIFICANT CHANGES:
+
+ * Argument 'fraction' for sample_partitions_similar_weights_by_half(),
+   sample_partitions_by_half(), and sample_partitions_by_cells_by_half()
+   should now be a numeric vector of length two where the two elements
+   specify the sample fractions for the 'reference' and the 'test' partions.
 
 NEW FEATURES:
 

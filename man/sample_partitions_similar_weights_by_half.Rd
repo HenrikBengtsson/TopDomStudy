@@ -16,9 +16,11 @@ sample_partitions_similar_weights_by_half(
 \item{w}{Numeric vector of \code{n} non-negative, finite weights.
 Weights are normalized such that \code{sum(w)} equals one.}
 
-\item{fraction}{A numeric in (0,1/2] specifying the size of the second
-set relative to \code{n}.  If \code{fraction = 1/2}, then there will be no down
-sampling performed and the two 50\%-sized sets are returned as is.}
+\item{fraction}{A numeric of length two in (0,1/2] specifying the size of
+each partition relative to \code{n}, where the first element specifies the
+"reference" partition and the second the "test" partition.
+For backward compatible reasons, if of length one, then it's equivalent to
+specifying \code{fraction = c(reference = 1/2, test = fraction)}.}
 
 \item{w_tolerance}{Maximum allowed difference between target weight of
 each of the two sets (e.g. \code{fraction * 1}) and the actual total weight
@@ -31,10 +33,10 @@ the partition is accepted, otherwise rejected.}
 are not of equal size.}
 }
 \value{
-A list of two random non-overlapping (disjoint) sets where each
-element holds indices in \eqn{{1, 2, ..., n}} and where their union is
-\eqn{{1, 2, ..., n}}.  Attribute \code{weights} gives the total normalized
-weight of each set.
+A list of two disjoint random non-overlapping partitions where each
+element holds indices in \eqn{{1, 2, ..., n}}.  The first element holds the
+'reference' partition and the second the 'test' partition.
+Attribute \code{weights} gives the total normalized weight of each set.
 If no accepted sample was found, then \code{NA} is returned.
 Attribute \code{count} gives the number of internal samples produced before
 arriving at an accepted or rejected partition.

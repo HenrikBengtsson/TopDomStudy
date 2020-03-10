@@ -17,7 +17,7 @@ stopifnot(
 
 n <- 1000L
 set.seed(0xBEEF)
-parts <- sample_partitions_by_half(n, fraction = 0.5)
+parts <- sample_partitions_by_half(n, fraction = c(reference = 1/2, test = 1/2))
 str(parts)
 idxs <- sort(unlist(parts, use.names = FALSE))
 stopifnot(
@@ -55,7 +55,7 @@ stopifnot(
 )
 
 set.seed(0xBEEF)
-parts <- sample_partitions_similar_weights_by_half(w, fraction = 1/2, w_tolerance = 0.01)
+parts <- sample_partitions_similar_weights_by_half(w, fraction = c(reference = 1/2, test = 1/2), w_tolerance = 0.01)
 str(parts)
 idxs <- sort(unlist(parts, use.names = FALSE))
 stopifnot(
@@ -80,7 +80,7 @@ for (pp in 2:length(parts)) {
 ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 for (fraction in c(0.01, 0.2, 0.5)) {
   set.seed(0xBEEF)
-  parts <- sample_partitions_by_half(n, fraction = fraction)
+  parts <- sample_partitions_by_half(n, fraction = c(reference = 1/2, test = fraction))
   str(parts)
   idxs <- sort(unlist(parts, use.names = FALSE))
   stopifnot(
@@ -100,7 +100,7 @@ for (fraction in c(0.01, 0.2, 0.5)) {
 
 for (fraction in c(0.01, 0.2, 0.5)) {
   set.seed(0xBEEF)
-  parts <- sample_partitions_similar_weights_by_half(w, fraction = fraction, w_tolerance = 0.01)
+  parts <- sample_partitions_similar_weights_by_half(w, fraction = c(reference = 1/2, test = fraction), w_tolerance = 0.01)
   str(parts)
   idxs <- sort(unlist(parts, use.names = FALSE))
   stopifnot(

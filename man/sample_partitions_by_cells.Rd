@@ -12,7 +12,7 @@ sample_partitions_by_cells(reads, ...)
 \item{\dots}{Argument passed to \link{sample_partitions_similar_weights}.}
 }
 \value{
-A list of random non-overlapping (disjoint) partition where each
+A list of random non-overlapping (disjoint) partitions where each
 element holds indices in \eqn{{1, 2, ..., n}} and where the union of all
 parts is \eqn{{1, 2, ..., n}}.
 }

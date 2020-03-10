@@ -16,8 +16,11 @@ sample_partitions_by_cells_by_half(
 \arguments{
 \item{reads}{A data.frame with \eqn{n} reads from \eqn{C} cells.}
 
-\item{fraction}{A numeric in (0,1/2] specifying the size of each part
-relative to \eqn{n}.}
+\item{fraction}{A numeric of length two in (0,1/2] specifying the size of
+each partition relative to \code{n}, where the first element specifies the
+"reference" partition and the second the "test" partition.
+For backward compatible reasons, if of length one, then it's equivalent to
+specifying \code{fraction = c(reference = 1/2, test = fraction)}.}
 
 \item{w_tolerance}{Maximum allowed difference between target weight of
 each part (e.g. \code{fraction * 1}) and the actual total weight of the part
@@ -36,9 +39,9 @@ are not of equal size.}
 \link{sample_partitions_similar_weights_by_half}.}
 }
 \value{
-A list of \eqn{P} random non-overlapping (disjoint) parts where
-each element holds indices in \eqn{{1, 2, ..., n}} and where the union of all
-part is \eqn{{1, 2, ..., n}}.
+A list of two disjoint random non-overlapping partitions where each
+element holds indices in \eqn{{1, 2, ..., n}}.  The first element holds the
+'reference' partition and the second the 'test' partition.
 }
 \description{
 Generate Random, Non-Overlapping Two-Set Partition of Cells By Half

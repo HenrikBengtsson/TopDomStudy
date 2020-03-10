@@ -230,9 +230,9 @@ topdom_partitions <- function(reads, bin_size, partition_by, rho, nsamples = 100
           } else if (partition_by == "cells") {
             reads_partitions <- sample_partitions_by_cells(reads, fraction = rho)
           } else if (partition_by == "reads_by_half") {
-            reads_partitions <- sample_partitions_by_half(nrow(reads), fraction = rho)
+            reads_partitions <- sample_partitions_by_half(nrow(reads), fraction = c(reference = 1/2, test = rho))
           } else if (partition_by == "cells_by_half") {
-            reads_partitions <- sample_partitions_by_cells_by_half(reads, fraction = rho)
+            reads_partitions <- sample_partitions_by_cells_by_half(reads, fraction = c(reference = 1/2, test = rho))
           }
           reads_partitions <- lapply(reads_partitions, FUN = function(partition) reads[partition, ])
 
