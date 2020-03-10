@@ -5,8 +5,8 @@
 \title{Import all test-set TopDom scores into a single data.frame}
 \usage{
 import_topdom_overlap_scores(
- 
-    pattern = "human,HAP1,unique,bin_size=.*,partition_by=cells_by_half,min_cell_size=2,window_size=.*,test=.*,mainseed=0xBEEF",
+  pattern = paste(c("human,HAP1,unique", "bin_size=.*", "partition_by=cells_by_half",
+    "min_cell_size=2", "window_size=.*", "test=.*", "mainseed=0xBEEF"), collapse = ","),
   path = "overlapScoreData",
   skip = TRUE,
   save_individual = TRUE

@@ -251,17 +251,26 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by,
             seed          = attr(tds, "seed", exact = TRUE)
           )
 
-	  if (verbose) mstr(list(params = params, seed = seed))
-	  
+          ## BACKWARD COMPATIBILITY (for existing files)
+          if (length(params$fraction) == 1L) {
+            params$fraction <- c(reference = 1/2, test = params$fraction)
+          }
+          stopifnot(length(params$fraction) == 2L)
+          if (is.null(names(params$fraction))) {
+            names(params$fraction) <- c("reference", "test")
+          }
+          
+          if (verbose) mstr(list(params = params, seed = seed, rho=rho))
+          
           ## Sanity check
           stop_if_not(params$chromosome    == chr,
                       params$bin_size      == bin_size,
-                      params$fraction      == rho,
+                      all(params$fraction  == c(reference = 1/2, test = rho)),
                       params$min_cell_size == min_cell_size,
                       params$window_size   == window_size,
                       params$partition_by  == partition_by,
                       params$mainseed      == mainseed,
-                      all(params$seed == seed))
+                      all(params$seed      == seed))
 
           ## Select reference
           ref <- NA_integer_
@@ -272,10 +281,10 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by,
             ok <- unlist(lapply(tds, FUN = function(td) !inherits(td, "try-error")))
             stopifnot(length(ok) == length(tds))
             ref <- which(ok)[1]
-	  }
+          }
           stopifnot(is.finite(ref), ref >= 1L, ref <= length(tds))
           td_ref <- tds[[ref]]
-	  
+          
           overlaps <- lapply(tds, FUN = function(td) Try(overlapScores)(td, reference = td_ref))
           stopifnot(is.list(overlaps), length(overlaps) == length(tds))
           tds <- NULL ## Not needed anymore

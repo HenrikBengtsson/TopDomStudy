@@ -5,8 +5,8 @@
 \title{Import all test-set TopDom regions into a single data.frame}
 \usage{
 import_topdom_regions(
- 
-    pattern = "human,HAP1,unique,bin_size=.*,partition_by=cells_by_half,min_cell_size=2,window_size=.*,test=.*,mainseed=0xBEEF",
+  pattern = paste(c("human,HAP1,unique", "bin_size=.*", "partition_by=cells_by_half",
+    "min_cell_size=2", "window_size=.*", "test=.*", "mainseed=0xBEEF"), collapse = ","),
   path = "topdomData",
   skip = TRUE,
   save_individual = TRUE
