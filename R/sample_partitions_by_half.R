@@ -22,10 +22,18 @@ sample_partitions_by_half <- function(n, fraction, warn = TRUE) {
               fraction > 0, fraction <= 1/2)
   
   parts <- sample_partitions(n = n, fraction = 1/2)
-  idxs <- parts[[2]]
-  nidxs <- length(idxs)
-  size <- min(round(fraction * n), nidxs)
-  parts[[2]] <- idxs[sample.int(nidxs, size = size)]
+
+  ## Sanity check
+  stop_if_not(length(parts) == 2L)
+
+  ## Down-sample test set?
+  if (fraction < 1/2) {
+    idxs <- parts[[2]]
+    nidxs <- length(idxs)
+    size <- min(round(fraction * n), nidxs)
+    parts[[2]] <- idxs[sample.int(nidxs, size = size)]
+  }
+  
   names(parts) <- c("reference", sprintf("fraction=%g", fraction))
   attr(parts, "fraction") <- fraction
   attr(parts, "n") <- n
