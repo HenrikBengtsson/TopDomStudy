@@ -138,7 +138,7 @@ overlap_score_summary_grid <- function(dataset, chromosomes, bin_sizes, rhos, wi
         if (verbose) message("pathname_summary_kk: ", pathname_summary_kk)
 
         progress(message = paste(c(chromosome_tag, bin_size_tag, rho_tag), collapse=", "))
-	  
+
         ## Already processed?
         if (file_test("-f", pathname_summary_kk)) {
           dummy[[cc, bb, rr]] <- pathname_summary_kk
@@ -186,7 +186,8 @@ overlap_score_summary_grid <- function(dataset, chromosomes, bin_sizes, rhos, wi
             stop_if_not(file_test("-f", pathname_td))
             td <- read_rds(pathname_td)
 
-            ref <- which(names(td) == "reference")
+            ref <- grep("^reference", names(td))
+            stopifnot(length(ref) == 1L)
             sizes <- td[[ref]]$domain$size
             ## Filter by domain lengths?
             if (!is.null(domain_length)) {
