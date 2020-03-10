@@ -8,7 +8,6 @@ overlap_scores_partitions(
   reads,
   bin_size,
   partition_by,
-  reference_type = c("half", "self"),
   rho,
   nsamples = 100L,
   seed = TRUE,
@@ -31,9 +30,6 @@ overlap_scores_partitions(
 
 \item{partition_by}{A string specifying how to partition;
 one of \code{"reads"}, \code{"cells"}, \code{"reads_by_half"}, and \code{"cells_by_half"}.}
-
-\item{reference_type}{A string specifying what reference to use;
-either \code{"half"} or \code{"self"}.}
 
 \item{rho}{A numeric in \eqn{(0,1/2]} specifying the relative size of the partitions.}
 

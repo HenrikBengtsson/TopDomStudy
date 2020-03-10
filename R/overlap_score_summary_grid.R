@@ -182,8 +182,6 @@ overlap_score_summary_grid <- function(dataset, chromosomes, bin_sizes, rhos, wi
             path_td <- file.path("topdomData", set)
             stop_if_not(file_test("-d", path_td))
             filename_td <- basename(pathname)
-            ## Ad hoc /HB 2020-02-20
-            filename_td <- gsub(",reference_type=[^,]+,", ",", filename_td)
             pathname_td <- file.path(path_td, filename_td)
             stop_if_not(file_test("-f", pathname_td))
             td <- read_rds(pathname_td)
