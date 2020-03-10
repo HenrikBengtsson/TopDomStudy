@@ -1,5 +1,5 @@
 Package: TopDomStudy
-Version: 0.0.1
+Version: 0.0.1-9000
 Title: TopDom Study by Segal et al.
 Description: Utility functions for the TopDom-related study by Segal et al. (2017).
 Authors@R: c(
