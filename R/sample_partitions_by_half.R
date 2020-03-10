@@ -46,7 +46,7 @@ sample_partitions_by_half <- function(n, fraction, warn = TRUE) {
   }
 
   ## TODO 2020-03-10
-  names(parts) <- sprintf("%s=%g", c("reference", "fraction"), fraction)
+  names(parts) <- sprintf("%s=%g", c("reference", "test"), fraction)
   ## attr(parts, "fraction") <- fraction
   
   ## names(parts) <- c("reference", sprintf("fraction=%g", fraction[2]))
@@ -129,7 +129,7 @@ sample_partitions_similar_weights_by_half <- function(w, fraction, w_tolerance =
   }
   
   ## TODO 2020-03-10
-  names(parts) <- sprintf("%s=%g", c("reference", "fraction"), fraction)
+  names(parts) <- sprintf("%s=%g", c("reference", "test"), fraction)
   ## attr(parts, "fraction") <- fraction
   
   ## names(parts) <- c("reference", sprintf("fraction=%g", fraction[2]))

@@ -32,7 +32,9 @@ read_topdom_overlap_scores <- function(pathname, format = c("tibble", "data.fram
   config$fraction <- fraction
   config <- config[c("chromosome", "bin_size", "fraction", "min_cell_size", "window_size", "partition_by", "seed")]
 
-  topdom <- data[["fraction=0.5"]]
+  test_partition <- grep("^(fraction|test)=0.5$", names(data))
+  stopifnot(length(test_set) == 1L)
+  topdom <- data[[test_partition]]
 
   if (inherits(topdom, "try-error")) {
     td <- data.frame(best_score = double(0L), best_length = integer(0L))

@@ -31,7 +31,10 @@ read_topdom_regions <- function(pathname, format = c("tibble", "data.frame")) {
   config$fraction <- fraction
   config <- config[c("bin_size", "fraction", "min_cell_size", "window_size", "partition_by", "seed")]
 
-  topdom <- data[["fraction=0.5"]]
+  test_partition <- grep("^(fraction|test)=0.5$", names(data))
+  stopifnot(length(test_set) == 1L)
+  topdom <- data[[test_partition]]
+  
   td <- topdom$domain
   data <- cbind(td, config)
   stopifnot(is.data.frame(data), nrow(data) == nrow(td))
