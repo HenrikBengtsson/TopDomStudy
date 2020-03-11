@@ -227,7 +227,7 @@ gg_overlap_score_summary_vs_bin_size <- function(dataset, chromosome, bin_sizes,
 
   ## Tags
   chromosome_tag <- sprintf("chr=%s", chromosome)
-  rho_tag <- sprintf("test=%.3f", rho)
+  test_tag <- sprintf("test=%.3f", rho)
   window_size_tag <- sprintf("window_size=%d", window_size)
   if (!is.null(domain_length)) {
     stop_if_not(is.numeric(domain_length), length(domain_length) == 2L, !anyNA(domain_length), all(domain_length > 0))
@@ -242,7 +242,7 @@ gg_overlap_score_summary_vs_bin_size <- function(dataset, chromosome, bin_sizes,
   if (!is.null(fig_path)) {
     signals_tag <- sprintf("signals=%s", paste(signal_labels, collapse = "-"))
   
-    tags <- c(chromosome_tag, "cells_by_half", "avg_score-vs-fraction", rho_tag, window_size_tag, nsamples_tag, signals_tag, weights_tag, domain_length_tag)
+    tags <- c(chromosome_tag, "cells_by_half", "avg_score-vs-fraction", test_tag, window_size_tag, nsamples_tag, signals_tag, weights_tag, domain_length_tag)
     fullname <- paste(c(dataset, tags), collapse = ",")
     filename <- sprintf("%s.png", fullname)
     fig_pathname <- file.path(fig_path, filename)

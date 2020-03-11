@@ -4,7 +4,7 @@ extract_domain_length_limits <- function(dataset, chromosome = ".*", bin_size = 
   
   path <- "overlapScoreSummary"
   stopifnot(file_test("-d", path))
-  pattern <- sprintf("%s,chr=%s,cells_by_half,avg_score-vs-fraction,bin_size=%s,fraction=[.0-9]+,nsamples=%d,weights=%s.rds", dataset, chromosome, bin_size, nsamples, weights)
+  pattern <- sprintf("%s,chr=%s,cells_by_half,avg_score-vs-fraction,bin_size=%s,test=[.0-9]+,nsamples=%d,weights=%s.rds", dataset, chromosome, bin_size, nsamples, weights)
 ##  if (verbose) mprint(pattern)
   pathnames <- dir(path, pattern = pattern, full.names = TRUE)
 ##  if (verbose) mprint(pathnames)

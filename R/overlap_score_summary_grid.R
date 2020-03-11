@@ -112,8 +112,8 @@ overlap_score_summary_grid <- function(dataset, chromosomes, bin_sizes, rhos, wi
 
       for (rr in seq_along(rhos)) {
         rho <- rhos[rr]
-        rho_tag <- sprintf("test=%.3f", rho)
-        if (verbose) message(sprintf("Fraction #%d (%s with %s bps on Chr %s) of %d ...", rr, rho_tag, bin_size, chromosome, length(rhos)))
+        test_tag <- sprintf("test=%.3f", rho)
+        if (verbose) message(sprintf("Fraction #%d (%s with %s bps on Chr %s) of %d ...", rr, test_tag, bin_size, chromosome, length(rhos)))
 
         if (is.character(domain_length) && domain_length == "ref_len_iqr") {
           limits <- extract_domain_length_limits(
@@ -132,17 +132,17 @@ overlap_score_summary_grid <- function(dataset, chromosomes, bin_sizes, rhos, wi
           domain_length_tag <- sprintf("domain_length=%.0f-%.0f", domain_length[1], domain_length[2])
         }
   
-        tags <- c(chromosome_tag, "cells_by_half", "avg_score", bin_size_tag, rho_tag, window_size_tag, domain_length_tag, weights_tag, nsamples_tag)
+        tags <- c(chromosome_tag, "cells_by_half", "avg_score", bin_size_tag, test_tag, window_size_tag, domain_length_tag, weights_tag, nsamples_tag)
         fullname <- paste(c(dataset, tags), collapse = ",")
         pathname_summary_kk <- file.path(path, sprintf("%s.rds", fullname))
         if (verbose) message("pathname_summary_kk: ", pathname_summary_kk)
 
-        progress(message = paste(c(chromosome_tag, bin_size_tag, rho_tag), collapse=", "))
+        progress(message = paste(c(chromosome_tag, bin_size_tag, test_tag), collapse=", "))
 
         ## Already processed?
         if (file_test("-f", pathname_summary_kk)) {
           dummy[[cc, bb, rr]] <- pathname_summary_kk
-          if (verbose) message(sprintf("Fraction #%d (%s with %s bps on Chr %s) of %d ... already done", rr, rho_tag, bin_size, chromosome, length(rhos)))
+          if (verbose) message(sprintf("Fraction #%d (%s with %s bps on Chr %s) of %d ... already done", rr, test_tag, bin_size, chromosome, length(rhos)))
           next
         }
 
@@ -224,7 +224,7 @@ overlap_score_summary_grid <- function(dataset, chromosomes, bin_sizes, rhos, wi
           pathname_summary_kk
         } %label% sprintf("%s-%s-%s", chromosome, bin_size, rho)
 
-        if (verbose) message(sprintf("Fraction #%d (%s with %s bps on Chr %s) of %d ...", rr, rho_tag, bin_size, chromosome, length(rhos)))
+        if (verbose) message(sprintf("Fraction #%d (%s with %s bps on Chr %s) of %d ...", rr, test_tag, bin_size, chromosome, length(rhos)))
       } ## for (rr ...)
 
       if (verbose) message(sprintf("Bin size #%d (%s bps on Chr %s) of %d ... done", bb, bin_size, chromosome, length(bin_sizes)))

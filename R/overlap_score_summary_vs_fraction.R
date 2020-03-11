@@ -179,10 +179,10 @@ read_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size
   summary <- list()
   for (rr in seq_along(rhos)) {
     rho <- rhos[rr]
-    rho_tag <- sprintf("test=%.3f", rho)
-    if (verbose) message(sprintf("Fraction #%d (%s with %s bps on Chr %s) of %d ...", rr, rho_tag, bin_size, chromosome, length(rhos)))
+    test_tag <- sprintf("test=%.3f", rho)
+    if (verbose) message(sprintf("Fraction #%d (%s with %s bps on Chr %s) of %d ...", rr, test_tag, bin_size, chromosome, length(rhos)))
 
-    tags <- c(chromosome_tag, "cells_by_half", "avg_score", bin_size_tag, rho_tag, window_size_tag, domain_length_tag, weights_tag, nsamples_tag)
+    tags <- c(chromosome_tag, "cells_by_half", "avg_score", bin_size_tag, test_tag, window_size_tag, domain_length_tag, weights_tag, nsamples_tag)
 
     fullname <- paste(c(dataset, tags), collapse = ",")
     pathname_summary_kk <- file.path(path, sprintf("%s.rds", fullname))
@@ -199,7 +199,7 @@ read_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size
     stop_if_not(file_test("-f", pathname_summary_kk))
     summary[[rr]] <- read_rds(pathname_summary_kk)
             
-    if (verbose) message(sprintf("Fraction #%d (%s with %s bps on Chr %s) of %d ... already done", rr, rho_tag, bin_size, chromosome, length(rhos)))
+    if (verbose) message(sprintf("Fraction #%d (%s with %s bps on Chr %s) of %d ... already done", rr, test_tag, bin_size, chromosome, length(rhos)))
   } ## for (rr ...)
 
   summary <- do.call(rbind, summary)
