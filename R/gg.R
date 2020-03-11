@@ -228,6 +228,7 @@ gg_overlap_score_summary_vs_bin_size <- function(dataset, chromosome, bin_sizes,
   ## Tags
   chromosome_tag <- sprintf("chr=%s", chromosome)
   test_tag <- sprintf("test=%.3f", rho)
+  reference_tag <- sprintf("reference=%.3f", 1/2)
   window_size_tag <- sprintf("window_size=%d", window_size)
   if (!is.null(domain_length)) {
     stop_if_not(is.numeric(domain_length), length(domain_length) == 2L, !anyNA(domain_length), all(domain_length > 0))

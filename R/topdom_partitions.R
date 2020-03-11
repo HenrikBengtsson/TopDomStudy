@@ -99,6 +99,7 @@ topdom_partitions <- function(reads, bin_size, partition_by, rho, nsamples = 100
     min_cell_size_tag <- NULL
   }
   test_tag <- sprintf("test=%.3f", rho)
+  reference_tag <- sprintf("reference=%.3f", 1/2)
   ## Random seeds (use the same for all chromosomes, i.e. invariant to chromosome)
   
   stop_if_not(mainseed == 0xBEEF)
