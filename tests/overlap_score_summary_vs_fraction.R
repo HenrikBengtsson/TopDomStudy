@@ -12,14 +12,13 @@ bin_sizes <- getOption("TopDomStudy.tests.bin_sizes", c(50e3, 100e3, 200e3))
 rhos <- getOption("TopDomStudy.tests.rhos", c(0.10, 0.25, 0.50))
 nsamples <- getOption("TopDomStudy.tests.nsamples", 5L)
 
-reference_rhos <- rep(1/2, times = length(rhos))
-#reference_rhos <- rhos
+reference_rhos <- c("50%", "same")[1]
 
 for (weights in c("uniform", "by_length")) {
   pathnames <- overlap_score_summary_vs_fraction(
     dataset        = "human,HAP1",
     chromosomes    = chromosomes,
-    bin_sizes      = rev(bin_sizes)[1],
+    bin_sizes      = bin_sizes,
     rhos           = rhos,
     reference_rhos = reference_rhos,
     window_size    = 5L,

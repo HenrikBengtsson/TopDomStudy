@@ -43,6 +43,17 @@
 #' @importFrom utils file_test
 #' @export
 gg_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size, rhos, reference_rhos = rep(1/2, times = length(rhos)), window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, signals = c("mean", "test_len_q0.50"), rho_lim = c(0, 1/2), length_lim = c(0, 2e3), rel_heights = c(4,1), labels = c("chromosome"), line_col = "black", fig_path = "figures", skip = FALSE, ..., verbose = TRUE) {
+  stopifnot(is.numeric(rhos), !anyNA(rhos), all(rhos > 0), all(rhos <= 1/2))
+  if (is.character(reference_rhos)) {
+    reference_rhos <- switch(reference_rhos,
+      "50%" = rep(1/2, times = length(rhos)),
+      "same" = rhos,
+      stop("Unknown value on 'reference_rhos': ", sQuote(reference_rhos))
+    )
+  }
+  stopifnot(is.numeric(reference_rhos), !anyNA(reference_rhos), all(reference_rhos > 0), all(reference_rhos <= 1/2))
+  stopifnot(length(reference_rhos) == length(rhos), all(reference_rhos >= rhos))
+  
   avg_signals <- c(mean = "mean", median = "`50%`", "q25" = "`25%`", "q75" = "`75%`")
   length_signals <- c(
     "reference Q25 length"    = "ref_len_q0.25",
@@ -193,6 +204,15 @@ gg_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size, 
 #'
 #' @export
 gg_overlap_score_summary_vs_bin_size <- function(dataset, chromosome, bin_sizes, rho, reference_rho = 1/2, window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, signals = c("mean", "test_len_q0.50"), bin_size_lim = c(0, max(bin_sizes)), length_lim = c(0, 2e3), rel_heights = c(4,1), labels = c("chromosome"), line_col = "black", fig_path = "figures", skip = FALSE, ..., verbose = TRUE) {
+  stop_if_not(is.numeric(rho), length(rho) == 1L, !is.na(rho), rho > 0.0, rho <= 0.5)
+  if (is.character(reference_rho)) {
+    reference_rho <- switch(reference_rho,
+      "50%" = 1/2,
+      "same" = rho,
+      stop("Unknown value on 'reference_rho': ", sQuote(reference_rho))
+    )
+  }
+  stop_if_not(is.numeric(reference_rho), length(reference_rho) == 1L, !is.na(reference_rho), reference_rho > 0.0, reference_rho <= 0.5)
   avg_signals <- c(mean = "mean", median = "`50%`", "q25" = "`25%`", "q75" = "`75%`")
   length_signals <- c(
     "reference Q25 length"    = "ref_len_q0.25",
@@ -367,6 +387,17 @@ geom_text_top_right <- function(label, size=5.0, hjust=+1.1, vjust=+1.5) {
 #'
 #' @export
 gg_overlap_score_summary_vs_tad_length <- function(dataset, chromosome, bin_sizes, rhos, reference_rhos = rep(1/2, times = length(rhos)), window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, signals = c("mean", "test_len_q0.50"), tad_length_lim = c(0, 2e6), labels = c("chromosome"), line_col = "black", fig_path = "figures", skip = FALSE, ..., verbose = TRUE) {
+  stopifnot(is.numeric(rhos), !anyNA(rhos), all(rhos > 0), all(rhos <= 1/2))
+  if (is.character(reference_rhos)) {
+    reference_rhos <- switch(reference_rhos,
+      "50%" = rep(1/2, times = length(rhos)),
+      "same" = rhos,
+      stop("Unknown value on 'reference_rhos': ", sQuote(reference_rhos))
+    )
+  }
+  stopifnot(is.numeric(reference_rhos), !anyNA(reference_rhos), all(reference_rhos > 0), all(reference_rhos <= 1/2))
+  stopifnot(length(reference_rhos) == length(rhos), all(reference_rhos >= rhos))
+  
   avg_signals <- c(mean = "mean", median = "`50%`", "q25" = "`25%`", "q75" = "`75%`")
   length_signals <- c(
     "reference Q25 length"    = "ref_len_q0.25",

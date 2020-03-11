@@ -22,6 +22,13 @@
 #' @export
 overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, rhos, reference_rhos = rep(1/2, times = length(rhos)), window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, fig_path = "figures", verbose = FALSE) {
   stopifnot(is.numeric(rhos), !anyNA(rhos), all(rhos > 0), all(rhos <= 1/2))
+  if (is.character(reference_rhos)) {
+    reference_rhos <- switch(reference_rhos,
+      "50%" = rep(1/2, times = length(rhos)),
+      "same" = rhos,
+      stop("Unknown value on 'reference_rhos': ", sQuote(reference_rhos))
+    )
+  }
   stopifnot(is.numeric(reference_rhos), !anyNA(reference_rhos), all(reference_rhos > 0), all(reference_rhos <= 1/2))
   stopifnot(length(reference_rhos) == length(rhos), all(reference_rhos >= rhos))
   weights <- match.arg(weights)
@@ -134,6 +141,13 @@ overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, r
 #' @importFrom R.cache loadCache saveCache
 read_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size, rhos, reference_rhos = rep(1/2, times = length(rhos)), window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, path = "overlapScoreSummary", force = FALSE, ..., verbose = FALSE) {
   stopifnot(is.numeric(rhos), !anyNA(rhos), all(rhos > 0), all(rhos <= 1/2))
+  if (is.character(reference_rhos)) {
+    reference_rhos <- switch(reference_rhos,
+      "50%" = rep(1/2, times = length(rhos)),
+      "same" = rho,
+      stop("Unknown value on 'reference_rhos': ", sQuote(reference_rhos))
+    )
+  }
   stopifnot(is.numeric(reference_rhos), !anyNA(reference_rhos), all(reference_rhos > 0), all(reference_rhos <= 1/2))
   stopifnot(length(reference_rhos) == length(rhos), all(reference_rhos >= rhos))
   chromosome <- as.integer(chromosome)

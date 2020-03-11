@@ -69,6 +69,15 @@ topdom_partitions <- function(reads, bin_size, partition_by, rho, reference_rho 
   stopifnot(length(min_cell_size) == 1L, is.numeric(min_cell_size),
             !is.na(min_cell_size), min_cell_size >= 1L)
   stop_if_not(is.numeric(rho), length(rho) == 1L, !is.na(rho), rho > 0.0, rho <= 0.5)
+  if (is.character(reference_rho)) {
+    reference_rho <- switch(reference_rho,
+      "50%" = 1/2,
+      "same" = rho,
+      stop("Unknown value on 'reference_rho': ", sQuote(reference_rho))
+    )
+  }
+  stop_if_not(is.numeric(reference_rho), length(reference_rho) == 1L, !is.na(reference_rho), reference_rho > 0.0, reference_rho <= 0.5)
+  
   stop_if_not(is.numeric(nsamples), length(nsamples) == 1L,
               !is.na(nsamples), nsamples >= 1L)
   if (is.null(chrs)) {

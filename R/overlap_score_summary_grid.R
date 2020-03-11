@@ -72,6 +72,13 @@ overlap_score_summary_grid <- function(dataset, chromosomes, bin_sizes, rhos, re
   stopifnot(is.character(chromosomes), !anyNA(chromosomes))
 
   stopifnot(is.numeric(rhos), !anyNA(rhos), all(rhos > 0), all(rhos <= 1/2))
+  if (is.character(reference_rhos)) {
+    reference_rhos <- switch(reference_rhos,
+      "50%" = rep(1/2, times = length(rhos)),
+      "same" = rho,
+      stop("Unknown value on 'reference_rhos': ", sQuote(reference_rhos))
+    )
+  }
   stopifnot(is.numeric(reference_rhos), !anyNA(reference_rhos), all(reference_rhos > 0), all(reference_rhos <= 1/2))
   stopifnot(length(reference_rhos) == length(rhos), all(reference_rhos >= rhos))
 

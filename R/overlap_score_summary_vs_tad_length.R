@@ -5,6 +5,13 @@ read_overlap_score_summary_vs_tad_length <- function(dataset, chromosome, bin_si
   chromosome <- as.integer(chromosome)
   bin_sizes <- as.integer(bin_sizes)
   stopifnot(is.numeric(rhos), !anyNA(rhos), all(rhos > 0), all(rhos <= 1/2))
+  if (is.character(reference_rhos)) {
+    reference_rhos <- switch(reference_rhos,
+      "50%" = rep(1/2, times = length(rhos)),
+      "same" = rho,
+      stop("Unknown value on 'reference_rhos': ", sQuote(reference_rhos))
+    )
+  }
   stopifnot(is.numeric(reference_rhos), !anyNA(reference_rhos), all(reference_rhos > 0), all(reference_rhos <= 1/2))
   stopifnot(length(reference_rhos) == length(rhos), all(reference_rhos >= rhos))
   window_size <- as.integer(window_size)
