@@ -240,7 +240,9 @@ overlap_score_summary_vs_bin_size <- function(dataset, chromosomes, bin_sizes, r
         tags <- sprintf("%s,chr=%s,%s,avg_score-vs-bin_size,test=%.3f,reference=%.3f,window_size=%d,nsamples=%d,signal=%s,weights=%s", dataset, chromosome, "cells_by_half", rho, reference_rho, window_size, nsamples, signal, weights)
         filename <- sprintf("%s.png", paste(c(tags, domain_length_tag), collapse = ","))
         if (verbose) suppressMessages <- identity
-        suppressMessages(ggsave(gg, filename=file.path(fig_path, filename)))
+        fig_pathname <- file.path(fig_path, filename)
+        suppressMessages(ggsave(gg, filename=fig_pathname))
+        if (verbose) message(" - Figure written: ", fig_pathname)
       } ## for (signal ...)
         
       if (verbose) message(sprintf("Fraction #%d (%g on Chr %s) of %d ... done", rr, rho, chromosome, length(rhos)))

@@ -9,8 +9,8 @@ plan(list(
 
 chromosomes <- getOption("TopDomStudy.tests.chromosomes", "22")
 bin_sizes <- getOption("TopDomStudy.tests.bin_sizes", c(50e3, 100e3, 200e3))
-rhos <- getOption("TopDomStudy.tests.rhos", c(0.10, 0.25, 0.50))
-nsamples <- getOption("TopDomStudy.tests.nsamples", 5L)
+rhos <- getOption("TopDomStudy.tests.rhos", c(0.10, 0.20, 0.30, 0.40, 0.50))
+nsamples <- getOption("TopDomStudy.tests.nsamples", 10L)
 
 reference_rhos <- c("50%", "same")[1]
 
