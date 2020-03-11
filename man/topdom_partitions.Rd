@@ -9,6 +9,7 @@ topdom_partitions(
   bin_size,
   partition_by,
   rho,
+  reference_rho = 1/2,
   nsamples = 100L,
   seed = TRUE,
   chrs = NULL,
@@ -31,7 +32,7 @@ topdom_partitions(
 \item{partition_by}{A string specifying how to partition;
 one of \code{"reads"}, \code{"cells"}, \code{"reads_by_half"}, or \code{"cells_by_half"}.}
 
-\item{rho}{A numeric in \eqn{(0,1/2]} specifying the relative size of the partions.}
+\item{rho, reference_rho}{A numeric in \eqn{(0,1/2]} specifying the relative size of the partions.}
 
 \item{nsamples}{Number of random samples.}
 

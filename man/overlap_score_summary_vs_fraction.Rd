@@ -9,6 +9,7 @@ overlap_score_summary_vs_fraction(
   chromosomes,
   bin_sizes,
   rhos,
+  reference_rhos = rep(1/2, times = length(rhos)),
   window_size = 5L,
   nsamples = 50L,
   weights = c("by_length", "uniform"),
@@ -25,6 +26,8 @@ overlap_score_summary_vs_fraction(
 \item{bin_sizes}{(numeric vector) The set of bin sizes (in bps) to process.}
 
 \item{rhos}{(numeric vector) The set of fractions (in (0,0.5]) to process.}
+
+\item{reference_rhos}{(numeric vector) The set of fractions (in (0,0.5]) to process.}
 
 \item{window_size}{(integer) The TopDom windows size.
 Argument passed as \code{window.size} to \code{\link[TopDom:TopDom]{TopDom::TopDom()}}.}

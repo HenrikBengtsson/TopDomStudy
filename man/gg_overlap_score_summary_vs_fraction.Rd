@@ -32,6 +32,7 @@ gg_overlap_score_summary_vs_bin_size(
   chromosome,
   bin_sizes,
   rho,
+  reference_rho = 1/2,
   window_size = 5L,
   nsamples = 50L,
   weights = c("by_length", "uniform"),
@@ -72,7 +73,7 @@ gg_overlap_score_summary_vs_tad_length(
 
 \item{chromosome}{(character string) The chromosome to be plotted.}
 
-\item{bin_size, rho}{(numeric) The bin size (bps) or sample fraction (in (0,0.5]) to be plotted.}
+\item{bin_size, rho, reference_rho}{(numeric) The bin size (bps) or sample fraction (in (0,0.5]) to be plotted.}
 
 \item{rhos}{(numeric vector) The set of fractions (in (0,0.5]) to process.}
 

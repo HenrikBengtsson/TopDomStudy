@@ -6,7 +6,7 @@
 #'
 #' @param bin_sizes (numeric vector) The set of bin sizes (in bps) to process.
 #'
-#' @param rhos (numeric vector) The set of fractions (in (0,0.5]) to process.
+#' @param rhos,reference_rhos (numeric vector) The set of fractions (in (0,0.5]) to process.
 #'
 #' @param window_size (integer) The TopDom windows size.
 #'        Argument passed as `window.size` to [TopDom::TopDom()].
@@ -65,11 +65,16 @@
 #' @importFrom future %<-% plan
 #' @importFrom future.apply future_lapply
 #' @export
-overlap_score_summary_grid <- function(dataset, chromosomes, bin_sizes, rhos, window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, verbose = FALSE) {
+overlap_score_summary_grid <- function(dataset, chromosomes, bin_sizes, rhos, reference_rhos = rep(1/2, times = length(rhos)), window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, verbose = FALSE) {
   progressor <- import_progressor()
 
   chromosomes <- as.character(chromosomes)
   stopifnot(is.character(chromosomes), !anyNA(chromosomes))
+
+  stopifnot(is.numeric(rhos), !anyNA(rhos), all(rhos > 0), all(rhos <= 1/2))
+  stopifnot(is.numeric(reference_rhos), !anyNA(reference_rhos), all(reference_rhos > 0), all(reference_rhos <= 1/2))
+  stopifnot(length(reference_rhos) == length(rhos), all(reference_rhos >= rhos))
+
   stopifnot(length(window_size) == 1L, is.numeric(window_size), !is.na(window_size), window_size >= 1L)
   window_size <- as.integer(window_size)
   window_size_tag <- sprintf("window_size=%d", window_size)
@@ -112,8 +117,9 @@ overlap_score_summary_grid <- function(dataset, chromosomes, bin_sizes, rhos, wi
 
       for (rr in seq_along(rhos)) {
         rho <- rhos[rr]
+        reference_rho <- reference_rhos[rr]
         test_tag <- sprintf("test=%.3f", rho)
-        reference_tag <- sprintf("reference=%.3f", 1/2)
+        reference_tag <- sprintf("reference=%.3f", reference_rho)
         if (verbose) message(sprintf("Fraction #%d (%s and %s with %s bps on Chr %s) of %d ...", rr, test_tag, reference_tag, bin_size, chromosome, length(rhos)))
 
         if (is.character(domain_length) && domain_length == "ref_len_iqr") {

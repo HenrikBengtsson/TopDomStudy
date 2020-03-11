@@ -1,7 +1,7 @@
 #' @importFrom tibble as_tibble
 #' @importFrom utils file_test
 #' @importFrom R.cache loadCache saveCache
-read_overlap_score_summary_vs_bin_size <- function(dataset, chromosome, bin_sizes, rho, window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, path = "overlapScoreSummary", force = FALSE, ..., verbose = FALSE) {
+read_overlap_score_summary_vs_bin_size <- function(dataset, chromosome, bin_sizes, rho, reference_rho = 1/2, window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, path = "overlapScoreSummary", force = FALSE, ..., verbose = FALSE) {
   chromosome <- as.integer(chromosome)
   bin_sizes <- as.integer(bin_sizes)
   rho <- as.numeric(rho)
@@ -17,7 +17,7 @@ read_overlap_score_summary_vs_bin_size <- function(dataset, chromosome, bin_size
   ## Tags
   chromosome_tag <- sprintf("chr=%s", chromosome)
   test_tag <- sprintf("test=%.3f", rho)
-  reference_tag <- sprintf("reference=%.3f", 1/2)
+  reference_tag <- sprintf("reference=%.3f", reference_rho)
   window_size_tag <- sprintf("window_size=%d", window_size)
   if (!is.null(domain_length)) {
     stop_if_not(is.numeric(domain_length), length(domain_length) == 2L, !anyNA(domain_length), all(domain_length > 0))
@@ -110,7 +110,10 @@ read_overlap_score_summary_vs_bin_size <- function(dataset, chromosome, bin_size
 #' @importFrom ggplot2 aes aes_string geom_boxplot geom_jitter ggplot ggsave ggtitle stat_summary xlab ylab ylim
 #' @importFrom utils file_test
 #' @export
-overlap_score_summary_vs_bin_size <- function(dataset, chromosomes, bin_sizes, rhos, window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, fig_path = "figures", verbose = FALSE) {
+overlap_score_summary_vs_bin_size <- function(dataset, chromosomes, bin_sizes, rhos, reference_rhos = rep(1/2, times = length(rhos)), window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, fig_path = "figures", verbose = FALSE) {
+  stopifnot(is.numeric(rhos), !anyNA(rhos), all(rhos > 0), all(rhos <= 1/2))
+  stopifnot(is.numeric(reference_rhos), !anyNA(reference_rhos), all(reference_rhos > 0), all(reference_rhos <= 1/2))
+  stopifnot(length(reference_rhos) == length(rhos), all(reference_rhos >= rhos))
   weights <- match.arg(weights)
   weights_tag <- sprintf("weights=%s", weights)
 
@@ -148,7 +151,8 @@ overlap_score_summary_vs_bin_size <- function(dataset, chromosomes, bin_sizes, r
     for (rr in seq_along(rhos)) {
       rho <- rhos[rr]
       test_tag <- sprintf("test=%.3f", rho)
-      reference_tag <- sprintf("reference=%.3f", 1/2)
+      reference_rho <- reference_rhos[rr]
+      reference_tag <- sprintf("reference=%.3f", reference_rho)
 
       if (verbose) message(sprintf("Fraction #%d (%g on Chr %s) of %d ... done", rr, rho, chromosome, length(rhos)))
 

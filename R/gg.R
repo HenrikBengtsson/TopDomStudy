@@ -4,7 +4,7 @@
 #'
 #' @param chromosome (character string) The chromosome to be plotted.
 #'
-#' @param bin_size,rho (numeric) The bin size (bps) or sample fraction (in (0,0.5]) to be plotted.
+#' @param bin_size,rho,reference_rho (numeric) The bin size (bps) or sample fraction (in (0,0.5]) to be plotted.
 #'
 #' @param signals (character vector of length two) The two signals to be
 #' plotted in the top and bottom panels.
@@ -192,7 +192,7 @@ gg_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size, 
 #' @importFrom utils file_test
 #'
 #' @export
-gg_overlap_score_summary_vs_bin_size <- function(dataset, chromosome, bin_sizes, rho, window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, signals = c("mean", "test_len_q0.50"), bin_size_lim = c(0, max(bin_sizes)), length_lim = c(0, 2e3), rel_heights = c(4,1), labels = c("chromosome"), line_col = "black", fig_path = "figures", skip = FALSE, ..., verbose = TRUE) {
+gg_overlap_score_summary_vs_bin_size <- function(dataset, chromosome, bin_sizes, rho, reference_rho = 1/2, window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, signals = c("mean", "test_len_q0.50"), bin_size_lim = c(0, max(bin_sizes)), length_lim = c(0, 2e3), rel_heights = c(4,1), labels = c("chromosome"), line_col = "black", fig_path = "figures", skip = FALSE, ..., verbose = TRUE) {
   avg_signals <- c(mean = "mean", median = "`50%`", "q25" = "`25%`", "q75" = "`75%`")
   length_signals <- c(
     "reference Q25 length"    = "ref_len_q0.25",
@@ -228,7 +228,7 @@ gg_overlap_score_summary_vs_bin_size <- function(dataset, chromosome, bin_sizes,
   ## Tags
   chromosome_tag <- sprintf("chr=%s", chromosome)
   test_tag <- sprintf("test=%.3f", rho)
-  reference_tag <- sprintf("reference=%.3f", 1/2)
+  reference_tag <- sprintf("reference=%.3f", reference_rho)
   window_size_tag <- sprintf("window_size=%d", window_size)
   if (!is.null(domain_length)) {
     stop_if_not(is.numeric(domain_length), length(domain_length) == 2L, !anyNA(domain_length), all(domain_length > 0))

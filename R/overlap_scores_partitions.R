@@ -7,7 +7,7 @@
 #' @param partition_by A string specifying how to partition;
 #'        one of `"reads"`, `"cells"`, `"reads_by_half"`, and `"cells_by_half"`.
 #'
-#' @param rho A numeric in \eqn{(0,1/2]} specifying the relative size of the partitions.
+#' @param rho,reference_rho A numeric in \eqn{(0,1/2]} specifying the relative size of the partitions.
 #'
 #' @param nsamples Number of random samples.
 #'
@@ -54,7 +54,7 @@
 #' @importFrom TopDom overlapScores TopDom
 #' @export
 overlap_scores_partitions <- function(reads, bin_size, partition_by, 
-                                      rho, nsamples = 100L, seed = TRUE,
+                                      rho, reference_rho = 1/2, nsamples = 100L, seed = TRUE,
                                       chrs = NULL, min_cell_size = 1L, dataset, cell_ids = NULL,
                                       window_size = 5L,
                                       path_out = ".", mainseed = 0xBEEF, force = FALSE,
@@ -99,7 +99,7 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by,
     min_cell_size_tag <- NULL
   }
   test_tag <- sprintf("test=%.3f", rho)
-  reference_tag <- sprintf("reference=%.3f", 1/2)
+  reference_tag <- sprintf("reference=%.3f", reference_rho)
   ## Random seeds (use the same for all chromosomes, i.e. invariant to chromosome)
 
   stop_if_not(mainseed == 0xBEEF)

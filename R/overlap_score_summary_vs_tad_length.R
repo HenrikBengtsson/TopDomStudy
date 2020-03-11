@@ -1,10 +1,12 @@
 #' @importFrom tibble as_tibble
 #' @importFrom utils file_test
 #' @importFrom R.cache loadCache saveCache
-read_overlap_score_summary_vs_tad_length <- function(dataset, chromosome, bin_sizes, rhos, window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, path = "overlapScoreSummary", force = FALSE, ..., verbose = FALSE) {
+read_overlap_score_summary_vs_tad_length <- function(dataset, chromosome, bin_sizes, rhos, reference_rhos = rep(1/2, times = length(rhos)), window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, path = "overlapScoreSummary", force = FALSE, ..., verbose = FALSE) {
   chromosome <- as.integer(chromosome)
   bin_sizes <- as.integer(bin_sizes)
-  rhos <- as.numeric(rhos)
+  stopifnot(is.numeric(rhos), !anyNA(rhos), all(rhos > 0), all(rhos <= 1/2))
+  stopifnot(is.numeric(reference_rhos), !anyNA(reference_rhos), all(reference_rhos > 0), all(reference_rhos <= 1/2))
+  stopifnot(length(reference_rhos) == length(rhos), all(reference_rhos >= rhos))
   window_size <- as.integer(window_size)
   nsamples <- as.integer(nsamples)
   weights <- match.arg(weights)
@@ -34,7 +36,7 @@ read_overlap_score_summary_vs_tad_length <- function(dataset, chromosome, bin_si
     message("- nsamples: ", nsamples)
   }
 
-  key <- list(dataset = dataset, chromosome = chromosome, bin_sizes = sort(bin_sizes), rhos = sort(rhos), window_size = window_size, nsamples = nsamples, weights = weights, domain_length = domain_length)
+  key <- list(dataset = dataset, chromosome = chromosome, bin_sizes = sort(bin_sizes), rhos = rhos, reference_rhos = reference_rhos, window_size = window_size, nsamples = nsamples, weights = weights, domain_length = domain_length)
   dirs <- c("TopDomStudy", dataset)
   if (!force) {
     summary <- loadCache(key = key, dirs = dirs)
@@ -56,8 +58,9 @@ read_overlap_score_summary_vs_tad_length <- function(dataset, chromosome, bin_si
     
     for (rr in seq_along(rhos)) {
       rho <- rhos[rr]
+      reference_rho <- reference_rhos[rr]
       test_tag <- sprintf("test=%.3f", rho)
-      reference_tag <- sprintf("reference=%.3f", 1/2)
+      reference_tag <- sprintf("reference=%.3f", reference_rho)
       if (verbose) message(sprintf("Fraction #%d (%s and %s with %s bps on Chr %s) of %d ...", rr, test_tag, reference_tag, bin_size, chromosome, length(rhos)))
 
       tags <- c(chromosome_tag, "cells_by_half", "avg_score", bin_size_tag, test_tag, reference_tag, window_size_tag, domain_length_tag, weights_tag, nsamples_tag)
