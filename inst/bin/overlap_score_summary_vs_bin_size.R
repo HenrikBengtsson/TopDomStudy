@@ -37,19 +37,21 @@ bin_sizes <- c(   6, 8, 10, 12, 15, 20, 30, 40, 50, 60, 80, 100) * 1e3
 rhos <- c(0.01, 0.02, 0.04, 0.05, 0.06, 0.08, 0.10, 0.20, 0.30, 0.40, 0.50)[-1]
 rhos <- c(      0.02, 0.04, 0.05, 0.06, 0.08, 0.10, 0.20, 0.30, 0.40, 0.50) ## Skip rho=0.02 due to chr=12 memory constraints
 rhos <- c(      0.02, 0.03, 0.04, 0.05, 0.06, 0.08, 0.10, 0.12, 0.14, 0.16, 0.18, 0.20, 0.25, 0.30, 0.40, 0.50) ## Skip rho=0.02 due to chr=12 memory constraints
+reference_rhos <- c("50%", "same")[1]
 
 domain_length <- NULL
 #domain_length <- c(300e3, 1000e3)
 
 done <- overlap_score_summary_vs_bin_size(
-  dataset       = "human,HAP1",
-  chromosomes   = rev(c("12", "16", "22")),
-  bin_sizes     = rev(bin_sizes),
-  rhos          = rhos,
-  window_size   = 5L,
-  weights       = c("by_length", "uniform")[1],
-  domain_length = domain_length,
-  nsamples      = 50L,
-  verbose       = TRUE
+  dataset        = "human,HAP1",
+  chromosomes    = rev(c("12", "16", "22")),
+  bin_sizes      = rev(bin_sizes),
+  rhos           = rhos,
+  reference_rhos = reference_rhos,
+  window_size    = 5L,
+  weights        = c("by_length", "uniform")[1],
+  domain_length  = domain_length,
+  nsamples       = 50L,
+  verbose        = TRUE
 )
 print(done)
