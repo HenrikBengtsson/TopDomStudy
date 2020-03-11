@@ -72,7 +72,7 @@ read_overlap_score_summary_vs_tad_length <- function(dataset, chromosome, bin_si
       ## Calculate on the fly?
       if (!file_test("-f", pathname_summary_kk)) {
         message("overlap_score_summary_grid() ...")
-        res <- overlap_score_summary_grid(dataset = dataset, chromosomes = chromosome, bin_sizes = bin_size, rhos = rho, window_size = window_size, nsamples = nsamples, weights = weights, domain_length = domain_length, verbose = verbose)
+        res <- overlap_score_summary_grid(dataset = dataset, chromosomes = chromosome, bin_sizes = bin_size, rhos = rho, reference_rhos = reference_rho, window_size = window_size, nsamples = nsamples, weights = weights, domain_length = domain_length, verbose = verbose)
         message("overlap_score_summary_grid() ... done")
       }
     

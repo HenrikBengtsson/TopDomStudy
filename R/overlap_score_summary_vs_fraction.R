@@ -32,7 +32,7 @@ overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, r
     stop_if_not(file_test("-d", fig_path))
   }
 
-  pathnames <- overlap_score_summary_grid(dataset, chromosomes = chromosomes, bin_sizes = bin_sizes, rhos = rhos, window_size = window_size, nsamples = nsamples, weights = weights, domain_length = domain_length, verbose = verbose)
+  pathnames <- overlap_score_summary_grid(dataset, chromosomes = chromosomes, bin_sizes = bin_sizes, rhos = rhos, reference_rhos = reference_rhos, window_size = window_size, nsamples = nsamples, weights = weights, domain_length = domain_length, verbose = verbose)
 
   nsamples_tag <- sprintf("nsamples=%d", nsamples)
 
@@ -63,7 +63,7 @@ overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, r
       bin_size_tag <- sprintf("bin_size=%.0f", bin_size)
       if (verbose) message(sprintf("Bin size #%d (%s) of %d ...", bb, bin_size_tag, length(bin_sizes)))
 
-      summary <- read_overlap_score_summary_vs_fraction(dataset, chromosome = chromosome, bin_size = bin_size, rhos = rhos, window_size = window_size, nsamples = nsamples, weights = weights, domain_length = domain_length, path = path, verbose = verbose)
+      summary <- read_overlap_score_summary_vs_fraction(dataset, chromosome = chromosome, bin_size = bin_size, rhos = rhos, reference_rhos = reference_rhos, window_size = window_size, nsamples = nsamples, weights = weights, domain_length = domain_length, path = path, verbose = verbose)
       summary <- as_tibble(summary)
       
       if (verbose) mprint(summary)
@@ -199,7 +199,7 @@ read_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size
     ## Calculate on the fly?
     if (!file_test("-f", pathname_summary_kk)) {
       message("overlap_score_summary_grid() ...")
-      res <- overlap_score_summary_grid(dataset = dataset, chromosomes = chromosome, bin_sizes = bin_size, rhos = rhos, window_size = window_size, nsamples = nsamples, weights = weights, domain_length = domain_length, verbose = verbose)
+      res <- overlap_score_summary_grid(dataset = dataset, chromosomes = chromosome, bin_sizes = bin_size, rhos = rhos, reference_rhos = reference_rhos, window_size = window_size, nsamples = nsamples, weights = weights, domain_length = domain_length, verbose = verbose)
       message("overlap_score_summary_grid() ... done")
     }
     

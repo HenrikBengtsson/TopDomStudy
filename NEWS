@@ -3,6 +3,10 @@ TopDomStudy
 
 Version: 0.0.1-9000 [2020-03-10]
 
+SIGNIFICANT CHANGES:
+
+ * Several functions gained argument 'reference_rho' or 'reference_rhos'.
+
  * Now pathnames in overScoreData/, overScoreSummary/, and topDomData/ have
    'reference=<size>' tags in addition to 'test=<size>' tags.  This is in
    preparation for using a reference partition of a different size than 50%.

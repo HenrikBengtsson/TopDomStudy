@@ -11,6 +11,7 @@ gg_overlap_score_summary_vs_fraction(
   chromosome,
   bin_size,
   rhos,
+  reference_rhos = rep(1/2, times = length(rhos)),
   window_size = 5L,
   nsamples = 50L,
   weights = c("by_length", "uniform"),
@@ -54,6 +55,7 @@ gg_overlap_score_summary_vs_tad_length(
   chromosome,
   bin_sizes,
   rhos,
+  reference_rhos = rep(1/2, times = length(rhos)),
   window_size = 5L,
   nsamples = 50L,
   weights = c("by_length", "uniform"),
@@ -76,6 +78,8 @@ gg_overlap_score_summary_vs_tad_length(
 \item{bin_size, rho, reference_rho}{(numeric) The bin size (bps) or sample fraction (in (0,0.5]) to be plotted.}
 
 \item{rhos}{(numeric vector) The set of fractions (in (0,0.5]) to process.}
+
+\item{reference_rhos}{(numeric vector) The set of fractions (in (0,0.5]) to process.}
 
 \item{window_size}{(integer) The TopDom windows size.
 Argument passed as \code{window.size} to \code{\link[TopDom:TopDom]{TopDom::TopDom()}}.}

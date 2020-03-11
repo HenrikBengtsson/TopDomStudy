@@ -69,6 +69,7 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by,
   stopifnot(length(min_cell_size) == 1L, is.numeric(min_cell_size),
             !is.na(min_cell_size), min_cell_size >= 1L)
   stop_if_not(is.numeric(rho), length(rho) == 1L, !is.na(rho), rho > 0.0, rho <= 0.5)
+  stop_if_not(is.numeric(reference_rho), length(reference_rho) == 1L, !is.na(reference_rho), reference_rho > 0.0, reference_rho <= 0.5)
   stop_if_not(is.numeric(nsamples), length(nsamples) == 1L,
               !is.na(nsamples), nsamples >= 1L)
   if (is.null(chrs)) {
@@ -164,7 +165,7 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by,
     if (verbose) mprintf(" - Number of (remaining) samples to process for chromosome %s (%s): %d", chr, chr_tag, length(sample_idxs))
 
     ## Always fit TopDom first
-    tds <- topdom_partitions(reads, chrs = chr, bin_size = bin_size, rho = rho, partition_by = partition_by, nsamples = nsamples, min_cell_size = min_cell_size, dataset = dataset, cell_ids = cell_ids, window_size = window_size, seed = seeds, mainseed = mainseed, force = FALSE, verbose = verbose)
+    tds <- topdom_partitions(reads, chrs = chr, bin_size = bin_size, rho = rho, reference_rho = reference_rho, partition_by = partition_by, nsamples = nsamples, min_cell_size = min_cell_size, dataset = dataset, cell_ids = cell_ids, window_size = window_size, seed = seeds, mainseed = mainseed, force = FALSE, verbose = verbose)
 
     res[[chr]] %<-% {
       if (is.function(reads)) reads <- reads()
@@ -261,12 +262,12 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by,
             names(params$fraction) <- c("reference", "test")
           }
           
-          if (verbose) mstr(list(params = params, seed = seed, rho=rho))
+          if (verbose) mstr(list(params = params, seed = seed))
           
           ## Sanity check
           stop_if_not(params$chromosome    == chr,
                       params$bin_size      == bin_size,
-                      all(params$fraction  == c(reference = 1/2, test = rho)),
+                      all(params$fraction  == c(reference = reference_rho, test = rho)),
                       params$min_cell_size == min_cell_size,
                       params$window_size   == window_size,
                       params$partition_by  == partition_by,

@@ -4,7 +4,8 @@
 read_overlap_score_summary_vs_bin_size <- function(dataset, chromosome, bin_sizes, rho, reference_rho = 1/2, window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, path = "overlapScoreSummary", force = FALSE, ..., verbose = FALSE) {
   chromosome <- as.integer(chromosome)
   bin_sizes <- as.integer(bin_sizes)
-  rho <- as.numeric(rho)
+  stop_if_not(is.numeric(rho), length(rho) == 1L, !is.na(rho), rho > 0.0, rho <= 0.5)
+  stop_if_not(is.numeric(reference_rho), length(reference_rho) == 1L, !is.na(reference_rho), reference_rho > 0.0, reference_rho <= 0.5)
   window_size <- as.integer(window_size)
   nsamples <- as.integer(nsamples)
   weights <- match.arg(weights)
@@ -37,7 +38,7 @@ read_overlap_score_summary_vs_bin_size <- function(dataset, chromosome, bin_size
     message("- nsamples: ", nsamples)
   }
 
-  key <- list(dataset = dataset, chromosome = chromosome, bin_sizes = sort(bin_sizes), rho = rho, window_size = window_size, nsamples = nsamples, weights = weights, domain_length = domain_length)
+  key <- list(dataset = dataset, chromosome = chromosome, bin_sizes = sort(bin_sizes), rho = rho, reference_rho = reference_rho, window_size = window_size, nsamples = nsamples, weights = weights, domain_length = domain_length)
   dirs <- c("TopDomStudy", dataset)
   if (!force) {
     summary <- loadCache(key = key, dirs = dirs)
@@ -64,7 +65,7 @@ read_overlap_score_summary_vs_bin_size <- function(dataset, chromosome, bin_size
     ## Calculate on the fly?
     if (!file_test("-f", pathname_summary_kk)) {
       message("overlap_score_summary_grid() ...")
-      res <- overlap_score_summary_grid(dataset = dataset, chromosomes = chromosome, bin_sizes = bin_sizes, rhos = rho, window_size = window_size, nsamples = nsamples, weights = weights, domain_length = domain_length, verbose = verbose)
+      res <- overlap_score_summary_grid(dataset = dataset, chromosomes = chromosome, bin_sizes = bin_sizes, rhos = rho, reference_rhos = reference_rho, window_size = window_size, nsamples = nsamples, weights = weights, domain_length = domain_length, verbose = verbose)
       message("overlap_score_summary_grid() ... done")
     }
     
@@ -122,7 +123,7 @@ overlap_score_summary_vs_bin_size <- function(dataset, chromosomes, bin_sizes, r
     stop_if_not(file_test("-d", fig_path))
   }
   
-  pathnames <- overlap_score_summary_grid(dataset, chromosomes = chromosomes, bin_sizes = bin_sizes, rhos = rhos, window_size = window_size, nsamples = nsamples, weights = weights, domain_length = domain_length, verbose = verbose)
+  pathnames <- overlap_score_summary_grid(dataset, chromosomes = chromosomes, bin_sizes = bin_sizes, rhos = rhos, reference_rhos = reference_rhos, window_size = window_size, nsamples = nsamples, weights = weights, domain_length = domain_length, verbose = verbose)
 
   nsamples_tag <- sprintf("nsamples=%d", nsamples)
 
@@ -222,7 +223,7 @@ overlap_score_summary_vs_bin_size <- function(dataset, chromosomes, bin_sizes, r
         }
 
         signal <- gsub("`50%`", "median", signal)
-        tags <- sprintf("%s,chr=%s,%s,avg_score-vs-bin_size,test=%.3f,window_size=%d,nsamples=%d,signal=%s,weights=%s", dataset, chromosome, "cells_by_half", rho, window_size, nsamples, signal, weights)
+        tags <- sprintf("%s,chr=%s,%s,avg_score-vs-bin_size,test=%.3f,reference=%.3f,window_size=%d,nsamples=%d,signal=%s,weights=%s", dataset, chromosome, "cells_by_half", rho, reference_rho, window_size, nsamples, signal, weights)
         filename <- sprintf("%s.png", paste(c(tags, domain_length_tag), collapse = ","))
         if (verbose) suppressMessages <- identity
         suppressMessages(ggsave(gg, filename=file.path(fig_path, filename)))

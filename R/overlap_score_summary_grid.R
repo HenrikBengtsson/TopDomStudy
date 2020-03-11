@@ -165,7 +165,7 @@ overlap_score_summary_grid <- function(dataset, chromosomes, bin_sizes, rhos, re
 
           if (verbose) message("overlap_scores_partitions() ...")
           res <- overlap_scores_partitions(reads = reads, dataset = sprintf("%s,unique", dataset), bin_size = bin_size,
-                                           partition_by = "cells_by_half", min_cell_size = 2L, window_size = window_size, rho = rho,
+                                           partition_by = "cells_by_half", min_cell_size = 2L, window_size = window_size, rho = rho, reference_rho = reference_rho,
                                            nsamples = nsamples, chrs = chromosome, seed = 0xBEEF, mainseed = 0xBEEF, verbose = verbose)
           if (verbose) mstr(res)
           if (verbose) message("overlap_scores_partitions() ... done")
