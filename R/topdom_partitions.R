@@ -273,7 +273,7 @@ topdom_partitions <- function(reads, bin_size, partition_by, rho, reference_rho 
 
           attr(tds, "chromosome") <- chr
           attr(tds, "bin_size") <- bin_size
-          attr(tds, "fraction") <- rho
+          attr(tds, "fraction") <- c(reference = reference_rho, test = rho)
           attr(tds, "min_cell_size") <- min_cell_size
           attr(tds, "window_size") <- window_size
           attr(tds, "partition_by") <- partition_by
