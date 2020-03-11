@@ -243,7 +243,7 @@ gg_overlap_score_summary_vs_bin_size <- function(dataset, chromosome, bin_sizes,
   if (!is.null(fig_path)) {
     signals_tag <- sprintf("signals=%s", paste(signal_labels, collapse = "-"))
   
-    tags <- c(chromosome_tag, "cells_by_half", "avg_score-vs-fraction", test_tag, window_size_tag, nsamples_tag, signals_tag, weights_tag, domain_length_tag)
+    tags <- c(chromosome_tag, "cells_by_half", "avg_score-vs-fraction", test_tag, reference_tag, window_size_tag, nsamples_tag, signals_tag, weights_tag, domain_length_tag)
     fullname <- paste(c(dataset, tags), collapse = ",")
     filename <- sprintf("%s.png", fullname)
     fig_pathname <- file.path(fig_path, filename)

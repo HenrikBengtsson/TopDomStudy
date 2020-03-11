@@ -116,7 +116,7 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by,
 
   as <- match.arg(as)
 
-  dataset_out <- paste(c(dataset, cell_ids_tag, bin_size_tag, partition_by_tag, min_cell_size_tag, window_size_tag, test_tag, mainseed_tag), collapse = ",")
+  dataset_out <- paste(c(dataset, cell_ids_tag, bin_size_tag, partition_by_tag, min_cell_size_tag, window_size_tag, test_tag, reference_tag, mainseed_tag), collapse = ",")
   path_out <- file.path("overlapScoreData", dataset_out)
   dir.create(path_out, recursive = TRUE, showWarnings = FALSE)
   stop_if_not(file_test("-d", path_out))
@@ -135,7 +135,7 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by,
 
     ## Find all input files for this chromosome
     filenames <- sapply(1:nsamples, function(bb) {
-      tags <- c(cell_ids_tag, chr_tag, bin_size_tag, partition_by_tag, min_cell_size_tag, window_size_tag, test_tag, seed_tags[bb])
+      tags <- c(cell_ids_tag, chr_tag, bin_size_tag, partition_by_tag, min_cell_size_tag, window_size_tag, test_tag, reference_tag, seed_tags[bb])
       name <- paste(c(dataset, tags), collapse = ",")
       sprintf("%s.rds", name)
     })
@@ -231,7 +231,7 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by,
         set <- basename(dirname(pathname))
         path_td <- file.path("topdomData", set)
         stop_if_not(file_test("-d", path_td))
-        tags <- c(cell_ids_tag, chr_tag, bin_size_tag, partition_by_tag, min_cell_size_tag, window_size_tag, test_tag, seed_tags[bb])
+        tags <- c(cell_ids_tag, chr_tag, bin_size_tag, partition_by_tag, min_cell_size_tag, window_size_tag, test_tag, reference_tag, seed_tags[bb])
         name <- paste(c(dataset, tags), collapse = ",")
         filename_td <- sprintf("%s.rds", name)
         pathname_td <- file.path(path_td, filename_td)

@@ -133,12 +133,12 @@ overlap_score_summary_grid <- function(dataset, chromosomes, bin_sizes, rhos, wi
           domain_length_tag <- sprintf("domain_length=%.0f-%.0f", domain_length[1], domain_length[2])
         }
   
-        tags <- c(chromosome_tag, "cells_by_half", "avg_score", bin_size_tag, test_tag, window_size_tag, domain_length_tag, weights_tag, nsamples_tag)
+        tags <- c(chromosome_tag, "cells_by_half", "avg_score", bin_size_tag, test_tag, reference_tag, window_size_tag, domain_length_tag, weights_tag, nsamples_tag)
         fullname <- paste(c(dataset, tags), collapse = ",")
         pathname_summary_kk <- file.path(path, sprintf("%s.rds", fullname))
         if (verbose) message("pathname_summary_kk: ", pathname_summary_kk)
 
-        progress(message = paste(c(chromosome_tag, bin_size_tag, test_tag), collapse=", "))
+        progress(message = paste(c(chromosome_tag, bin_size_tag, test_tag, reference_tag), collapse=", "))
 
         ## Already processed?
         if (file_test("-f", pathname_summary_kk)) {

@@ -55,7 +55,7 @@ read_overlap_score_summary_vs_bin_size <- function(dataset, chromosome, bin_size
     bin_size_tag <- sprintf("bin_size=%.0f", bin_size)
     if (verbose) message(sprintf("Bin size #%d (%s with %s and %s on Chr %s) of %d ...", bb, bin_size, test_tag, reference_tag, chromosome, length(bin_sizes)))
 
-    tags <- c(chromosome_tag, "cells_by_half", "avg_score", bin_size_tag, test_tag, window_size_tag, domain_length_tag, weights_tag, nsamples_tag)
+    tags <- c(chromosome_tag, "cells_by_half", "avg_score", bin_size_tag, test_tag, reference_tag, window_size_tag, domain_length_tag, weights_tag, nsamples_tag)
 
     fullname <- paste(c(dataset, tags), collapse = ",")
     pathname_summary_kk <- file.path(path, sprintf("%s.rds", fullname))
@@ -148,6 +148,7 @@ overlap_score_summary_vs_bin_size <- function(dataset, chromosomes, bin_sizes, r
     for (rr in seq_along(rhos)) {
       rho <- rhos[rr]
       test_tag <- sprintf("test=%.3f", rho)
+      reference_tag <- sprintf("reference=%.3f", 1/2)
 
       if (verbose) message(sprintf("Fraction #%d (%g on Chr %s) of %d ... done", rr, rho, chromosome, length(rhos)))
 
@@ -158,7 +159,7 @@ overlap_score_summary_vs_bin_size <- function(dataset, chromosomes, bin_sizes, r
         bin_size_tag <- sprintf("bin_size=%.0f", bin_size)
         if (verbose) message(sprintf("Bin size #%d (%s bps with %g on Chr %s) of %d ...", bb, bin_size, rho, chromosome, length(bin_sizes)))
 
-        tags <- c(chromosome_tag, "cells_by_half", "avg_score", bin_size_tag, test_tag, window_size_tag, domain_length_tag, weights_tag, nsamples_tag)
+        tags <- c(chromosome_tag, "cells_by_half", "avg_score", bin_size_tag, test_tag, reference_tag, window_size_tag, domain_length_tag, weights_tag, nsamples_tag)
         fullname <- paste(c(dataset, tags), collapse = ",")
         pathname_summary_kk <- file.path(path, sprintf("%s.rds", fullname))
         if (verbose) message("pathname_summary_kk: ", pathname_summary_kk)
