@@ -189,6 +189,8 @@ overlap_score_summary_grid <- function(dataset, chromosomes, bin_sizes, rhos, re
               if (length(oss) < 2) return(NULL)
             }
             z <- overlap_score_summary(oss, weights = weights, domain_length = domain_length)
+            ## Sanity checks
+            stopifnot(all(z$fraction == rho), all(z$ref_fraction == reference_rho))
             oss <- failed <- NULL
 
             ## Locate TopDom fit results
@@ -228,7 +230,6 @@ overlap_score_summary_grid <- function(dataset, chromosomes, bin_sizes, rhos, re
           })
           summary_kk <- do.call(rbind, summary_kk)
           rownames(summary_kk) <- NULL
-          summary_kk <- cbind(summary_kk, fraction = rho)
           if (verbose) message("Summary of overlap scores and reference domain lengths ... done")
 
           ## Save intermediate results to file
