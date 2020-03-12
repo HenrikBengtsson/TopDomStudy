@@ -7,7 +7,7 @@
 #' @param partition_by A string specifying how to partition;
 #'        one of `"reads"`, `"cells"`, `"reads_by_half"`, or `"cells_by_half"`.
 #'
-#' @param rho,reference_rho A numeric in \eqn{(0,1/2]} specifying the relative size of the partions.
+#' @param rho,reference_rho A numeric in \eqn{(0,1/2]} specifying the relative size of the partitions.
 #'
 #' @param nsamples Number of random samples.
 #'
@@ -17,7 +17,7 @@
 #'        be included. Cells with less reads are dropped.
 #'
 #' @param chrs (optional, filter) Names of chromosomes to iterate over.
-#'        Defaults to the chromsomes in `reads$chr_a`.
+#'        Defaults to the chromosomes in `reads$chr_a`.
 #'
 #' @param cell_ids (optional, filter) ...
 #'

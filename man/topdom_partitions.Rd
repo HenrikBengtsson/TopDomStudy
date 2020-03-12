@@ -32,14 +32,14 @@ topdom_partitions(
 \item{partition_by}{A string specifying how to partition;
 one of \code{"reads"}, \code{"cells"}, \code{"reads_by_half"}, or \code{"cells_by_half"}.}
 
-\item{rho, reference_rho}{A numeric in \eqn{(0,1/2]} specifying the relative size of the partions.}
+\item{rho, reference_rho}{A numeric in \eqn{(0,1/2]} specifying the relative size of the partitions.}
 
 \item{nsamples}{Number of random samples.}
 
 \item{seed}{Random seed for reproducible (parallel) random number generation (RNG).}
 
 \item{chrs}{(optional, filter) Names of chromosomes to iterate over.
-Defaults to the chromsomes in \code{reads$chr_a}.}
+Defaults to the chromosomes in \code{reads$chr_a}.}
 
 \item{min_cell_size}{(optional, filter) The minimum number of reads for a cell to
 be included. Cells with less reads are dropped.}

@@ -15,7 +15,7 @@
 #' element holds indices in \eqn{{1, 2, ..., n}}.  The first element holds the
 #' 'reference' partition and the second the 'test' partition.
 #' As an example, if `fraction[1] == 1/2`, then the reference partition
-#' \eqn{P_0.5} holds \eqn{n/2} indices and the test parition holds indices in
+#' \eqn{P_0.5} holds \eqn{n/2} indices and the test partition holds indices in
 #' \eqn{{1, 2, ..., n} \ P_0.5} where the size of the partitions corresponds
 #' to the sizes specified by `fraction[2]`.
 #'

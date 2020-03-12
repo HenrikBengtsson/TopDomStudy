@@ -11,7 +11,7 @@
 #'
 #' @param rho_lim,bin_size_lim The range of the fraction or bin size to be displayed.
 #'
-#' @param length_lim The range of the domain lenghts to be displayed.
+#' @param length_lim The range of the domain lengths to be displayed.
 #'
 #' @param rel_heights (numeric vector of length two) The relative height
 #' of the two figures.  Passed to [cowplot::plot_grid] as is.

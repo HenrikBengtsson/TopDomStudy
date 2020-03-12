@@ -48,7 +48,7 @@ The overlap scores and their summaries are written to file to folders `./overlap
 The above takes approximately 24-30 hours and up to 20 GiB of RAM to complete when running in parallel using two cores (with `future::plan("multicore", workers=2)`) on a Lenovo Thinkpad Carbon X1 (gen 6) with 16 GiB of RAM.  The majority of the processing time, and memory, is consumed on Chr 12 at the higher resolutions (bin sizes <= 10 kb).  Running sequentially (default) will lower the memory requirements to approximately 10 GiB of RAM.
 
 
-In addition to the above computationally expensive 10-by-10 grid, we will also need a a few additional calcuations;
+In addition to the above computationally expensive 10-by-10 grid, we will also need a a few additional calculations;
 
 ```r
 library(TopDomStudy)
