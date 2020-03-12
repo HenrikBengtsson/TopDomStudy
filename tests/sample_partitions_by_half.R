@@ -1,4 +1,4 @@
-library(TopDomStudy)
+source("incl/start.R")
 
 n <- 1000L
 
@@ -117,3 +117,4 @@ for (fraction in c(0.01, 0.2, 0.5)) {
   }
 }
 
+source("incl/end.R")

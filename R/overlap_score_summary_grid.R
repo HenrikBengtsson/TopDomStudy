@@ -6,7 +6,7 @@
 #'
 #' @param bin_sizes (numeric vector) The set of bin sizes (in bps) to process.
 #'
-#' @param rhos (numeric vector) The set of fractions (in (0,0.5]) to process.
+#' @param rhos,reference_rhos (numeric vector) The set of fractions (in (0,0.5]) to process.
 #'
 #' @param window_size (integer) The TopDom windows size.
 #'        Argument passed as `window.size` to [TopDom::TopDom()].
@@ -65,11 +65,23 @@
 #' @importFrom future %<-% plan
 #' @importFrom future.apply future_lapply
 #' @export
-overlap_score_summary_grid <- function(dataset, chromosomes, bin_sizes, rhos, window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, verbose = FALSE) {
+overlap_score_summary_grid <- function(dataset, chromosomes, bin_sizes, rhos, reference_rhos = rep(1/2, times = length(rhos)), window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, verbose = FALSE) {
   progressor <- import_progressor()
 
   chromosomes <- as.character(chromosomes)
   stopifnot(is.character(chromosomes), !anyNA(chromosomes))
+
+  stopifnot(is.numeric(rhos), !anyNA(rhos), all(rhos > 0), all(rhos <= 1/2))
+  if (is.character(reference_rhos)) {
+    reference_rhos <- switch(reference_rhos,
+      "50%" = rep(1/2, times = length(rhos)),
+      "same" = rhos,
+      stop("Unknown value on 'reference_rhos': ", sQuote(reference_rhos))
+    )
+  }
+  stopifnot(is.numeric(reference_rhos), !anyNA(reference_rhos), all(reference_rhos > 0), all(reference_rhos <= 1/2))
+  stopifnot(length(reference_rhos) == length(rhos), all(reference_rhos >= rhos))
+
   stopifnot(length(window_size) == 1L, is.numeric(window_size), !is.na(window_size), window_size >= 1L)
   window_size <- as.integer(window_size)
   window_size_tag <- sprintf("window_size=%d", window_size)
@@ -112,8 +124,10 @@ overlap_score_summary_grid <- function(dataset, chromosomes, bin_sizes, rhos, wi
 
       for (rr in seq_along(rhos)) {
         rho <- rhos[rr]
-        rho_tag <- sprintf("test=%.3f", rho)
-        if (verbose) message(sprintf("Fraction #%d (%s with %s bps on Chr %s) of %d ...", rr, rho_tag, bin_size, chromosome, length(rhos)))
+        reference_rho <- reference_rhos[rr]
+        test_tag <- sprintf("test=%.3f", rho)
+        reference_tag <- sprintf("reference=%.3f", reference_rho)
+        if (verbose) message(sprintf("Fraction #%d (%s and %s with %s bps on Chr %s) of %d ...", rr, test_tag, reference_tag, bin_size, chromosome, length(rhos)))
 
         if (is.character(domain_length) && domain_length == "ref_len_iqr") {
           limits <- extract_domain_length_limits(
@@ -132,17 +146,17 @@ overlap_score_summary_grid <- function(dataset, chromosomes, bin_sizes, rhos, wi
           domain_length_tag <- sprintf("domain_length=%.0f-%.0f", domain_length[1], domain_length[2])
         }
   
-        tags <- c(chromosome_tag, "cells_by_half", "avg_score", bin_size_tag, rho_tag, window_size_tag, domain_length_tag, weights_tag, nsamples_tag)
+        tags <- c(chromosome_tag, "cells_by_half", "avg_score", bin_size_tag, test_tag, reference_tag, window_size_tag, domain_length_tag, weights_tag, nsamples_tag)
         fullname <- paste(c(dataset, tags), collapse = ",")
         pathname_summary_kk <- file.path(path, sprintf("%s.rds", fullname))
         if (verbose) message("pathname_summary_kk: ", pathname_summary_kk)
 
-        progress(message = paste(c(chromosome_tag, bin_size_tag, rho_tag), collapse=", "))
+        progress(message = paste(c(chromosome_tag, bin_size_tag, test_tag, reference_tag), collapse=", "))
 
         ## Already processed?
         if (file_test("-f", pathname_summary_kk)) {
           dummy[[cc, bb, rr]] <- pathname_summary_kk
-          if (verbose) message(sprintf("Fraction #%d (%s with %s bps on Chr %s) of %d ... already done", rr, rho_tag, bin_size, chromosome, length(rhos)))
+          if (verbose) message(sprintf("Fraction #%d (%s and %s with %s bps on Chr %s) of %d ... already done", rr, test_tag, reference_tag, bin_size, chromosome, length(rhos)))
           next
         }
 
@@ -158,7 +172,7 @@ overlap_score_summary_grid <- function(dataset, chromosomes, bin_sizes, rhos, wi
 
           if (verbose) message("overlap_scores_partitions() ...")
           res <- overlap_scores_partitions(reads = reads, dataset = sprintf("%s,unique", dataset), bin_size = bin_size,
-                                           partition_by = "cells_by_half", min_cell_size = 2L, window_size = window_size, rho = rho,
+                                           partition_by = "cells_by_half", min_cell_size = 2L, window_size = window_size, rho = rho, reference_rho = reference_rho,
                                            nsamples = nsamples, chrs = chromosome, seed = 0xBEEF, mainseed = 0xBEEF, verbose = verbose)
           if (verbose) mstr(res)
           if (verbose) message("overlap_scores_partitions() ... done")
@@ -175,6 +189,8 @@ overlap_score_summary_grid <- function(dataset, chromosomes, bin_sizes, rhos, wi
               if (length(oss) < 2) return(NULL)
             }
             z <- overlap_score_summary(oss, weights = weights, domain_length = domain_length)
+            ## Sanity checks
+            stopifnot(all(z$fraction == rho), all(z$ref_fraction == reference_rho))
             oss <- failed <- NULL
 
             ## Locate TopDom fit results
@@ -214,7 +230,6 @@ overlap_score_summary_grid <- function(dataset, chromosomes, bin_sizes, rhos, wi
           })
           summary_kk <- do.call(rbind, summary_kk)
           rownames(summary_kk) <- NULL
-          summary_kk <- cbind(summary_kk, fraction = rho)
           if (verbose) message("Summary of overlap scores and reference domain lengths ... done")
 
           ## Save intermediate results to file
@@ -224,7 +239,7 @@ overlap_score_summary_grid <- function(dataset, chromosomes, bin_sizes, rhos, wi
           pathname_summary_kk
         } %label% sprintf("%s-%s-%s", chromosome, bin_size, rho)
 
-        if (verbose) message(sprintf("Fraction #%d (%s with %s bps on Chr %s) of %d ...", rr, rho_tag, bin_size, chromosome, length(rhos)))
+        if (verbose) message(sprintf("Fraction #%d (%s and %s with %s bps on Chr %s) of %d ... done", rr, test_tag, reference_tag, bin_size, chromosome, length(rhos)))
       } ## for (rr ...)
 
       if (verbose) message(sprintf("Bin size #%d (%s bps on Chr %s) of %d ... done", bb, bin_size, chromosome, length(bin_sizes)))

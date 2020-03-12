@@ -1,4 +1,4 @@
-library(TopDomStudy)
+source("incl/start.R")
 
 message("read_rds() ...")
 
@@ -28,3 +28,5 @@ print(res)
 stopifnot(inherits(res, "error"))
 
 message("read_rds() ... done")
+
+source("incl/end.R")

@@ -99,6 +99,8 @@ overlap_score_summary <- function(fit, weights = c("uniform", "by_length"), doma
       chromosome = chr,
       min_cell_size = min_cell_size,
       bin_size = bin_size,
+      fraction = attrs[["fraction"]]["test"],
+      ref_fraction = attrs[["fraction"]]["reference"],
       mean = mean_hat,
       as.list(quantile_hat),
       sd = sd_hat,

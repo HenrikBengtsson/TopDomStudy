@@ -11,6 +11,7 @@ gg_overlap_score_summary_vs_fraction(
   chromosome,
   bin_size,
   rhos,
+  reference_rhos = rep(1/2, times = length(rhos)),
   window_size = 5L,
   nsamples = 50L,
   weights = c("by_length", "uniform"),
@@ -32,6 +33,7 @@ gg_overlap_score_summary_vs_bin_size(
   chromosome,
   bin_sizes,
   rho,
+  reference_rho = 1/2,
   window_size = 5L,
   nsamples = 50L,
   weights = c("by_length", "uniform"),
@@ -53,6 +55,7 @@ gg_overlap_score_summary_vs_tad_length(
   chromosome,
   bin_sizes,
   rhos,
+  reference_rhos = rep(1/2, times = length(rhos)),
   window_size = 5L,
   nsamples = 50L,
   weights = c("by_length", "uniform"),
@@ -72,9 +75,11 @@ gg_overlap_score_summary_vs_tad_length(
 
 \item{chromosome}{(character string) The chromosome to be plotted.}
 
-\item{bin_size, rho}{(numeric) The bin size (bps) or sample fraction (in (0,0.5]) to be plotted.}
+\item{bin_size, rho, reference_rho}{(numeric) The bin size (bps) or sample fraction (in (0,0.5]) to be plotted.}
 
 \item{rhos}{(numeric vector) The set of fractions (in (0,0.5]) to process.}
+
+\item{reference_rhos}{(numeric vector) The set of fractions (in (0,0.5]) to process.}
 
 \item{window_size}{(integer) The TopDom windows size.
 Argument passed as \code{window.size} to \code{\link[TopDom:TopDom]{TopDom::TopDom()}}.}
@@ -94,7 +99,7 @@ plotted in the top and bottom panels.}
 
 \item{rho_lim, bin_size_lim}{The range of the fraction or bin size to be displayed.}
 
-\item{length_lim}{The range of the domain lenghts to be displayed.}
+\item{length_lim}{The range of the domain lengths to be displayed.}
 
 \item{rel_heights}{(numeric vector of length two) The relative height
 of the two figures.  Passed to \link[cowplot:plot_grid]{cowplot::plot_grid} as is.}

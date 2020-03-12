@@ -28,6 +28,8 @@ library(future) ## sources ./.future.R, if it exists
 ## Allow for 3-GiB objects to be exported during parallelizing
 options(future.globals.maxSize = 3 * 1024^3)
 
+chromosomes <- c("12", "16", "22")
+
 bin_sizes <- c(5, 6, 8, 10, 12, 15, 20, 40, 60, 80, 100) * 1e3
 bin_sizes <- c(         10,         20, 40, 60, 80, 100) * 1e3
 bin_sizes <- c(   6, 8, 10, 12, 15, 20, 40, 60, 80, 100) * 1e3
@@ -42,14 +44,15 @@ domain_length <- NULL
 #domain_length <- c(300e3, 1000e3)
 
 done <- overlap_score_summary_vs_bin_size(
-  dataset       = "human,HAP1",
-  chromosomes   = rev(c("12", "16", "22")),
-  bin_sizes     = rev(bin_sizes),
-  rhos          = rhos,
-  window_size   = 5L,
-  weights       = c("by_length", "uniform")[1],
-  domain_length = domain_length,
-  nsamples      = 50L,
-  verbose       = TRUE
+  dataset        = "human,HAP1",
+  chromosomes    = chromosomes,
+  bin_sizes      = bin_sizes,
+  rhos           = rhos,
+  reference_rhos = c("50%", "same")[1],
+  window_size    = 5L,
+  weights        = c("by_length", "uniform")[1],
+  domain_length  = domain_length,
+  nsamples       = 50L,
+  verbose        = TRUE
 )
 print(done)

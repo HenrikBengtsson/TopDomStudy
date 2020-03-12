@@ -20,7 +20,17 @@
 #' @importFrom utils file_test
 #' @importFrom R.cache loadCache saveCache
 #' @export
-overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, rhos, window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, fig_path = "figures", verbose = FALSE) {
+overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, rhos, reference_rhos = rep(1/2, times = length(rhos)), window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, fig_path = "figures", verbose = FALSE) {
+  stopifnot(is.numeric(rhos), !anyNA(rhos), all(rhos > 0), all(rhos <= 1/2))
+  if (is.character(reference_rhos)) {
+    reference_rhos <- switch(reference_rhos,
+      "50%" = rep(1/2, times = length(rhos)),
+      "same" = rhos,
+      stop("Unknown value on 'reference_rhos': ", sQuote(reference_rhos))
+    )
+  }
+  stopifnot(is.numeric(reference_rhos), !anyNA(reference_rhos), all(reference_rhos > 0), all(reference_rhos <= 1/2))
+  stopifnot(length(reference_rhos) == length(rhos), all(reference_rhos >= rhos))
   weights <- match.arg(weights)
   weights_tag <- sprintf("weights=%s", weights)
 
@@ -29,7 +39,7 @@ overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, r
     stop_if_not(file_test("-d", fig_path))
   }
 
-  pathnames <- overlap_score_summary_grid(dataset, chromosomes = chromosomes, bin_sizes = bin_sizes, rhos = rhos, window_size = window_size, nsamples = nsamples, weights = weights, domain_length = domain_length, verbose = verbose)
+  pathnames <- overlap_score_summary_grid(dataset, chromosomes = chromosomes, bin_sizes = bin_sizes, rhos = rhos, reference_rhos = reference_rhos, window_size = window_size, nsamples = nsamples, weights = weights, domain_length = domain_length, verbose = verbose)
 
   nsamples_tag <- sprintf("nsamples=%d", nsamples)
 
@@ -60,11 +70,22 @@ overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, r
       bin_size_tag <- sprintf("bin_size=%.0f", bin_size)
       if (verbose) message(sprintf("Bin size #%d (%s) of %d ...", bb, bin_size_tag, length(bin_sizes)))
 
-      summary <- read_overlap_score_summary_vs_fraction(dataset, chromosome = chromosome, bin_size = bin_size, rhos = rhos, window_size = window_size, nsamples = nsamples, weights = weights, domain_length = domain_length, path = path, verbose = verbose)
+      summary <- read_overlap_score_summary_vs_fraction(dataset, chromosome = chromosome, bin_size = bin_size, rhos = rhos, reference_rhos = reference_rhos, window_size = window_size, nsamples = nsamples, weights = weights, domain_length = domain_length, path = path, verbose = verbose)
       summary <- as_tibble(summary)
       
       if (verbose) mprint(summary)
-    
+
+      if (all(summary$fraction == summary$ref_fraction)) {
+        fraction_label <- "sample fraction (test = reference)"
+        fraction_tag <- "ref=same"
+      } else if (all(summary$ref_fraction == 1/2)) {
+        fraction_label <- "test sample fraction (50% for reference)"
+        fraction_tag <- "ref=50pct"
+      } else {
+        fraction_label <- "sample fraction"
+        fraction_tag <- "unknown"
+      }
+
       dw <- diff(range(rhos)) / length(rhos)
 
       length_signals <- c(
@@ -89,16 +110,17 @@ overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, r
 
         gg <- gg + stat_summary(aes_string(y = signal, group = 1L),
                                 fun.y = function(x) mean(x, trim = 0.10),
-                                geom = "line", size = 2L, group = 1L)
+                                geom = "line", size = 2L, ## colour = "red", 
+                                group = 1L)
 
         params <- c(sprintf("estimator: %s", signal_label),
                     sprintf("weights: %s", weights),
                     sprintf("domains: %.0f-%.0f", domain_length[1], domain_length[2]))
-        subtitle <- sprintf("chromosome %s, bin size=%d, window size=%d (%d samples) [%s]",
+        subtitle <- sprintf("chromosome %s, bin size=%d, window size=%d (%d samples)\n[%s]",
                             chromosome, bin_size, window_size, nsamples, paste(params, collapse = "; "))
 
         gg <- gg + ggtitle(dataset, subtitle = subtitle)
-        gg <- gg + xlab("fraction")
+        gg <- gg + xlab(fraction_label)
         if (signal_label %in% names(length_signals)) {
           gg <- gg + ylab("domain length (bps)")
           gg <- gg + ylim(0, 2e6)
@@ -108,10 +130,12 @@ overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, r
         }
 
         signal <- gsub("`50%`", "median", signal)
-        tags <- sprintf("%s,chr=%s,%s,avg_score-vs-fraction,bin_size=%d,window_size=%d,nsamples=%d,signal=%s,weights=%s", dataset, chromosome, "cells_by_half", bin_size, window_size, nsamples, signal, weights)
+        tags <- sprintf("%s,chr=%s,%s,avg_score-vs-fraction,bin_size=%d,%s,window_size=%d,nsamples=%d,signal=%s,weights=%s", dataset, chromosome, "cells_by_half", bin_size, fraction_tag, window_size, nsamples, signal, weights)
         filename <- sprintf("%s.png", paste(c(tags, domain_length_tag), collapse = ","))
         if (verbose) suppressMessages <- identity
-        suppressMessages(ggsave(gg, filename=file.path(fig_path, filename)))
+        fig_pathname <- file.path(fig_path, filename)
+        suppressMessages(ggsave(gg, filename=fig_pathname))
+        if (verbose) message(" - Figure written: ", fig_pathname)
       } ## for (signal ...)
       
       if (verbose) message(sprintf("Bin size #%d (%s) of %d ... done", bb, bin_size_tag, length(bin_sizes)))
@@ -129,7 +153,17 @@ overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, r
 #' @importFrom tibble as_tibble
 #' @importFrom utils file_test
 #' @importFrom R.cache loadCache saveCache
-read_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size, rhos, window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, path = "overlapScoreSummary", force = FALSE, ..., verbose = FALSE) {
+read_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size, rhos, reference_rhos = rep(1/2, times = length(rhos)), window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, path = "overlapScoreSummary", force = FALSE, ..., verbose = FALSE) {
+  stopifnot(is.numeric(rhos), !anyNA(rhos), all(rhos > 0), all(rhos <= 1/2))
+  if (is.character(reference_rhos)) {
+    reference_rhos <- switch(reference_rhos,
+      "50%" = rep(1/2, times = length(rhos)),
+      "same" = rho,
+      stop("Unknown value on 'reference_rhos': ", sQuote(reference_rhos))
+    )
+  }
+  stopifnot(is.numeric(reference_rhos), !anyNA(reference_rhos), all(reference_rhos > 0), all(reference_rhos <= 1/2))
+  stopifnot(length(reference_rhos) == length(rhos), all(reference_rhos >= rhos))
   chromosome <- as.integer(chromosome)
   bin_size <- as.integer(bin_size)
   rhos <- as.numeric(rhos)
@@ -164,7 +198,7 @@ read_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size
     message("- nsamples: ", nsamples)
   }
 
-  key <- list(dataset = dataset, chromosome = chromosome, bin_size = bin_size, rhos = sort(rhos), window_size = window_size, nsamples = nsamples, weights = weights, domain_length = domain_length)
+  key <- list(dataset = dataset, chromosome = chromosome, bin_size = bin_size, rhos = rhos, reference_rhos = reference_rhos, window_size = window_size, nsamples = nsamples, weights = weights, domain_length = domain_length)
   dirs <- c("TopDomStudy", dataset)
   if (!force) {
     summary <- loadCache(key = key, dirs = dirs)
@@ -179,10 +213,12 @@ read_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size
   summary <- list()
   for (rr in seq_along(rhos)) {
     rho <- rhos[rr]
-    rho_tag <- sprintf("test=%.3f", rho)
-    if (verbose) message(sprintf("Fraction #%d (%s with %s bps on Chr %s) of %d ...", rr, rho_tag, bin_size, chromosome, length(rhos)))
+    test_tag <- sprintf("test=%.3f", rho)
+    reference_rho <- reference_rhos[rr]
+    reference_tag <- sprintf("reference=%.3f", reference_rho)
+    if (verbose) message(sprintf("Fraction #%d (%s and %s with %s bps on Chr %s) of %d ...", rr, test_tag, reference_tag, bin_size, chromosome, length(rhos)))
 
-    tags <- c(chromosome_tag, "cells_by_half", "avg_score", bin_size_tag, rho_tag, window_size_tag, domain_length_tag, weights_tag, nsamples_tag)
+    tags <- c(chromosome_tag, "cells_by_half", "avg_score", bin_size_tag, test_tag, reference_tag, window_size_tag, domain_length_tag, weights_tag, nsamples_tag)
 
     fullname <- paste(c(dataset, tags), collapse = ",")
     pathname_summary_kk <- file.path(path, sprintf("%s.rds", fullname))
@@ -191,7 +227,7 @@ read_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size
     ## Calculate on the fly?
     if (!file_test("-f", pathname_summary_kk)) {
       message("overlap_score_summary_grid() ...")
-      res <- overlap_score_summary_grid(dataset = dataset, chromosomes = chromosome, bin_sizes = bin_size, rhos = rhos, window_size = window_size, nsamples = nsamples, weights = weights, domain_length = domain_length, verbose = verbose)
+      res <- overlap_score_summary_grid(dataset = dataset, chromosomes = chromosome, bin_sizes = bin_size, rhos = rhos, reference_rhos = reference_rhos, window_size = window_size, nsamples = nsamples, weights = weights, domain_length = domain_length, verbose = verbose)
       message("overlap_score_summary_grid() ... done")
     }
     
@@ -199,7 +235,7 @@ read_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size
     stop_if_not(file_test("-f", pathname_summary_kk))
     summary[[rr]] <- read_rds(pathname_summary_kk)
             
-    if (verbose) message(sprintf("Fraction #%d (%s with %s bps on Chr %s) of %d ... already done", rr, rho_tag, bin_size, chromosome, length(rhos)))
+    if (verbose) message(sprintf("Fraction #%d (%s and %s with %s bps on Chr %s) of %d ... done", rr, test_tag, reference_tag, bin_size, chromosome, length(rhos)))
   } ## for (rr ...)
 
   summary <- do.call(rbind, summary)

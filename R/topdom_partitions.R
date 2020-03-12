@@ -7,7 +7,7 @@
 #' @param partition_by A string specifying how to partition;
 #'        one of `"reads"`, `"cells"`, `"reads_by_half"`, or `"cells_by_half"`.
 #'
-#' @param rho A numeric in \eqn{(0,1/2]} specifying the relative size of the partions.
+#' @param rho,reference_rho A numeric in \eqn{(0,1/2]} specifying the relative size of the partitions.
 #'
 #' @param nsamples Number of random samples.
 #'
@@ -17,7 +17,7 @@
 #'        be included. Cells with less reads are dropped.
 #'
 #' @param chrs (optional, filter) Names of chromosomes to iterate over.
-#'        Defaults to the chromsomes in `reads$chr_a`.
+#'        Defaults to the chromosomes in `reads$chr_a`.
 #'
 #' @param cell_ids (optional, filter) ...
 #'
@@ -54,7 +54,7 @@
 #' @importFrom utils file_test str
 #' @importFrom TopDom TopDom
 #' @export
-topdom_partitions <- function(reads, bin_size, partition_by, rho, nsamples = 100L, seed = TRUE,
+topdom_partitions <- function(reads, bin_size, partition_by, rho, reference_rho = 1/2, nsamples = 100L, seed = TRUE,
                               chrs = NULL, min_cell_size = 1L, dataset, cell_ids = NULL,
                               window_size = 5L,
                               path_out = "topdomData", mainseed = 0xBEEF, force = FALSE,
@@ -69,6 +69,15 @@ topdom_partitions <- function(reads, bin_size, partition_by, rho, nsamples = 100
   stopifnot(length(min_cell_size) == 1L, is.numeric(min_cell_size),
             !is.na(min_cell_size), min_cell_size >= 1L)
   stop_if_not(is.numeric(rho), length(rho) == 1L, !is.na(rho), rho > 0.0, rho <= 0.5)
+  if (is.character(reference_rho)) {
+    reference_rho <- switch(reference_rho,
+      "50%" = 1/2,
+      "same" = rho,
+      stop("Unknown value on 'reference_rho': ", sQuote(reference_rho))
+    )
+  }
+  stop_if_not(is.numeric(reference_rho), length(reference_rho) == 1L, !is.na(reference_rho), reference_rho > 0.0, reference_rho <= 0.5)
+  
   stop_if_not(is.numeric(nsamples), length(nsamples) == 1L,
               !is.na(nsamples), nsamples >= 1L)
   if (is.null(chrs)) {
@@ -98,7 +107,8 @@ topdom_partitions <- function(reads, bin_size, partition_by, rho, nsamples = 100
   } else {
     min_cell_size_tag <- NULL
   }
-  rho_tag <- sprintf("test=%.3f", rho)
+  test_tag <- sprintf("test=%.3f", rho)
+  reference_tag <- sprintf("reference=%.3f", reference_rho)
   ## Random seeds (use the same for all chromosomes, i.e. invariant to chromosome)
   
   stop_if_not(mainseed == 0xBEEF)
@@ -115,7 +125,7 @@ topdom_partitions <- function(reads, bin_size, partition_by, rho, nsamples = 100
 
   as <- match.arg(as)
 
-  dataset_out <- paste(c(dataset, cell_ids_tag, bin_size_tag, partition_by_tag, min_cell_size_tag, window_size_tag, rho_tag, mainseed_tag), collapse = ",")
+  dataset_out <- paste(c(dataset, cell_ids_tag, bin_size_tag, partition_by_tag, min_cell_size_tag, window_size_tag, test_tag, reference_tag, mainseed_tag), collapse = ",")
   path_out <- file.path(path_out, dataset_out)
   dir.create(path_out, recursive = TRUE, showWarnings = FALSE)
   stop_if_not(file_test("-d", path_out))
@@ -134,7 +144,7 @@ topdom_partitions <- function(reads, bin_size, partition_by, rho, nsamples = 100
 
     ## Find all input files for this chromosome
     pathnames <- file.path(path_out, sapply(1:nsamples, function(bb) {
-      tags <- c(cell_ids_tag, chr_tag, bin_size_tag, partition_by_tag, min_cell_size_tag, window_size_tag, rho_tag, seed_tags[bb])
+      tags <- c(cell_ids_tag, chr_tag, bin_size_tag, partition_by_tag, min_cell_size_tag, window_size_tag, test_tag, reference_tag, seed_tags[bb])
       name <- paste(c(dataset, tags), collapse = ",")
       sprintf("%s.rds", name)
     }))
@@ -230,9 +240,9 @@ topdom_partitions <- function(reads, bin_size, partition_by, rho, nsamples = 100
           } else if (partition_by == "cells") {
             reads_partitions <- sample_partitions_by_cells(reads, fraction = rho)
           } else if (partition_by == "reads_by_half") {
-            reads_partitions <- sample_partitions_by_half(nrow(reads), fraction = c(reference = 1/2, test = rho))
+            reads_partitions <- sample_partitions_by_half(nrow(reads), fraction = c(reference = reference_rho, test = rho))
           } else if (partition_by == "cells_by_half") {
-            reads_partitions <- sample_partitions_by_cells_by_half(reads, fraction = c(reference = 1/2, test = rho))
+            reads_partitions <- sample_partitions_by_cells_by_half(reads, fraction = c(reference = reference_rho, test = rho))
           }
           reads_partitions <- lapply(reads_partitions, FUN = function(partition) reads[partition, ])
 
@@ -272,7 +282,7 @@ topdom_partitions <- function(reads, bin_size, partition_by, rho, nsamples = 100
 
           attr(tds, "chromosome") <- chr
           attr(tds, "bin_size") <- bin_size
-          attr(tds, "fraction") <- rho
+          attr(tds, "fraction") <- c(reference = reference_rho, test = rho)
           attr(tds, "min_cell_size") <- min_cell_size
           attr(tds, "window_size") <- window_size
           attr(tds, "partition_by") <- partition_by

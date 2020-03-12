@@ -1,12 +1,11 @@
-library(TopDomStudy)
+source("incl/start.R")
 
-dataset <- "human,HAP1,unique"
-pathname <- system.file("compiledData", sprintf("%s,chr=22.rds", dataset), package = "TopDomStudy", mustWork = TRUE)
+pathname <- system.file("compiledData", sprintf("%s,unique,chr=22.rds", dataset), package = "TopDomStudy", mustWork = TRUE)
 reads <- read_rds(pathname)
 print(reads)
 
 ## Overlap scores per partition
-dt <- system.time(res <- overlap_scores_partitions(reads = reads, dataset = dataset, bin_size = 100000, partition_by = "cells_by_half", min_cell_size = 2L, rho = 1/4, nsamples = 10L, chrs = "22", seed = 0xBEEF, mainseed = 0xBEEF, force = TRUE))
+dt <- system.time(res <- overlap_scores_partitions(reads = reads, dataset = dataset, bin_size = 100000, partition_by = "cells_by_half", min_cell_size = 2L, rho = 0.20, reference_rho = 1/2, nsamples = 10L, chrs = "22", seed = 0xBEEF, mainseed = 0xBEEF, force = TRUE))
 print(dt)
 
 ## TopDom data
@@ -41,3 +40,5 @@ for (kk in seq_along(tds)) {
   
   stopifnot(length(scores) == nrow(td_ref$domain))
 }
+
+source("incl/end.R")
