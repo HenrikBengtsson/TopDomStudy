@@ -5,10 +5,10 @@
 ^incl
 ^.local
 ^run
-^topdomData
-^overlapScoreData
-^overlapScoreSummary
-^figures
+^tests/topdomData
+^tests/overlapScoreData
+^tests/overlapScoreSummary
+^tests/figures
 ^last[.]dump
 [.]png$
 ^Makefile$

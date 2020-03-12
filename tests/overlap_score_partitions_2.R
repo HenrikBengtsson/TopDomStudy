@@ -1,7 +1,6 @@
-library(TopDomStudy)
+source("incl/start.R")
 
-dataset <- "human,HAP1,unique"
-pathname <- system.file("compiledData", sprintf("%s,chr=22.rds", dataset), package = "TopDomStudy", mustWork = TRUE)
+pathname <- system.file("compiledData", sprintf("%s,unique,chr=22.rds", dataset), package = "TopDomStudy", mustWork = TRUE)
 reads <- read_rds(pathname)
 print(reads)
 
@@ -41,3 +40,5 @@ for (kk in seq_along(tds)) {
   
   stopifnot(length(scores) == nrow(td_ref$domain))
 }
+
+source("incl/end.R")

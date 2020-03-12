@@ -75,7 +75,7 @@ overlap_score_summary_grid <- function(dataset, chromosomes, bin_sizes, rhos, re
   if (is.character(reference_rhos)) {
     reference_rhos <- switch(reference_rhos,
       "50%" = rep(1/2, times = length(rhos)),
-      "same" = rho,
+      "same" = rhos,
       stop("Unknown value on 'reference_rhos': ", sQuote(reference_rhos))
     )
   }

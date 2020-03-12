@@ -74,7 +74,18 @@ overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, r
       summary <- as_tibble(summary)
       
       if (verbose) mprint(summary)
-    
+
+      if (all(summary$fraction == summary$ref_fraction)) {
+        fraction_label <- "sample fraction (test = reference)"
+        fraction_tag <- "ref=same"
+      } else if (all(summary$ref_fraction == 1/2)) {
+        fraction_label <- "test sample fraction (50% for reference)"
+        fraction_tag <- "ref=50pct"
+      } else {
+        fraction_label <- "sample fraction"
+        fraction_tag <- "unknown"
+      }
+
       dw <- diff(range(rhos)) / length(rhos)
 
       length_signals <- c(
@@ -99,16 +110,17 @@ overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, r
 
         gg <- gg + stat_summary(aes_string(y = signal, group = 1L),
                                 fun.y = function(x) mean(x, trim = 0.10),
-                                geom = "line", size = 2L, group = 1L)
+                                geom = "line", size = 2L, ## colour = "red", 
+                                group = 1L)
 
         params <- c(sprintf("estimator: %s", signal_label),
                     sprintf("weights: %s", weights),
                     sprintf("domains: %.0f-%.0f", domain_length[1], domain_length[2]))
-        subtitle <- sprintf("chromosome %s, bin size=%d, window size=%d (%d samples) [%s]",
+        subtitle <- sprintf("chromosome %s, bin size=%d, window size=%d (%d samples)\n[%s]",
                             chromosome, bin_size, window_size, nsamples, paste(params, collapse = "; "))
 
         gg <- gg + ggtitle(dataset, subtitle = subtitle)
-        gg <- gg + xlab("fraction")
+        gg <- gg + xlab(fraction_label)
         if (signal_label %in% names(length_signals)) {
           gg <- gg + ylab("domain length (bps)")
           gg <- gg + ylim(0, 2e6)
@@ -118,7 +130,7 @@ overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, r
         }
 
         signal <- gsub("`50%`", "median", signal)
-        tags <- sprintf("%s,chr=%s,%s,avg_score-vs-fraction,bin_size=%d,window_size=%d,nsamples=%d,signal=%s,weights=%s", dataset, chromosome, "cells_by_half", bin_size, window_size, nsamples, signal, weights)
+        tags <- sprintf("%s,chr=%s,%s,avg_score-vs-fraction,bin_size=%d,%s,window_size=%d,nsamples=%d,signal=%s,weights=%s", dataset, chromosome, "cells_by_half", bin_size, fraction_tag, window_size, nsamples, signal, weights)
         filename <- sprintf("%s.png", paste(c(tags, domain_length_tag), collapse = ","))
         if (verbose) suppressMessages <- identity
         fig_pathname <- file.path(fig_path, filename)

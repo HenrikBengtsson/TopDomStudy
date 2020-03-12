@@ -118,6 +118,14 @@ gg_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size, 
 
   summary <- read_overlap_score_summary_vs_fraction(dataset, chromosome = chromosome, bin_size = bin_size, rhos = rhos, reference_rhos = reference_rhos, window_size = window_size, nsamples = nsamples, weights = weights, domain_length = domain_length, ..., verbose = verbose)
 
+  if (all(summary$fraction == summary$ref_fraction)) {
+    fraction_label <- "sample fraction (test = reference)"
+  } else if (all(summary$ref_fraction == 1/2)) {
+    fraction_label <- "test sample fraction (50% for reference)"
+  } else {
+    fraction_label <- "sample fraction"
+  }
+  
   fraction <- NULL; rm(list = "fraction") ## To please R CMD check
 
   dw <- diff(range(rhos)) / length(rhos)
@@ -151,7 +159,7 @@ gg_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size, 
       gg <- gg + xlab("")
     } else {
       gg <- gg + scale_x_continuous(labels = percent_format(accuracy = 2L))
-      gg <- gg + xlab("sample fraction")
+      gg <- gg + xlab(fraction_label)
     }
     if (signal %in% length_signals) {
       ylim <- length_lim
@@ -175,7 +183,7 @@ gg_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size, 
 
   if (!is.null(fig_pathname)) {
     if (verbose) suppressMessages <- identity
-    suppressMessages(ggsave(res, filename = fig_pathname,, scale = getOption("TopDomStudy.ggsave.scale", 0.80), dpi = getOption("TopDomStudy.ggsave.dpi", 360)))
+    suppressMessages(ggsave(res, filename = fig_pathname, scale = getOption("TopDomStudy.ggsave.scale", 0.80), dpi = getOption("TopDomStudy.ggsave.dpi", 360)))
     attr(res, "fig_pathname") <- normalizePath(fig_pathname)
     if (verbose) message(" - Figure written: ", fig_pathname)
   }

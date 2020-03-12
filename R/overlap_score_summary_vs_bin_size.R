@@ -123,7 +123,7 @@ overlap_score_summary_vs_bin_size <- function(dataset, chromosomes, bin_sizes, r
   if (is.character(reference_rhos)) {
     reference_rhos <- switch(reference_rhos,
       "50%" = rep(1/2, times = length(rhos)),
-      "same" = rho,
+      "same" = rhos,
       stop("Unknown value on 'reference_rhos': ", sQuote(reference_rhos))
     )
   }
@@ -223,8 +223,8 @@ overlap_score_summary_vs_bin_size <- function(dataset, chromosomes, bin_sizes, r
         params <- c(sprintf("estimator: %s", signal_label),
                     sprintf("weights: %s", weights),
                     sprintf("domains: %.0f-%.0f", domain_length[1], domain_length[2]))
-        subtitle <- sprintf("chromosome %s, test=%.3f (%d samples) [%s]",
-                            chromosome, rho, nsamples, paste(params, collapse = "; "))
+        subtitle <- sprintf("chromosome %s, test=%.3f, reference=%.3f (%d samples)\n[%s]",
+                            chromosome, rho, reference_rho, nsamples, paste(params, collapse = "; "))
 
         gg <- gg + ggtitle(dataset, subtitle = subtitle)
         gg <- gg + xlab("bin size (bps)")

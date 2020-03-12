@@ -1,9 +1,9 @@
-library(TopDomStudy)
+source("incl/start.R")
 
 message("hic_bin() ...")
 
 message("- reading reads")
-pathname <- system.file("compiledData", "human,HAP1,unique,chr=22.rds", package = "TopDomStudy", mustWork = TRUE)
+pathname <- system.file("compiledData", sprintf("%s,unique,chr=22.rds", dataset), package = "TopDomStudy", mustWork = TRUE)
 reads <- read_rds(pathname)
 print(reads)
 
@@ -37,3 +37,5 @@ stopifnot(
 )
 
 message("hic_bin() ... done")
+
+source("incl/end.R")
