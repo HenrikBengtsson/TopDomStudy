@@ -17,7 +17,7 @@
 #'        be included. Cells with less reads are dropped.
 #'
 #' @param chrs (optional, filter) Names of chromosomes to iterate over.
-#'        Defaults to the chromsomes in `reads$chr_a`.
+#'        Defaults to the chromosomes in `reads$chr_a`.
 #'
 #' @param cell_ids (optional, filter) ...
 #'

@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{Try}
 \alias{Try}
-\title{Tweaks a Function to be Evaluted using try()}
+\title{Tweaks a Function to be Evaluated using try()}
 \usage{
 Try(fcn)
 }
@@ -13,7 +13,7 @@ Try(fcn)
 A function that calls \code{try(fcn(...), silent = TRUE)}.
 }
 \description{
-Tweaks a Function to be Evaluted using try()
+Tweaks a Function to be Evaluated using try()
 }
 \details{
 The function  \link[base:stopifnot]{base::stopifnot}.

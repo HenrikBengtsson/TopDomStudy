@@ -54,7 +54,7 @@ stop_if_not <- function(...) {
 }
 
 
-#' Tweaks a Function to be Evaluted using try()
+#' Tweaks a Function to be Evaluated using try()
 #'
 #' @param fcn A function.
 #'

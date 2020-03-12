@@ -99,7 +99,7 @@ plotted in the top and bottom panels.}
 
 \item{rho_lim, bin_size_lim}{The range of the fraction or bin size to be displayed.}
 
-\item{length_lim}{The range of the domain lenghts to be displayed.}
+\item{length_lim}{The range of the domain lengths to be displayed.}
 
 \item{rel_heights}{(numeric vector of length two) The relative height
 of the two figures.  Passed to \link[cowplot:plot_grid]{cowplot::plot_grid} as is.}
