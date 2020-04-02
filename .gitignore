@@ -13,3 +13,6 @@ run*/
 revdep/data.sqlite
 revdep/checks/*
 revdep/library/*
+tests/overlapScoreData/
+tests/overlapScoreSummary/
+tests/topdomData/
