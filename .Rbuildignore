@@ -12,3 +12,6 @@
 ^last[.]dump
 [.]png$
 ^Makefile$
+^figures
+^overlapScore*
+^topdomData
