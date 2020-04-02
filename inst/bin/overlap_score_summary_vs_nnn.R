@@ -2,16 +2,17 @@
 ##-----------------------------------------------------------------------------
 ## Usage:
 ##
-##  Rscript overlap_score_summary_vs_bin_size.R
+##  Rscript overlap_score_summary_vs_nnn.R <options>
 ##
-## Parameters:
-##  * chromosomes
-##  * bin_sizes
-##  * rhos
-##  * nsamples
-##  * window_size
-##  * weights
-##  * domain_length
+## Options:
+##  --vs=(bin_size|fraction)
+##  --chromosomes=<comma-separated integer names>
+##  --bin_sizes=<comma-separated basepair integers>
+##  --rhos=<comma-separated (0,0.5] values>
+##  --reference_rhos=(same|50%)
+##  --nsamples=<positive integer>
+##  --window_size=<basepair integer>
+##  --weights=(by_length|uniform)
 ##
 ## Input:
 ##  * human,HAP1,unique,chr*.rds files in R package 'TopDomStudy', i.e.
@@ -44,7 +45,7 @@ rhos <- cmdArg(rhos = c(0.02, 0.03, 0.04, 0.05, 0.06, 0.08,
                         0.10, 0.12, 0.14, 0.16, 0.18, 0.20,
 			0.25, 0.30, 0.40, 0.50))
 
-choices <- c("50%", "same")
+choices <- c("same", "50%")
 reference_rhos <- match.arg(cmdArg(reference_rhos = choices[1]), choices)
 
 window_size <- cmdArg(window_size = 5L)
@@ -85,3 +86,10 @@ done <- FUN(
   verbose        = verbose
 )
 print(done)
+
+
+## NOTES:
+## * 2019-01-08:
+##   Running the above with nsamples = 50L, bin_size = 100000 on chromosomes
+##   12, 19, 22 (data available in TopDomStudy) takes ~30 minutes with 6 cores
+##   on a Thinkpad X1C6.
