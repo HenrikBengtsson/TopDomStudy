@@ -12,4 +12,4 @@ if module --version &> /dev/null; then
     module load CBC r &> /dev/null
 fi    
 
-Rscript overlap_score_summary_vs_nnn.R --vs=fraction
+Rscript overlap_score_summary_vs_nnn.R

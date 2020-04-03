@@ -5,7 +5,6 @@
 ##  Rscript overlap_score_summary_vs_nnn.R <options>
 ##
 ## Options:
-##  --vs=(bin_size|fraction)
 ##  --chromosomes=<comma-separated integer names>
 ##  --bin_sizes=<comma-separated basepair integers>
 ##  --rhos=<comma-separated (0,0.5] values>
@@ -34,11 +33,10 @@ options(future.globals.maxSize = 3 * 1024^3)
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Parse command-line options
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-chromosomes <- cmdArg(chromosomes = c("12", "16", "22"))
+chromosomes <- cmdArg(chromosomes = c("12", "16", "22")[3])
+nsamples <- cmdArg(nsamples = 100L)
 
-bin_sizes <- cmdArg(bin_sizes = c(6, 8, 10, 12, 15, 20,
-                                  30, 40, 50, 60, 80, 100) * 1e3)
-
+## Simulation parameters
 ## FIXME: chromosome="22", rho=0.01, bin_size=10000, nsamples=1L gives an error
 ## Skip rho=0.02 due to chr=12 memory constraints
 rhos <- cmdArg(rhos = c(0.02, 0.03, 0.04, 0.05, 0.06, 0.08,
@@ -48,8 +46,15 @@ rhos <- cmdArg(rhos = c(0.02, 0.03, 0.04, 0.05, 0.06, 0.08,
 choices <- c("same", "50%")
 reference_rhos <- match.arg(cmdArg(reference_rhos = choices[1]), choices)
 
+
+## TopDom parameters
+bin_sizes <- cmdArg(bin_sizes = c(6, 8, 10, 12, 15, 20,
+                                  30, 40, 50, 60, 80, 100) * 1e3)
+
 window_size <- cmdArg(window_size = 5L)
 
+
+## Parameters for summarizing overlap scores
 choices <- c("by_length", "uniform")
 weights <- match.arg(cmdArg(weights = choices[1]), choices)
 
@@ -57,35 +62,34 @@ weights <- match.arg(cmdArg(weights = choices[1]), choices)
 #domain_length <- c(300e3, 1000e3)
 domain_length <- cmdArg(domain_length = NULL)
 
-nsamples <- cmdArg(nsamples = 100L)
 
+## Miscellaneous
 verbose <- cmdArg(verbose = TRUE)
-
-choices <- c("bin_size", "fraction")
-vs <- match.arg(cmdArg(vs = choices[1]), choices)
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Process
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-FUN <- switch(vs,
-  bin_size = overlap_score_summary_vs_bin_size,
-  fraction = overlap_score_summary_vs_fraction
-)
-
-done <- FUN(
-  dataset        = "human,HAP1",
-  chromosomes    = chromosomes,
-  bin_sizes      = bin_sizes,
-  rhos           = rhos,
-  reference_rhos = reference_rhos,
-  window_size    = window_size,
-  weights        = weights,
-  domain_length  = domain_length,
-  nsamples       = nsamples,
-  verbose        = verbose
-)
-print(done)
+for (vs in c("bin_size", "fraction")) {
+  FUN <- switch(vs,
+    bin_size = overlap_score_summary_vs_bin_size,
+    fraction = overlap_score_summary_vs_fraction
+  )
+  
+  done <- FUN(
+    dataset        = "human,HAP1",
+    chromosomes    = chromosomes,
+    bin_sizes      = bin_sizes,
+    rhos           = rhos,
+    reference_rhos = reference_rhos,
+    window_size    = window_size,
+    weights        = weights,
+    domain_length  = domain_length,
+    nsamples       = nsamples,
+    verbose        = verbose
+  )
+  print(done)
+}
 
 
 ## NOTES:
