@@ -303,7 +303,7 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by,
           if (verbose) mprint(overlaps)
   
           pathname
-        } %seed% seed %label% paste(c(chr_tag, sprintf("sample=%d", kk)), collapse = "-")
+        } %seed% seed %label% sprintf("osp_%s-sample=%d", chr_tag, kk)
   
         if (verbose) mprintf("Sample #%d (%s) of %d ... DONE", kk, seed_tags[bb], length(sample_idxs))
       } ## for (kk ...)
@@ -322,7 +322,7 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by,
       if (verbose) { mprintf("value:"); mstr(value) }
 
       value
-    } %label% chr_tag
+    } %label% sprintf("osp_%s", chr_tag)
   
     if (verbose) mprintf("Chromosome #%d (%s) of %d ... DONE", cc, chr_tag, length(chrs))
   } ## for (chr ...)

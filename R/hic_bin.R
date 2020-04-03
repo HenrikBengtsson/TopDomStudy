@@ -151,7 +151,7 @@ hic_bin <- function(data, bin_size, intra_only = FALSE, known_chrs = c(1:22, "X"
         attr(counts_t, "bins") <- list(chr_a = chr_bins_a, chr_b = chr_bins_b)
         counts_pair <- NULL ## Not needed anymore      
 	counts_t
-      }	%label% sprintf("%s-%s", chr_a, chr_b)
+      }	%label% sprintf("hb_%s-%s", chr_a, chr_b)
     }
   }
 
