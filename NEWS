@@ -1,12 +1,17 @@
 TopDomStudy
 ===========
 
+Version: 0.1.1-9000 [2020-04-07]
+
+ * ...
+
+
 Version: 0.1.1 [2020-04-03]
 
 SIGNIFICANT CHANGES:
 
-* Consolidated the two R scripts for calculating overlap scores summaries
-  across sample fractions and bin sizes into one.
+ * Consolidated the two R scripts for calculating overlap scores summaries
+   across sample fractions and bin sizes into one.
 
 
 Version: 0.1.0 [2020-03-11]
