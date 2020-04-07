@@ -13,3 +13,7 @@ if module --version &> /dev/null; then
 fi    
 
 Rscript overlap_score_summary_vs_nnn.R
+#Rscript overlap_score_summary_vs_nnn.R --window_size=5  --weights=by_length
+#Rscript overlap_score_summary_vs_nnn.R --window_size=5  --weights=uniform  
+#Rscript overlap_score_summary_vs_nnn.R --window_size=20 --weights=by_length
+#Rscript overlap_score_summary_vs_nnn.R --window_size=20 --weights=uniform  
