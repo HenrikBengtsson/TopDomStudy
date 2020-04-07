@@ -12,6 +12,7 @@
 ##  --nsamples=<positive integer>
 ##  --window_size=<basepair integer>
 ##  --weights=(by_length|uniform)
+##  --fig_format=(pdf|png)
 ##
 ## Input:
 ##  * human,HAP1,unique,chr*.rds files in R package 'TopDomStudy', i.e.
@@ -64,7 +65,7 @@ domain_length <- cmdArg(domain_length = NULL)
 
 
 ## Miscellaneous
-choices <- c("png", "pdf")
+choices <- c("pdf", "png")
 fig_format <- match.arg(cmdArg(fig_format = choices[1]), choices)
 
 verbose <- cmdArg(verbose = TRUE)
