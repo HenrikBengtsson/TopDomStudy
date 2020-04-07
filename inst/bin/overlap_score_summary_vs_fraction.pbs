@@ -8,7 +8,8 @@ trap '{ >&2 printf "\n\n=== JOB SESSION INFORMATION ===\n"; >&2 qstat -f "${PBS_
 
 cd "${PBS_O_WORKDIR}" || { >&2 echo "ERROR: Failed to change directory: ${PBS_O_WORKDIR}"; exit 1; }
 
-module load CBC
-module load r
+if module --version &> /dev/null; then
+    module load CBC r &> /dev/null
+fi    
 
-Rscript overlap_score_summary_vs_fraction.R
+Rscript overlap_score_summary_vs_nnn.R --vs=fraction

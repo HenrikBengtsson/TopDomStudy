@@ -298,7 +298,7 @@ topdom_partitions <- function(reads, bin_size, partition_by, rho, reference_rho 
           tds <- NULL
   
           pathname
-        } %seed% seed %label% paste(c(chr_tag, sprintf("sample=%d", kk)), collapse = "-")
+        } %seed% seed %label% sprintf("tpp_%s-sample=%d", chr_tag, kk)
   
         if (verbose) mprintf("topdom_partitions(): Sample #%d (%s) of %d ... DONE", kk, seed_tags[bb], length(sample_idxs))
       } ## for (kk ...)
@@ -317,7 +317,7 @@ topdom_partitions <- function(reads, bin_size, partition_by, rho, reference_rho 
       if (verbose) { mprintf("value:"); mstr(value) }
 
       value
-    } %label% chr_tag
+    } %label% sprintf("tpp_%s", chr_tag)
   
     if (verbose) mprintf("topdom_partitions(): Chromosome #%d (%s) of %d ... DONE", cc, chr_tag, length(chrs))
   } ## for (chr ...)

@@ -237,7 +237,7 @@ overlap_score_summary_grid <- function(dataset, chromosomes, bin_sizes, rhos, re
           if (verbose) message("Saved pathname_summary_kk: ", pathname_summary_kk)
 
           pathname_summary_kk
-        } %label% sprintf("%s-%s-%s", chromosome, bin_size, rho)
+        } %label% sprintf("osg_%s-%s-%s", bin_size, rho, chromosome)
 
         if (verbose) message(sprintf("Fraction #%d (%s and %s with %s bps on Chr %s) of %d ... done", rr, test_tag, reference_tag, bin_size, chromosome, length(rhos)))
       } ## for (rr ...)

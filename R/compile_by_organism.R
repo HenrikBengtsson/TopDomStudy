@@ -242,7 +242,7 @@ compile_by_organism <- function(samples, organisms = c("human", "mouse"), path =
         data <- NULL  ## Not needed anymore
         
         pathname
-      } %label% paste(sample, org, sep = "-") ## %<-%    
+      } %label% sprintf("cbo_%s-%s", sample, org)
     } ## for (org ...)
     
     message(sprintf("Sample %s ... OK", sQuote(sample)))
