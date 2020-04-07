@@ -15,6 +15,7 @@ overlap_score_summary_vs_bin_size(
   weights = c("by_length", "uniform"),
   domain_length = NULL,
   fig_path = "figures",
+  fig_format = c("png", "pdf"),
   verbose = FALSE
 )
 }
@@ -42,7 +43,9 @@ Argument passed as is to \code{\link[=overlap_score_summary]{overlap_score_summa
 If specified, controls how to filter out too short or too long TopDom domains.
 Argument passed as is to \code{\link[=overlap_score_summary]{overlap_score_summary()}}.}
 
-\item{fig_path}{If non-NULL, a PNG image is written to this path.}
+\item{fig_path}{If non-NULL, an image is written to this path.}
+
+\item{fig_format}{Image format used for image files.}
 
 \item{verbose}{(logical) If \code{TRUE}, verbose output is produced.}
 }
@@ -55,7 +58,7 @@ the third 'rhos'.
 Calculate and Summarize TopDom Overlap Scores as Function of Bin Size
 }
 \details{
-PNG images are written to the \file{figures/} folder (created if missing).
+Image files are written to the \file{figures/} folder (created if missing).
 }
 \seealso{
 Internal, \code{\link[=overlap_score_summary_grid]{overlap_score_summary_grid()}} is used to calculate overlap

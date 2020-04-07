@@ -102,14 +102,16 @@ read_overlap_score_summary_vs_bin_size <- function(dataset, chromosome, bin_size
 #'
 #' @inheritParams overlap_score_summary_grid
 #'
-#' @param fig_path If non-NULL, a PNG image is written to this path.
+#' @param fig_path If non-NULL, an image is written to this path.
+#'
+#' @param fig_format Image format used for image files.
 #'
 #' @return A three-dimensional character array of pathname names where the
 #' first dimension specify `chromosomes`, the second `bin_sizes`, and
 #' the third 'rhos'.
 #'
 #' @details
-#' PNG images are written to the \file{figures/} folder (created if missing).
+#' Image files are written to the \file{figures/} folder (created if missing).
 #'
 #' @seealso
 #' Internal, [overlap_score_summary_grid()] is used to calculate overlap
@@ -118,7 +120,7 @@ read_overlap_score_summary_vs_bin_size <- function(dataset, chromosome, bin_size
 #' @importFrom ggplot2 aes aes_string geom_boxplot geom_jitter ggplot ggsave ggtitle stat_summary xlab ylab ylim
 #' @importFrom utils file_test
 #' @export
-overlap_score_summary_vs_bin_size <- function(dataset, chromosomes, bin_sizes, rhos, reference_rhos = rep(1/2, times = length(rhos)), window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, fig_path = "figures", verbose = FALSE) {
+overlap_score_summary_vs_bin_size <- function(dataset, chromosomes, bin_sizes, rhos, reference_rhos = rep(1/2, times = length(rhos)), window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, fig_path = "figures", fig_format = c("png", "pdf"), verbose = FALSE) {
   stopifnot(is.numeric(rhos), !anyNA(rhos), all(rhos > 0), all(rhos <= 1/2))
   if (is.character(reference_rhos)) {
     reference_rhos <- switch(reference_rhos,
@@ -136,6 +138,7 @@ overlap_score_summary_vs_bin_size <- function(dataset, chromosomes, bin_sizes, r
     dir.create(fig_path, recursive = TRUE, showWarnings = FALSE)
     stop_if_not(file_test("-d", fig_path))
   }
+  fig_format <- match.arg(fig_format)
   
   pathnames <- overlap_score_summary_grid(dataset, chromosomes = chromosomes, bin_sizes = bin_sizes, rhos = rhos, reference_rhos = reference_rhos, window_size = window_size, nsamples = nsamples, weights = weights, domain_length = domain_length, verbose = verbose)
 
@@ -238,7 +241,7 @@ overlap_score_summary_vs_bin_size <- function(dataset, chromosomes, bin_sizes, r
 
         signal <- gsub("`50%`", "median", signal)
         tags <- sprintf("%s,chr=%s,%s,avg_score-vs-bin_size,test=%.3f,reference=%.3f,window_size=%d,nsamples=%d,signal=%s,weights=%s", dataset, chromosome, "cells_by_half", rho, reference_rho, window_size, nsamples, signal, weights)
-        filename <- sprintf("%s.png", paste(c(tags, domain_length_tag), collapse = ","))
+        filename <- sprintf("%s.%s", paste(c(tags, domain_length_tag), collapse = ","), fig_format)
         if (verbose) suppressMessages <- identity
         fig_pathname <- file.path(fig_path, filename)
         suppressMessages(ggsave(gg, filename=fig_pathname))

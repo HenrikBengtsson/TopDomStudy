@@ -23,6 +23,7 @@ gg_overlap_score_summary_vs_fraction(
   labels = c("chromosome"),
   line_col = "black",
   fig_path = "figures",
+  fig_format = c("png", "pdf"),
   skip = FALSE,
   ...,
   verbose = TRUE
@@ -45,6 +46,7 @@ gg_overlap_score_summary_vs_bin_size(
   labels = c("chromosome"),
   line_col = "black",
   fig_path = "figures",
+  fig_format = c("png", "pdf"),
   skip = FALSE,
   ...,
   verbose = TRUE
@@ -65,6 +67,7 @@ gg_overlap_score_summary_vs_tad_length(
   labels = c("chromosome"),
   line_col = "black",
   fig_path = "figures",
+  fig_format = c("png", "pdf"),
   skip = FALSE,
   ...,
   verbose = TRUE
@@ -108,9 +111,11 @@ of the two figures.  Passed to \link[cowplot:plot_grid]{cowplot::plot_grid} as i
 
 \item{line_col}{The color of the profile curve.}
 
-\item{fig_path}{If non-NULL, a PNG image is written to this path.}
+\item{fig_path}{If non-NULL, an image file is written to this path.}
 
-\item{skip}{If TRUE and the PNG file already exists, then it is not replotted.}
+\item{fig_format}{Image format used for image files.}
+
+\item{skip}{If TRUE and the image file already exists, then it is not replotted.}
 
 \item{verbose}{(logical) If \code{TRUE}, verbose output is produced.}
 

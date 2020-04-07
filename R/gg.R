@@ -20,9 +20,11 @@
 #'
 #' @param line_col The color of the profile curve.
 #'
-#' @param fig_path If non-NULL, a PNG image is written to this path.
+#' @param fig_path If non-NULL, an image file is written to this path.
 #'
-#' @param skip If TRUE and the PNG file already exists, then it is not replotted.
+#' @param fig_format Image format used for image files.
+#'
+#' @param skip If TRUE and the image file already exists, then it is not replotted.
 #'
 #' @param \ldots Not used.
 #'
@@ -42,7 +44,7 @@
 #' @importFrom cowplot plot_grid
 #' @importFrom utils file_test
 #' @export
-gg_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size, rhos, reference_rhos = rep(1/2, times = length(rhos)), window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, signals = c("mean", "test_len_q0.50"), rho_lim = c(0, 1/2), length_lim = c(0, 2e3), rel_heights = c(4,1), labels = c("chromosome"), line_col = "black", fig_path = "figures", skip = FALSE, ..., verbose = TRUE) {
+gg_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size, rhos, reference_rhos = rep(1/2, times = length(rhos)), window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, signals = c("mean", "test_len_q0.50"), rho_lim = c(0, 1/2), length_lim = c(0, 2e3), rel_heights = c(4,1), labels = c("chromosome"), line_col = "black", fig_path = "figures", fig_format = c("png", "pdf"), skip = FALSE, ..., verbose = TRUE) {
   stopifnot(is.numeric(rhos), !anyNA(rhos), all(rhos > 0), all(rhos <= 1/2))
   if (is.character(reference_rhos)) {
     reference_rhos <- switch(reference_rhos,
@@ -85,6 +87,7 @@ gg_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size, 
     dir.create(fig_path, recursive = TRUE, showWarnings = FALSE)
     stop_if_not(file_test("-d", fig_path))
   }
+  fig_format <- match.arg(fig_format)
 
   ## Tags
   chromosome_tag <- sprintf("chr=%s", chromosome)
@@ -105,7 +108,7 @@ gg_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size, 
   
     tags <- c(chromosome_tag, "cells_by_half", "avg_score-vs-fraction", bin_size_tag, window_size_tag, nsamples_tag, signals_tag, weights_tag, domain_length_tag)
     fullname <- paste(c(dataset, tags), collapse = ",")
-    filename <- sprintf("%s.png", fullname)
+    filename <- sprintf("%s.%s", fullname, fig_format)
     fig_pathname <- file.path(fig_path, filename)
 
     ## Nothing to do?
@@ -211,7 +214,7 @@ gg_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size, 
 #' @importFrom utils file_test
 #'
 #' @export
-gg_overlap_score_summary_vs_bin_size <- function(dataset, chromosome, bin_sizes, rho, reference_rho = 1/2, window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, signals = c("mean", "test_len_q0.50"), bin_size_lim = c(0, max(bin_sizes)), length_lim = c(0, 2e3), rel_heights = c(4,1), labels = c("chromosome"), line_col = "black", fig_path = "figures", skip = FALSE, ..., verbose = TRUE) {
+gg_overlap_score_summary_vs_bin_size <- function(dataset, chromosome, bin_sizes, rho, reference_rho = 1/2, window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, signals = c("mean", "test_len_q0.50"), bin_size_lim = c(0, max(bin_sizes)), length_lim = c(0, 2e3), rel_heights = c(4,1), labels = c("chromosome"), line_col = "black", fig_path = "figures", fig_format = c("png", "pdf"), skip = FALSE, ..., verbose = TRUE) {
   stop_if_not(is.numeric(rho), length(rho) == 1L, !is.na(rho), rho > 0.0, rho <= 0.5)
   if (is.character(reference_rho)) {
     reference_rho <- switch(reference_rho,
@@ -252,6 +255,7 @@ gg_overlap_score_summary_vs_bin_size <- function(dataset, chromosome, bin_sizes,
     dir.create(fig_path, recursive = TRUE, showWarnings = FALSE)
     stop_if_not(file_test("-d", fig_path))
   }
+  fig_format <- match.arg(fig_format)
 
   ## Tags
   chromosome_tag <- sprintf("chr=%s", chromosome)
@@ -273,7 +277,7 @@ gg_overlap_score_summary_vs_bin_size <- function(dataset, chromosome, bin_sizes,
   
     tags <- c(chromosome_tag, "cells_by_half", "avg_score-vs-fraction", test_tag, reference_tag, window_size_tag, nsamples_tag, signals_tag, weights_tag, domain_length_tag)
     fullname <- paste(c(dataset, tags), collapse = ",")
-    filename <- sprintf("%s.png", fullname)
+    filename <- sprintf("%s.%s", fullname, fig_format)
     fig_pathname <- file.path(fig_path, filename)
 
     ## Nothing to do?
@@ -394,7 +398,7 @@ geom_text_top_right <- function(label, size=5.0, hjust=+1.1, vjust=+1.5) {
 #' @importFrom utils file_test
 #'
 #' @export
-gg_overlap_score_summary_vs_tad_length <- function(dataset, chromosome, bin_sizes, rhos, reference_rhos = rep(1/2, times = length(rhos)), window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, signals = c("mean", "test_len_q0.50"), tad_length_lim = c(0, 2e6), labels = c("chromosome"), line_col = "black", fig_path = "figures", skip = FALSE, ..., verbose = TRUE) {
+gg_overlap_score_summary_vs_tad_length <- function(dataset, chromosome, bin_sizes, rhos, reference_rhos = rep(1/2, times = length(rhos)), window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, signals = c("mean", "test_len_q0.50"), tad_length_lim = c(0, 2e6), labels = c("chromosome"), line_col = "black", fig_path = "figures", fig_format = c("png", "pdf"), skip = FALSE, ..., verbose = TRUE) {
   stopifnot(is.numeric(rhos), !anyNA(rhos), all(rhos > 0), all(rhos <= 1/2))
   if (is.character(reference_rhos)) {
     reference_rhos <- switch(reference_rhos,
@@ -440,6 +444,7 @@ gg_overlap_score_summary_vs_tad_length <- function(dataset, chromosome, bin_size
     dir.create(fig_path, recursive = TRUE, showWarnings = FALSE)
     stop_if_not(file_test("-d", fig_path))
   }
+  fig_format <- match.arg(fig_format)
 
   ## Tags
   chromosome_tag <- sprintf("chr=%s", chromosome)
@@ -463,7 +468,7 @@ gg_overlap_score_summary_vs_tad_length <- function(dataset, chromosome, bin_size
   
     tags <- c(chromosome_tag, "cells_by_half", "avg_score-vs-fraction", window_size_tag, nsamples_tag, signals_tag, weights_tag, domain_length_tag, bin_sizes_tag, rhos_tag)
     fullname <- paste(c(dataset, tags), collapse = ",")
-    filename <- sprintf("%s.png", fullname)
+    filename <- sprintf("%s.%s", fullname, fig_format)
     fig_pathname <- file.path(fig_path, filename)
 
     ## Nothing to do?

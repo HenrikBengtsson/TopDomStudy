@@ -3,7 +3,8 @@ TopDomStudy
 
 Version: 0.1.1-9000 [2020-04-07]
 
- * ...
+ * overlap_score_summary_vs_{fraction,bin_size}() gained argument 'fig_format'
+   to control whether PNGs or PDFs should be produced.
 
 
 Version: 0.1.1 [2020-04-03]

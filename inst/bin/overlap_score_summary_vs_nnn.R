@@ -64,6 +64,9 @@ domain_length <- cmdArg(domain_length = NULL)
 
 
 ## Miscellaneous
+choices <- c("png", "pdf")
+fig_format <- match.arg(cmdArg(fig_format = choices[1]), choices)
+
 verbose <- cmdArg(verbose = TRUE)
 
 
@@ -86,6 +89,7 @@ for (vs in c("bin_size", "fraction")) {
     weights        = weights,
     domain_length  = domain_length,
     nsamples       = nsamples,
+    fig_format     = fig_format,
     verbose        = verbose
   )
   print(done)
