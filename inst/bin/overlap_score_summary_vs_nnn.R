@@ -40,17 +40,22 @@ nsamples <- cmdArg(nsamples = 100L)
 ## Simulation parameters
 ## FIXME: chromosome="22", rho=0.01, bin_size=10000, nsamples=1L gives an error
 ## Skip rho=0.02 due to chr=12 memory constraints
-rhos <- cmdArg(rhos = c(0.02, 0.03, 0.04, 0.05, 0.06, 0.08,
-                        0.10, 0.12, 0.14, 0.16, 0.18, 0.20,
-			0.25, 0.30, 0.40, 0.50))
+rhos <- cmdArg(rhos = c(
+  0.001, 0.005, 0.010,
+  0.02, 0.03, 0.04, 0.05, 0.06, 0.08,
+  0.10, 0.12, 0.14, 0.16, 0.18, 0.20,
+  0.25, 0.30, 0.40, 0.50
+))
 
 choices <- c("same", "50%")
 reference_rhos <- match.arg(cmdArg(reference_rhos = choices[1]), choices)
 
 
 ## TopDom parameters
-bin_sizes <- cmdArg(bin_sizes = c(6, 8, 10, 12, 15, 20,
-                                  30, 40, 50, 60, 80, 100) * 1e3)
+bin_sizes <- cmdArg(bin_sizes = 1e3 * c(
+  6, 8, 10, 12, 15, 20,
+  30, 40, 50, 60, 80, 100
+))
 
 window_size <- cmdArg(window_size = 5L)
 
@@ -67,6 +72,11 @@ domain_length <- cmdArg(domain_length = NULL)
 ## Miscellaneous
 choices <- c("pdf", "png")
 fig_format <- match.arg(cmdArg(fig_format = choices[1]), choices)
+
+value <- cmdArg(ylim_score = c(0,1))
+stopifnot(is.numeric(value), length(value) == 2L, !anyNA(value),
+          all(value >= 0), all(value <= 1))
+ylim_score <- value
 
 verbose <- cmdArg(verbose = TRUE)
 
@@ -91,6 +101,7 @@ for (vs in c("bin_size", "fraction")) {
     domain_length  = domain_length,
     nsamples       = nsamples,
     fig_format     = fig_format,
+    ylim_score     = ylim_score,
     verbose        = verbose
   )
   print(done)
