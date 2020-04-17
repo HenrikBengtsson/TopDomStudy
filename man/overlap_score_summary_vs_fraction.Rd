@@ -16,6 +16,7 @@ overlap_score_summary_vs_fraction(
   domain_length = NULL,
   fig_path = "figures",
   fig_format = c("png", "pdf"),
+  ylim_score = c(0, 1),
   verbose = FALSE
 )
 }
@@ -46,6 +47,8 @@ Argument passed as is to \code{\link[=overlap_score_summary]{overlap_score_summa
 \item{fig_path}{If non-NULL, an image file is written to this path.}
 
 \item{fig_format}{Image format used for image files.}
+
+\item{ylim_score}{The range of overlap scores on the y axis.}
 
 \item{verbose}{(logical) If \code{TRUE}, verbose output is produced.}
 }

@@ -1,3 +1,5 @@
+## These calls with produce folders in the working directory
+
 gg1 <- gg_overlap_score_summary_vs_fraction(
   dataset       = "human,HAP1",
   chromosome    = "22",

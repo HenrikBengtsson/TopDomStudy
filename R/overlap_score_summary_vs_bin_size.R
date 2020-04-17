@@ -101,10 +101,7 @@ read_overlap_score_summary_vs_bin_size <- function(dataset, chromosome, bin_size
 #' Calculate and Summarize TopDom Overlap Scores as Function of Bin Size
 #'
 #' @inheritParams overlap_score_summary_grid
-#'
-#' @param fig_path If non-NULL, an image is written to this path.
-#'
-#' @param fig_format Image format used for image files.
+#' @inheritParams overlap_score_summary_vs_fraction
 #'
 #' @return A three-dimensional character array of pathname names where the
 #' first dimension specify `chromosomes`, the second `bin_sizes`, and
@@ -120,7 +117,7 @@ read_overlap_score_summary_vs_bin_size <- function(dataset, chromosome, bin_size
 #' @importFrom ggplot2 aes aes_string geom_boxplot geom_jitter ggplot ggsave ggtitle stat_summary xlab ylab ylim
 #' @importFrom utils file_test
 #' @export
-overlap_score_summary_vs_bin_size <- function(dataset, chromosomes, bin_sizes, rhos, reference_rhos = rep(1/2, times = length(rhos)), window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, fig_path = "figures", fig_format = c("png", "pdf"), verbose = FALSE) {
+overlap_score_summary_vs_bin_size <- function(dataset, chromosomes, bin_sizes, rhos, reference_rhos = rep(1/2, times = length(rhos)), window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, fig_path = "figures", fig_format = c("png", "pdf"), ylim_score = c(0,1), verbose = FALSE) {
   stopifnot(is.numeric(rhos), !anyNA(rhos), all(rhos > 0), all(rhos <= 1/2))
   if (is.character(reference_rhos)) {
     reference_rhos <- switch(reference_rhos,
@@ -139,7 +136,10 @@ overlap_score_summary_vs_bin_size <- function(dataset, chromosomes, bin_sizes, r
     stop_if_not(file_test("-d", fig_path))
   }
   fig_format <- match.arg(fig_format)
-  
+
+  stop_if_not(is.numeric(ylim_score), length(ylim_score) == 2L,
+              all(ylim_score >= 0), all(ylim_score <= 1))
+
   pathnames <- overlap_score_summary_grid(dataset, chromosomes = chromosomes, bin_sizes = bin_sizes, rhos = rhos, reference_rhos = reference_rhos, window_size = window_size, nsamples = nsamples, weights = weights, domain_length = domain_length, verbose = verbose)
 
   nsamples_tag <- sprintf("nsamples=%d", nsamples)
@@ -236,7 +236,7 @@ overlap_score_summary_vs_bin_size <- function(dataset, chromosomes, bin_sizes, r
           gg <- gg + ylim(0, 2e6)
         } else {
           gg <- gg + ylab("average overlap score")
-          gg <- gg + ylim(0, 1)
+          gg <- gg + ylim(ylim_score[1], ylim_score[2])
         }
 
         signal <- gsub("`50%`", "median", signal)

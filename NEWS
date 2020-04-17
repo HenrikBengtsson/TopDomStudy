@@ -1,10 +1,13 @@
 TopDomStudy
 ===========
 
-Version: 0.1.1-9000 [2020-04-07]
+Version: 0.1.1-9001 [2020-04-17]
+
+NEW FEATURES:
 
  * overlap_score_summary_vs_{fraction,bin_size}() gained argument 'fig_format'
-   to control whether PNGs or PDFs should be produced.
+   to control whether PNGs or PDFs should be produced and argument 'ylim_score'
+   to control the range on the y axis when displaying average overlap scores.
 
 
 Version: 0.1.1 [2020-04-03]
