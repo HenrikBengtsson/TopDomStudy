@@ -41,11 +41,14 @@ nsamples <- cmdArg(nsamples = 100L)
 ## FIXME: chromosome="22", rho=0.01, bin_size=10000, nsamples=1L gives an error
 ## Skip rho=0.02 due to chr=12 memory constraints
 rhos <- cmdArg(rhos = c(
-  0.001, 0.005, 0.010,
+#  0.001, 0.005, 0.010,
   0.02, 0.03, 0.04, 0.05, 0.06, 0.08,
   0.10, 0.12, 0.14, 0.16, 0.18, 0.20,
   0.25, 0.30, 0.40, 0.50
 ))
+if (any(rhos < 0.001)) {
+  stop("Due to a limitation in TopDomStudy, the smallest sample fraction is 0.001")
+}
 
 choices <- c("same", "50%")
 reference_rhos <- match.arg(cmdArg(reference_rhos = choices[1]), choices)
