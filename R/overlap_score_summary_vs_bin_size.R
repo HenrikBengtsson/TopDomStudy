@@ -235,7 +235,6 @@ overlap_score_summary_vs_bin_size <- function(dataset, chromosomes, bin_sizes, r
         if (signal_label %in% names(length_signals)) {
           gg <- gg + ylab("domain length (bps)")
           ylim <- c(0, 2e6)
-          gg <- gg + ylim(0, 2e6)
         } else {
           gg <- gg + ylab("average overlap score")
           ylim <- ylim_score
