@@ -231,16 +231,23 @@ overlap_score_summary_vs_bin_size <- function(dataset, chromosomes, bin_sizes, r
 
         gg <- gg + ggtitle(dataset, subtitle = subtitle)
         gg <- gg + xlab("bin size (bps)")
+        ylim_tag <- NULL
         if (signal_label %in% names(length_signals)) {
           gg <- gg + ylab("domain length (bps)")
+          ylim <- c(0, 2e6)
           gg <- gg + ylim(0, 2e6)
         } else {
           gg <- gg + ylab("average overlap score")
-          gg <- gg + ylim(ylim_score[1], ylim_score[2])
+          ylim <- ylim_score
+          if (any(ylim != c(0,1))) {
+            ylim_tag <- sprintf("ylim=%g-%g", ylim[1], ylim[2])
+          }
         }
+        gg <- gg + ylim(ylim[1], ylim[2])
 
         signal <- gsub("`50%`", "median", signal)
         tags <- sprintf("%s,chr=%s,%s,avg_score-vs-bin_size,test=%.3f,reference=%.3f,window_size=%d,nsamples=%d,signal=%s,weights=%s", dataset, chromosome, "cells_by_half", rho, reference_rho, window_size, nsamples, signal, weights)
+        if (!is.null(ylim_tag)) tags <- paste(c(tags, ylim_tag), collapse=",")
         filename <- sprintf("%s.%s", paste(c(tags, domain_length_tag), collapse = ","), fig_format)
         if (verbose) suppressMessages <- identity
         fig_pathname <- file.path(fig_path, filename)
