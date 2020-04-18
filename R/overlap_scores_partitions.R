@@ -106,8 +106,8 @@ overlap_scores_partitions <- function(reads, bin_size, partition_by,
   } else {
     min_cell_size_tag <- NULL
   }
-  test_tag <- sprintf("test=%.3f", rho)
-  reference_tag <- sprintf("reference=%.3f", reference_rho)
+  test_tag <- sprintf("test=%.5f", rho)
+  reference_tag <- sprintf("reference=%.5f", reference_rho)
   ## Random seeds (use the same for all chromosomes, i.e. invariant to chromosome)
 
   stop_if_not(mainseed == 0xBEEF)

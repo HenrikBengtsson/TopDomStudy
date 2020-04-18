@@ -24,8 +24,8 @@ read_overlap_score_summary_vs_bin_size <- function(dataset, chromosome, bin_size
 
   ## Tags
   chromosome_tag <- sprintf("chr=%s", chromosome)
-  test_tag <- sprintf("test=%.3f", rho)
-  reference_tag <- sprintf("reference=%.3f", reference_rho)
+  test_tag <- sprintf("test=%.5f", rho)
+  reference_tag <- sprintf("reference=%.5f", reference_rho)
   window_size_tag <- sprintf("window_size=%d", window_size)
   if (!is.null(domain_length)) {
     stop_if_not(is.numeric(domain_length), length(domain_length) == 2L, !anyNA(domain_length), all(domain_length > 0))
@@ -168,9 +168,9 @@ overlap_score_summary_vs_bin_size <- function(dataset, chromosomes, bin_sizes, r
 
     for (rr in seq_along(rhos)) {
       rho <- rhos[rr]
-      test_tag <- sprintf("test=%.3f", rho)
+      test_tag <- sprintf("test=%.5f", rho)
       reference_rho <- reference_rhos[rr]
-      reference_tag <- sprintf("reference=%.3f", reference_rho)
+      reference_tag <- sprintf("reference=%.5f", reference_rho)
 
       if (verbose) message(sprintf("Fraction #%d (%g on Chr %s) of %d ... done", rr, rho, chromosome, length(rhos)))
 
@@ -226,7 +226,7 @@ overlap_score_summary_vs_bin_size <- function(dataset, chromosomes, bin_sizes, r
         params <- c(sprintf("estimator: %s", signal_label),
                     sprintf("weights: %s", weights),
                     sprintf("domains: %.0f-%.0f", domain_length[1], domain_length[2]))
-        subtitle <- sprintf("chromosome %s, test=%.3f, reference=%.3f (%d samples)\n[%s]",
+        subtitle <- sprintf("chromosome %s, test=%.5f, reference=%.5f (%d samples)\n[%s]",
                             chromosome, rho, reference_rho, nsamples, paste(params, collapse = "; "))
 
         gg <- gg + ggtitle(dataset, subtitle = subtitle)
@@ -245,7 +245,7 @@ overlap_score_summary_vs_bin_size <- function(dataset, chromosomes, bin_sizes, r
         gg <- gg + ylim(ylim[1], ylim[2])
 
         signal <- gsub("`50%`", "median", signal)
-        tags <- sprintf("%s,chr=%s,%s,avg_score-vs-bin_size,test=%.3f,reference=%.3f,window_size=%d,nsamples=%d,signal=%s,weights=%s", dataset, chromosome, "cells_by_half", rho, reference_rho, window_size, nsamples, signal, weights)
+        tags <- sprintf("%s,chr=%s,%s,avg_score-vs-bin_size,test=%.5f,reference=%.5f,window_size=%d,nsamples=%d,signal=%s,weights=%s", dataset, chromosome, "cells_by_half", rho, reference_rho, window_size, nsamples, signal, weights)
         if (!is.null(ylim_tag)) tags <- paste(c(tags, ylim_tag), collapse=",")
         filename <- sprintf("%s.%s", paste(c(tags, domain_length_tag), collapse = ","), fig_format)
         if (verbose) suppressMessages <- identity
