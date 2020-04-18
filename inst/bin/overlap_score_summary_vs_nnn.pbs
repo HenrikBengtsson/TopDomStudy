@@ -3,17 +3,24 @@
 #PBS -j oe
 #PBS -l vmem=15gb
 
-## End of session job summary (regardless of success or failure)
-trap '{ >&2 printf "\n\n=== JOB SESSION INFORMATION ===\n"; >&2 qstat -f "${PBS_JOBID}"; }' EXIT
-
-cd "${PBS_O_WORKDIR}" || { >&2 echo "ERROR: Failed to change directory: ${PBS_O_WORKDIR}"; exit 1; }
+if [[ -n "$PBS_JOBID" ]]; then
+  ## End of session job summary (regardless of success or failure)
+  trap '{ >&2 printf "\n\n=== JOB SESSION INFORMATION ===\n"; >&2 qstat -f "${PBS_JOBID}"; }' EXIT
+  
+  cd "${PBS_O_WORKDIR}" || { >&2 echo "ERROR: Failed to change directory: ${PBS_O_WORKDIR}"; exit 1; }
+fi
 
 if module --version &> /dev/null; then
     module load CBC r &> /dev/null
 fi    
 
 Rscript overlap_score_summary_vs_nnn.R
+#Rscript overlap_score_summary_vs_nnn.R --nsamples=200 --chromosomes=2 --rhos:="c(0.0010, 0.0020, 0.0030, 0.0050, 0.0070, 0.0100)" --bin_sizes:="c(100)*1e3" --ylim_score:="c(0,1)"
+#Rscript overlap_score_summary_vs_nnn.R --nsamples=500 --chromosomes=15 --rhos:="c(0.0010, 0.0020, 0.0030, 0.0050, 0.0070, 0.0100)" --bin_sizes:="c(80,100)*1e3"
+#Rscript overlap_score_summary_vs_nnn.R --nsamples=200 --chromosomes=15 --rhos:="c(0.0010, 0.0020, 0.0030, 0.0050, 0.0070, 0.0100)" --bin_sizes:="c(80,100,200,500)*1e3"
 #Rscript overlap_score_summary_vs_nnn.R --window_size=5  --weights=by_length
 #Rscript overlap_score_summary_vs_nnn.R --window_size=5  --weights=uniform  
 #Rscript overlap_score_summary_vs_nnn.R --window_size=20 --weights=by_length
 #Rscript overlap_score_summary_vs_nnn.R --window_size=20 --weights=uniform  
+#Rscript overlap_score_summary_vs_nnn.R --window_size=5  --weights=by_length --reference_rhos=50%
+#Rscript overlap_score_summary_vs_nnn.R --window_size=20 --weights=by_length --reference_rhos=50%
