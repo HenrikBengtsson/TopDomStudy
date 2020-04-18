@@ -46,9 +46,6 @@ rhos <- cmdArg(rhos = c(
   0.10, 0.12, 0.14, 0.16, 0.18, 0.20,
   0.25, 0.30, 0.40, 0.50
 ))
-if (any(rhos < 0.001)) {
-  stop("Due to a limitation in TopDomStudy, the smallest sample fraction is 0.001")
-}
 
 choices <- c("same", "50%")
 reference_rhos <- match.arg(cmdArg(reference_rhos = choices[1]), choices)
