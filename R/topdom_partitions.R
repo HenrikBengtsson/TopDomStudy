@@ -261,7 +261,7 @@ topdom_partitions <- function(reads, bin_size, partition_by, rho, reference_rho 
             stopifnot(is.list(counts), length(counts) == length(chr), all(names(counts) == chr))
 
             t0 <- Sys.time()
-            tds <- future_lapply(counts, FUN = TopDom, window.size = window_size)
+            tds <- future_lapply(counts, FUN = Try(TopDom), window.size = window_size)
             dt <- Sys.time() - t0
             if (verbose) { mprintf("tds:"); mstr(tds) }
             stopifnot(is.list(tds), length(tds) == 1L, all(names(tds) == chr))

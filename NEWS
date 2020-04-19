@@ -1,7 +1,7 @@
 TopDomStudy
 ===========
 
-Version: 0.1.1-9002 [2020-04-17]
+Version: 0.1.1-9002 [2020-04-18]
 
 SIGNIFICANT CHANGES:
 
@@ -14,6 +14,18 @@ NEW FEATURES:
  * overlap_score_summary_vs_{fraction,bin_size}() gained argument 'fig_format'
    to control whether PNGs or PDFs should be produced and argument 'ylim_score'
    to control the range on the y axis when displaying average overlap scores.
+
+BUG FIXES:
+
+ * When the sample fraction becomes very small, TopDom::TopDom() may fail when
+   calculating the p-value throwing an "Error in wilcox.test.default(x = dia *
+   scale, y = c(ups, downs), alternative = "less",  : not enough 'x'
+   observations" or ("... 'y' observations").  Since TopDom() does not handle
+   this gracefully (e.g. by returning with a NA_real_ p-value), the 
+   topdom_partitions() function in this package will suffer from this error.
+   Until fixed in the 'TopDom' package (if ever), topdom_partitions() now calls
+   TopDom() within a try() statement and store the 'try-error' object instead
+   of the TopDom results for the failed instance.
 
 
 Version: 0.1.1 [2020-04-03]
