@@ -2,14 +2,18 @@
 #'
 #' @inheritParams overlap_score_summary_grid
 #'
-#' @param fig_path If non-NULL, a PNG image is written to this path.
+#' @param fig_path If non-NULL, an image file is written to this path.
+#'
+#' @param fig_format Image format used for image files.
+#'
+#' @param ylim_score The range of overlap scores on the y axis.
 #'
 #' @return A three-dimensional character array of pathname names where the
 #' first dimension specify `chromosomes`, the second `bin_sizes`, and
 #' the third 'rhos'.
 #'
 #' @details
-#' PNG images are written to the \file{figures/} folder (created if missing).
+#' Image files are written to the \file{figures/} folder (created if missing).
 #'
 #' @seealso
 #' Internal, [overlap_score_summary_grid()] is used to calculate overlap
@@ -20,7 +24,7 @@
 #' @importFrom utils file_test
 #' @importFrom R.cache loadCache saveCache
 #' @export
-overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, rhos, reference_rhos = rep(1/2, times = length(rhos)), window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, fig_path = "figures", verbose = FALSE) {
+overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, rhos, reference_rhos = rep(1/2, times = length(rhos)), window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, fig_path = "figures", fig_format = c("png", "pdf"), ylim_score = c(0,1), verbose = FALSE) {
   stopifnot(is.numeric(rhos), !anyNA(rhos), all(rhos > 0), all(rhos <= 1/2))
   if (is.character(reference_rhos)) {
     reference_rhos <- switch(reference_rhos,
@@ -38,6 +42,10 @@ overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, r
     dir.create(fig_path, recursive = TRUE, showWarnings = FALSE)
     stop_if_not(file_test("-d", fig_path))
   }
+  fig_format <- match.arg(fig_format)
+
+  stop_if_not(is.numeric(ylim_score), length(ylim_score) == 2L,
+              all(ylim_score >= 0), all(ylim_score <= 1))
 
   pathnames <- overlap_score_summary_grid(dataset, chromosomes = chromosomes, bin_sizes = bin_sizes, rhos = rhos, reference_rhos = reference_rhos, window_size = window_size, nsamples = nsamples, weights = weights, domain_length = domain_length, verbose = verbose)
 
@@ -121,17 +129,23 @@ overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, r
 
         gg <- gg + ggtitle(dataset, subtitle = subtitle)
         gg <- gg + xlab(fraction_label)
+        ylim_tag <- NULL
         if (signal_label %in% names(length_signals)) {
           gg <- gg + ylab("domain length (bps)")
-          gg <- gg + ylim(0, 2e6)
+          ylim <- c(0, 2e6)
         } else {
           gg <- gg + ylab("average overlap score")
-          gg <- gg + ylim(0, 1)
+          ylim <- ylim_score
+          if (any(ylim != c(0,1))) {
+            ylim_tag <- sprintf("ylim=%g-%g", ylim[1], ylim[2])
+          }
         }
+        gg <- gg + ylim(ylim[1], ylim[2])
 
         signal <- gsub("`50%`", "median", signal)
         tags <- sprintf("%s,chr=%s,%s,avg_score-vs-fraction,bin_size=%d,%s,window_size=%d,nsamples=%d,signal=%s,weights=%s", dataset, chromosome, "cells_by_half", bin_size, fraction_tag, window_size, nsamples, signal, weights)
-        filename <- sprintf("%s.png", paste(c(tags, domain_length_tag), collapse = ","))
+        if (!is.null(ylim_tag)) tags <- paste(c(tags, ylim_tag), collapse=",")
+        filename <- sprintf("%s.%s", paste(c(tags, domain_length_tag), collapse = ","), fig_format)
         if (verbose) suppressMessages <- identity
         fig_pathname <- file.path(fig_path, filename)
         suppressMessages(ggsave(gg, filename=fig_pathname))
@@ -213,9 +227,9 @@ read_overlap_score_summary_vs_fraction <- function(dataset, chromosome, bin_size
   summary <- list()
   for (rr in seq_along(rhos)) {
     rho <- rhos[rr]
-    test_tag <- sprintf("test=%.3f", rho)
+    test_tag <- sprintf("test=%.5f", rho)
     reference_rho <- reference_rhos[rr]
-    reference_tag <- sprintf("reference=%.3f", reference_rho)
+    reference_tag <- sprintf("reference=%.5f", reference_rho)
     if (verbose) message(sprintf("Fraction #%d (%s and %s with %s bps on Chr %s) of %d ...", rr, test_tag, reference_tag, bin_size, chromosome, length(rhos)))
 
     tags <- c(chromosome_tag, "cells_by_half", "avg_score", bin_size_tag, test_tag, reference_tag, window_size_tag, domain_length_tag, weights_tag, nsamples_tag)

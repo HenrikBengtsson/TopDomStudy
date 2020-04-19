@@ -107,8 +107,8 @@ topdom_partitions <- function(reads, bin_size, partition_by, rho, reference_rho 
   } else {
     min_cell_size_tag <- NULL
   }
-  test_tag <- sprintf("test=%.3f", rho)
-  reference_tag <- sprintf("reference=%.3f", reference_rho)
+  test_tag <- sprintf("test=%.5f", rho)
+  reference_tag <- sprintf("reference=%.5f", reference_rho)
   ## Random seeds (use the same for all chromosomes, i.e. invariant to chromosome)
   
   stop_if_not(mainseed == 0xBEEF)
@@ -261,7 +261,7 @@ topdom_partitions <- function(reads, bin_size, partition_by, rho, reference_rho 
             stopifnot(is.list(counts), length(counts) == length(chr), all(names(counts) == chr))
 
             t0 <- Sys.time()
-            tds <- future_lapply(counts, FUN = TopDom, window.size = window_size)
+            tds <- future_lapply(counts, FUN = Try(TopDom), window.size = window_size)
             dt <- Sys.time() - t0
             if (verbose) { mprintf("tds:"); mstr(tds) }
             stopifnot(is.list(tds), length(tds) == 1L, all(names(tds) == chr))

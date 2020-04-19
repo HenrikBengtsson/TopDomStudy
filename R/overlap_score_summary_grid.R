@@ -125,8 +125,8 @@ overlap_score_summary_grid <- function(dataset, chromosomes, bin_sizes, rhos, re
       for (rr in seq_along(rhos)) {
         rho <- rhos[rr]
         reference_rho <- reference_rhos[rr]
-        test_tag <- sprintf("test=%.3f", rho)
-        reference_tag <- sprintf("reference=%.3f", reference_rho)
+        test_tag <- sprintf("test=%.5f", rho)
+        reference_tag <- sprintf("reference=%.5f", reference_rho)
         if (verbose) message(sprintf("Fraction #%d (%s and %s with %s bps on Chr %s) of %d ...", rr, test_tag, reference_tag, bin_size, chromosome, length(rhos)))
 
         if (is.character(domain_length) && domain_length == "ref_len_iqr") {
