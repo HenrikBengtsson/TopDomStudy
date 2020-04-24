@@ -109,7 +109,7 @@ for (vs in c("bin_size", "fraction")) {
     domain_length  = domain_length,
     nsamples       = nsamples,
     fig_format     = fig_format,
-    ylim           = ylim,
+    xlim           = xlim,
     ylim_score     = ylim_score,
     verbose        = verbose
   )
