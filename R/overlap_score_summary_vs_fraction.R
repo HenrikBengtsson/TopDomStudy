@@ -6,6 +6,8 @@
 #'
 #' @param fig_format Image format used for image files.
 #'
+#' @param xlim The range on the x axis.
+#'
 #' @param ylim_score The range of overlap scores on the y axis.
 #'
 #' @return A three-dimensional character array of pathname names where the
@@ -19,12 +21,12 @@
 #' Internal, [overlap_score_summary_grid()] is used to calculate overlap
 #' scores over (chromosome, bin_size, rho).
 #'
-#' @importFrom ggplot2 aes aes_string geom_boxplot geom_jitter ggplot ggsave ggtitle stat_summary xlab ylab ylim
+#' @importFrom ggplot2 aes aes_string geom_boxplot geom_jitter ggplot ggsave ggtitle stat_summary xlab ylab xlim ylim
 #' @importFrom tibble as_tibble
 #' @importFrom utils file_test
 #' @importFrom R.cache loadCache saveCache
 #' @export
-overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, rhos, reference_rhos = rep(1/2, times = length(rhos)), window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, fig_path = "figures", fig_format = c("png", "pdf"), ylim_score = c(0,1), verbose = FALSE) {
+overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, rhos, reference_rhos = rep(1/2, times = length(rhos)), window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, fig_path = "figures", fig_format = c("png", "pdf"), xlim = NULL, ylim_score = c(0,1), verbose = FALSE) {
   stopifnot(is.numeric(rhos), !anyNA(rhos), all(rhos > 0), all(rhos <= 1/2))
   if (is.character(reference_rhos)) {
     reference_rhos <- switch(reference_rhos,
@@ -44,6 +46,10 @@ overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, r
   }
   fig_format <- match.arg(fig_format)
 
+  if (!is.null(xlim)) {
+    stop_if_not(length(xlim) == 2L, is.numeric(xlim), all(is.finite(xlim)),
+                xlim[2] > xlim[1], xlim[1] >= 0, xlim[2] <= 1/2)
+  }
   stop_if_not(is.numeric(ylim_score), length(ylim_score) == 2L,
               all(ylim_score >= 0), all(ylim_score <= 1))
 
@@ -128,7 +134,12 @@ overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, r
                             chromosome, bin_size, window_size, nsamples, paste(params, collapse = "; "))
 
         gg <- gg + ggtitle(dataset, subtitle = subtitle)
+        
         gg <- gg + xlab(fraction_label)
+        if (is.null(xlim)) xlim <- c(0, max(rhos))
+        xlim_tag <- sprintf("xlim=%g-%g", xlim[1], xlim[2])
+        gg <- gg + xlim(xlim[1], xlim[2])
+        
         ylim_tag <- NULL
         if (signal_label %in% names(length_signals)) {
           gg <- gg + ylab("domain length (bps)")
@@ -140,10 +151,11 @@ overlap_score_summary_vs_fraction <- function(dataset, chromosomes, bin_sizes, r
             ylim_tag <- sprintf("ylim=%g-%g", ylim[1], ylim[2])
           }
         }
-        gg <- gg + ylim(ylim[1], ylim[2])
+        if (!is.null(ylim)) gg <- gg + ylim(ylim[1], ylim[2])
 
         signal <- gsub("`50%`", "median", signal)
         tags <- sprintf("%s,chr=%s,%s,avg_score-vs-fraction,bin_size=%d,%s,window_size=%d,nsamples=%d,signal=%s,weights=%s", dataset, chromosome, "cells_by_half", bin_size, fraction_tag, window_size, nsamples, signal, weights)
+        if (!is.null(xlim_tag)) tags <- paste(c(tags, xlim_tag), collapse=",")
         if (!is.null(ylim_tag)) tags <- paste(c(tags, ylim_tag), collapse=",")
         filename <- sprintf("%s.%s", paste(c(tags, domain_length_tag), collapse = ","), fig_format)
         if (verbose) suppressMessages <- identity
