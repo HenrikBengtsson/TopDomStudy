@@ -107,7 +107,8 @@ overlap_score_summary <- function(fit, weights = c("uniform", "by_length"), doma
       mad = mad_hat,
       count = count,
       n = n,
-      check.names = FALSE
+      check.names = FALSE,
+      stringsAsFactors = FALSE
     )
   })
   

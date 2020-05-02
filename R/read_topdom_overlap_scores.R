@@ -42,7 +42,7 @@ read_topdom_overlap_scores <- function(pathname, format = c("tibble", "data.fram
 
   if (inherits(topdom, "try-error")) {
     td <- data.frame(best_score = double(0L), best_length = integer(0L))
-    config <- as.data.frame(config)
+    config <- as.data.frame(config, stringsAsFactors = FALSE)
     config <- config[integer(0L), ]
   } else {
     td <- topdom[[1]][,1:2]
