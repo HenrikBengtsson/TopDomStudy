@@ -5,9 +5,8 @@
 
 This [R] package depends on several R packages.  Most of them are available on [CRAN] but not all.  Currently, the following packages are available only on GitHub:
 
-* [TopDom] - An efficient and Deterministic Method for identifying Topological Domains in Genomes
-* [ramani] - Access Ramani et al. Hi-C Data
-* [progressr] - A Unifying API for Progress Updates
+* **[TopDom]** - An efficient and Deterministic Method for identifying Topological Domains in Genomes
+* **[ramani]** - Access Ramani et al. Hi-C Data
 
 However, you do _not_ need to install those manually as long as you follow the installation instruction below; they will be install automatically.
 
@@ -32,7 +31,7 @@ Moreover, this packages produces and makes use of pathnames that are longer than
 
 ## Installation
 
-R package TopDomStudy is only available via [GitHub](https://github.com/HenrikBengtsson/TopDomStudy) and can be installed in R as:
+R package **TopDomStudy** is only available via [GitHub](https://github.com/HenrikBengtsson/TopDomStudy) and can be installed in R as:
 ```r
 remotes::install_github("HenrikBengtsson/TopDomStudy")
 ```
