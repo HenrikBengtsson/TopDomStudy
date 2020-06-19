@@ -33,14 +33,14 @@ Moreover, this packages produces and makes use of pathnames that are longer than
 
 R package **TopDomStudy** is only available via [GitHub](https://github.com/HenrikBengtsson/TopDomStudy) and can be installed in R as:
 ```r
-remotes::install_github("HenrikBengtsson/TopDomStudy")
+remotes::install_github("HenrikBengtsson/TopDomStudy", ref="master")
 ```
 
 ### Pre-release version
 
 To install the pre-release version that is available in Git branch `develop` on GitHub, use:
 ```r
-remotes::install_github("HenrikBengtsson/TopDomStudy@develop")
+remotes::install_github("HenrikBengtsson/TopDomStudy", ref="develop")
 ```
 This will install the package from source.  
 
