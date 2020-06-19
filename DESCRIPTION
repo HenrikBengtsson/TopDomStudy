@@ -23,7 +23,7 @@ Imports:
     parallel,
     progressr,
     R.cache,
-    ramani,
+    GSE84920.parser,
     scales,
     tibble,
     stats,
@@ -38,6 +38,6 @@ VignetteBuilder:
     TopDomStudy
 Remotes:
     github::HenrikBengtsson/TopDom,
-    github::HenrikBengtsson/ramani
-RoxygenNote: 7.1.0
+    github::HenrikBengtsson/GSE84920.parser
+RoxygenNote: 7.1.0.9000
 Roxygen: list(markdown = TRUE)

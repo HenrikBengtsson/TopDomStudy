@@ -49,5 +49,6 @@ box()
 
 }
 \author{
-Henrik Bengtsson adopted from a script by Adam Olshen.
+Henrik Bengtsson adopted from a script by Adam Olshen who proposed
+to use \code{base::table(chr_a, chr_b)} for efficient two-dimensional binning.
 }

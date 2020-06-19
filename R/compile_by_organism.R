@@ -43,7 +43,7 @@
 #'
 #' @importFrom utils file_test
 #' @importFrom dplyr filter left_join mutate arrange select
-#' @importFrom ramani read_percentages read_validpairs
+#' @importFrom GSE84920.parser read_percentages read_validpairs
 #' @importFrom listenv listenv
 #' @importFrom future %<-% resolve
 #' @importFrom progressr progressor
@@ -76,7 +76,7 @@ compile_by_organism <- function(samples, organisms = c("human", "mouse"), path =
     ## Subset of barcodes to focus on
     ## ---------------------------------------------------------------------
     ## The 'celltype' field in "percentages" is "Undetermined" unless either
-    ## hg19_frac or mm10_frac >= 0.95.  See ?ramani::read_percentages.
+    ## hg19_frac or mm10_frac >= 0.95.  See ?GSE84920.parser::read_percentages.
     per <- filter(per, celltype != "Undetermined")
     print(per)
     

@@ -22,7 +22,8 @@
 #'
 #' @example incl/hic_bin.R
 #'
-#' @author Henrik Bengtsson adopted from a script by Adam Olshen.
+#' @author Henrik Bengtsson adopted from a script by Adam Olshen who proposed
+#' to use `base::table(chr_a, chr_b)` for efficient two-dimensional binning.
 #'
 #' @importFrom listenv listenv
 #' @importFrom future %<-% %label%
