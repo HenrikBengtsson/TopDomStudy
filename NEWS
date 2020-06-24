@@ -3,15 +3,17 @@ TopDomStudy
 
 Version: 0.1.2-9000 [2020-06-24]
 
+SIGNIFICANT CHANGES:
+
+ * overlap_score_summary() now return data.frame:s where strings remain
+   strings.  Previously, they were coerced to factors due to the default
+   behavior of base::data.frame(), which changed in R 4.0.0.
+
 NEW FEATURES:
 
  * overlap_score_summary_vs_{fraction,bin_size}() gained argument 'xlim' to
    control the range on the x axis. The image filename will also contain an
    'xlim=...' file tag.
-
- * overlap_score_summary() now return data.frame:s where strings remain
-   strings.  Previously, they were coerced to factors due to the default
-   behavior of base::data.frame(), which changed in R 4.0.0.
 
  * save_rds() reports on file size and timestamp whenever there is an error.
    
@@ -20,7 +22,7 @@ NEW FEATURES:
 
 Version: 0.1.2 [2020-04-18]
 
-SIGNIFICANT CHANGES:
+save_rds() now report on file size and timestamp whenever there is an error.SIGNIFICANT CHANGES:
 
  * Increased the precision on sample fraction to five digits (was three).
    This requires all existing topdomData/, overlapScoreData/, and
