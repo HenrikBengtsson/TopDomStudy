@@ -1,14 +1,16 @@
 Package: TopDomStudy
-Version: 0.1.2
+Version: 0.1.3
 Title: TopDom Study by Segal et al.
 Description: Utility functions for the TopDom-related study by Segal et al. (2017).
 Authors@R: c(
    person("Henrik", "Bengtsson", role=c("aut", "cre", "cph"),
           email = "henrikb@braju.com"))
 License: GPL (>= 3)
+URL: https://github.com/HenrikBengtsson/TopDomStudy
+BugReports: https://github.com/HenrikBengtsson/TopDomStudy/issues
 Depends:
     R (>= 3.5.0),
-    TopDom (>= 0.9.0)
+    TopDom (>= 0.9.1)
 Imports:
     cowplot,
     digest,
@@ -21,7 +23,7 @@ Imports:
     parallel,
     progressr,
     R.cache,
-    ramani,
+    GSE84920.parser,
     scales,
     tibble,
     stats,
@@ -36,6 +38,6 @@ VignetteBuilder:
     TopDomStudy
 Remotes:
     github::HenrikBengtsson/TopDom,
-    github::HenrikBengtsson/ramani
-RoxygenNote: 7.1.0
+    github::HenrikBengtsson/GSE84920.parser
+RoxygenNote: 7.1.0.9000
 Roxygen: list(markdown = TRUE)

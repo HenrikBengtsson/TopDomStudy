@@ -50,15 +50,16 @@ read_rds <- function(pathname, ...) {
 save_rds <- function(object, pathname, ...) {
   pathname_tmp <- sprintf("%s.tmp", pathname)
   if (file_test("-f", pathname_tmp)) {
-    stop(sprintf("Cannot save RDS file because a temporary save file already exists: %s", sQuote(pathname_tmp)))
+    fi_tmp <- file.info(pathname_tmp)
+    stop(sprintf("Cannot save RDS file because a temporary save file already exists: %s (%0.f bytes; last modified on %s)", sQuote(pathname_tmp), fi_tmp[["size"]], fi_tmp[["mtime"]]))
   }
   
   tryCatch({
     saveRDS(object, file = pathname_tmp, ...)
   }, error = function(ex) {
     msg <- conditionMessage(ex)
-    msg <- sprintf("saveRDS() failed to save to temporary file %s (%.0f bytes). The reason was: %s",
-                   sQuote(pathname_tmp), file.size(pathname_tmp), msg)
+    fi_tmp <- file.info(pathname_tmp)
+    msg <- sprintf("saveRDS() failed to save to temporary file %s (%.0f bytes; last modified on %s). The reason was: %s", sQuote(pathname_tmp), fi_tmp[["size"]], fi_tmp[["mtime"]], msg)
     ex$message <- msg
     stop(ex)
   })
@@ -66,7 +67,9 @@ save_rds <- function(object, pathname, ...) {
 
   file.rename(from = pathname_tmp, to = pathname)
   if (file_test("-f", pathname_tmp) || !file_test("-f", pathname)) {
-    msg <- sprintf("save_rds() failed to rename temporary save file %s (%0.f bytes) to %s  (%0.f bytes)", sQuote(pathname_tmp), file.size(pathname_tmp), sQuote(pathname), file.size(pathname))
+    fi_tmp <- file.info(pathname_tmp)
+    fi <- file.info(pathname)
+    msg <- sprintf("save_rds() failed to rename temporary save file %s (%0.f bytes; last modified on %s) to %s (%0.f bytes; last modified on %s)", sQuote(pathname_tmp), fi_tmp[["size"]], fi_tmp[["mtime"]], sQuote(pathname), fi[["size"]], fi[["mtime"]])
     stop(msg)
   }
   

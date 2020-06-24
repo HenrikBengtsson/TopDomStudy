@@ -13,7 +13,7 @@ maybe(expr, substitute = TRUE, envir = parent.frame())
 and from where global variables should be identified and frozen.}
 }
 \value{
-A lazy \link[future:Future]{future::Future}.
+A lazy \link[future:Future-class]{future::Future}.
 }
 \description{
 An R Expression that Maybe Evaluated Later

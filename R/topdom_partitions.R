@@ -252,7 +252,7 @@ topdom_partitions <- function(reads, bin_size, partition_by, rho, reference_rho 
           t0 <- Sys.time()
           tds <- lapply(reads_partitions, FUN = function(reads_pp) {
             counts <- {
-              counts <- hic_bin(reads_pp, intra_only = TRUE, bin_size = bin_size, progress = FALSE)
+              counts <- hic_bin(reads_pp, intra_only = TRUE, bin_size = bin_size)
               stopifnot(is.list(counts), length(counts) == 1L, all(names(counts) == chr))
               counts <- as_TopDomData(counts)
               counts

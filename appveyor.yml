@@ -45,7 +45,7 @@ build_script:
   - travis-tool.sh install_r cowplot digest dplyr ggplot2 Hmisc listenv matrixStats future future.apply tibble 
   - travis-tool.sh install_r progress commonmark
   - travis-tool.sh install_github HenrikBengtsson/progressr
-  - travis-tool.sh install_github HenrikBengtsson/ramani
+  - travis-tool.sh install_github HenrikBengtsson/GSE84920.parser
   - travis-tool.sh install_github HenrikBengtsson/TopDom
 
 test_script:

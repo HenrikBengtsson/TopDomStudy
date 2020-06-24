@@ -366,7 +366,8 @@ geom_text_top_left <- function(label, size=5.0, hjust=-0.1, vjust=+1.5) {
   annotations <- data.frame(
     label = label,
     xpos = -Inf, ypos = +Inf,
-    hjust = hjust, vjust = vjust
+    hjust = hjust, vjust = vjust,
+    stringsAsFactors = FALSE
   )
   geom_text(data=annotations, aes(x=xpos, y=ypos, hjust=hjust, vjust=vjust, label=label), size=size)
 }
@@ -379,7 +380,8 @@ geom_text_top_right <- function(label, size=5.0, hjust=+1.1, vjust=+1.5) {
   annotations <- data.frame(
     label = label,
     xpos = +Inf, ypos = +Inf,
-    hjust = hjust, vjust = vjust
+    hjust = hjust, vjust = vjust,
+    stringsAsFactors = FALSE
   )
   geom_text(data=annotations, aes(x=xpos, y=ypos, hjust=hjust, vjust=vjust, label=label), size=size)
 }

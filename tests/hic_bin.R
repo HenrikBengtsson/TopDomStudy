@@ -18,6 +18,14 @@ stopifnot(
   is.list(attr(counts[[1]], "bins", exact = TRUE))
 )
 
+
+progressr::with_progress({
+  counts1 <- hic_bin(reads, bin_size = 50000, intra_only = TRUE)
+})
+str(counts1)
+stopifnot(identical(counts1, counts))
+
+
 message("- Coercing to list of TopDomData objects")
 counts <- as_TopDomData(counts)
 print(counts)

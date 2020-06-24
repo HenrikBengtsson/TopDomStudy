@@ -73,9 +73,17 @@ domain_length <- cmdArg(domain_length = NULL)
 choices <- c("pdf", "png")
 fig_format <- match.arg(cmdArg(fig_format = choices[1]), choices)
 
+value <- cmdArg(xlim_score = NULL)
+if (!is.null(value)) {
+  value <- as.numeric(value)
+  stopifnot(is.numeric(value), length(value) == 2L, !anyNA(value),
+          all(value >= 0), value[1] < value[2])
+}          
+xlim <- value
+
 value <- cmdArg(ylim_score = c(0,1))
 stopifnot(is.numeric(value), length(value) == 2L, !anyNA(value),
-          all(value >= 0), all(value <= 1))
+          all(value >= 0), all(value <= 1), value[1] < value[2])
 ylim_score <- value
 
 verbose <- cmdArg(verbose = TRUE)
@@ -101,6 +109,7 @@ for (vs in c("bin_size", "fraction")) {
     domain_length  = domain_length,
     nsamples       = nsamples,
     fig_format     = fig_format,
+    xlim           = xlim,
     ylim_score     = ylim_score,
     verbose        = verbose
   )

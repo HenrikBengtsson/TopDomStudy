@@ -12,8 +12,6 @@
 #' @param known_chrs (character vector) The names of the L chromosomes
 #' to bin over.
 #' 
-#' @param progress (logical) If `TRUE`, progress is displayed.
-#'
 #' @return
 #' If `intra_only = FALSE`, an L-by-L list matrix where each element \eqn{(i, j)} in turn
 #' holds an integer matrix of binned counts for chromosome pair \eqn{(i, j)}.
@@ -22,13 +20,14 @@
 #'
 #' @example incl/hic_bin.R
 #'
-#' @author Henrik Bengtsson adopted from a script by Adam Olshen.
+#' @author Henrik Bengtsson adopted from a script by Adam Olshen who proposed
+#' to use `base::table(chr_a, chr_b)` for efficient two-dimensional binning.
 #'
 #' @importFrom listenv listenv
 #' @importFrom future %<-% %label%
-#' @importFrom utils txtProgressBar setTxtProgressBar
+#' @importFrom progressr progressor
 #' @export
-hic_bin <- function(data, bin_size, intra_only = FALSE, known_chrs = c(1:22, "X", "Y", "M"), progress = TRUE) {
+hic_bin <- function(data, bin_size, intra_only = FALSE, known_chrs = c(1:22, "X", "Y", "M")) {
   stop_if_not(
     all(c("chr_a", "start_a", "end_a", "chr_b", "start_b",  "end_b")
         %in% colnames(data))
@@ -44,12 +43,10 @@ hic_bin <- function(data, bin_size, intra_only = FALSE, known_chrs = c(1:22, "X"
   
   known_chrs <- intersect(known_chrs, data$chr_a)
 
-  if (progress) {
-    max_progress <- if (intra_only) length(known_chrs) else length(known_chrs)^2
-    max_progress <- max_progress + length(known_chrs)
-    pb <- txtProgressBar(max = max_progress, file = stderr())
-    iter <- 0L
-  }
+  ## Progress updates
+  max_progress <- if (intra_only) length(known_chrs) else length(known_chrs)^2
+  max_progress <- max_progress + length(known_chrs)
+  p <- progressor(max_progress)
 
   ## Identify bins for each chromosome
   chr_bins <- lapply(known_chrs, FUN = function(chr) {
@@ -61,7 +58,8 @@ hic_bin <- function(data, bin_size, intra_only = FALSE, known_chrs = c(1:22, "X"
   ## Bin chr_a and chr_b positions independently into bin indices
   data$chr_a_bin <- data$chr_b_bin <- integer(nrow(data))
   for (chr in known_chrs) {
-    if (progress) setTxtProgressBar(pb, value = (iter <- iter + 1))
+    p()
+    
     bins <- chr_bins[[chr]]
 
     ## chr_a
@@ -114,7 +112,7 @@ hic_bin <- function(data, bin_size, intra_only = FALSE, known_chrs = c(1:22, "X"
 
     chrs_b <- if (intra_only) chr_a else known_chrs
     for (chr_b in chrs_b) {
-      if (progress) setTxtProgressBar(pb, value = (iter <- iter + 1))
+      p()
       
       if (intra_only) {
         data_ab <- data_a  ## already done at the very top
@@ -158,11 +156,6 @@ hic_bin <- function(data, bin_size, intra_only = FALSE, known_chrs = c(1:22, "X"
   ## Resolve
   counts <- as.list(counts)
   
-  if (progress) {
-    setTxtProgressBar(pb, value = nrow(counts))
-    close(pb)
-  }
-
   if (intra_only) counts <- diag(counts)
   
   counts

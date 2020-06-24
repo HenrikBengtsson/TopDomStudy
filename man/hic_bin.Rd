@@ -8,8 +8,7 @@ hic_bin(
   data,
   bin_size,
   intra_only = FALSE,
-  known_chrs = c(1:22, "X", "Y", "M"),
-  progress = TRUE
+  known_chrs = c(1:22, "X", "Y", "M")
 )
 }
 \arguments{
@@ -24,8 +23,6 @@ binned.}
 
 \item{known_chrs}{(character vector) The names of the L chromosomes
 to bin over.}
-
-\item{progress}{(logical) If \code{TRUE}, progress is displayed.}
 }
 \value{
 If \code{intra_only = FALSE}, an L-by-L list matrix where each element \eqn{(i, j)} in turn
@@ -49,5 +46,6 @@ box()
 
 }
 \author{
-Henrik Bengtsson adopted from a script by Adam Olshen.
+Henrik Bengtsson adopted from a script by Adam Olshen who proposed
+to use \code{base::table(chr_a, chr_b)} for efficient two-dimensional binning.
 }

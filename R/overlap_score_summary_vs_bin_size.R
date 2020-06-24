@@ -114,10 +114,10 @@ read_overlap_score_summary_vs_bin_size <- function(dataset, chromosome, bin_size
 #' Internal, [overlap_score_summary_grid()] is used to calculate overlap
 #' scores over (chromosome, bin_size, rho).
 #'
-#' @importFrom ggplot2 aes aes_string geom_boxplot geom_jitter ggplot ggsave ggtitle stat_summary xlab ylab ylim
+#' @importFrom ggplot2 aes aes_string geom_boxplot geom_jitter ggplot ggsave ggtitle stat_summary xlab ylab xlim ylim
 #' @importFrom utils file_test
 #' @export
-overlap_score_summary_vs_bin_size <- function(dataset, chromosomes, bin_sizes, rhos, reference_rhos = rep(1/2, times = length(rhos)), window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, fig_path = "figures", fig_format = c("png", "pdf"), ylim_score = c(0,1), verbose = FALSE) {
+overlap_score_summary_vs_bin_size <- function(dataset, chromosomes, bin_sizes, rhos, reference_rhos = rep(1/2, times = length(rhos)), window_size = 5L, nsamples = 50L, weights = c("by_length", "uniform"), domain_length = NULL, fig_path = "figures", fig_format = c("png", "pdf"), xlim = NULL, ylim_score = c(0,1), verbose = FALSE) {
   stopifnot(is.numeric(rhos), !anyNA(rhos), all(rhos > 0), all(rhos <= 1/2))
   if (is.character(reference_rhos)) {
     reference_rhos <- switch(reference_rhos,
@@ -137,6 +137,10 @@ overlap_score_summary_vs_bin_size <- function(dataset, chromosomes, bin_sizes, r
   }
   fig_format <- match.arg(fig_format)
 
+  if (!is.null(xlim)) {
+    stop_if_not(length(xlim) == 2L, is.numeric(xlim), all(is.finite(xlim)),
+                xlim[2] > xlim[1], xlim[1] >= 0)
+  }                
   stop_if_not(is.numeric(ylim_score), length(ylim_score) == 2L,
               all(ylim_score >= 0), all(ylim_score <= 1))
 
@@ -230,7 +234,12 @@ overlap_score_summary_vs_bin_size <- function(dataset, chromosomes, bin_sizes, r
                             chromosome, rho, reference_rho, nsamples, paste(params, collapse = "; "))
 
         gg <- gg + ggtitle(dataset, subtitle = subtitle)
+        
         gg <- gg + xlab("bin size (bps)")
+        if (is.null(xlim)) xlim <- c(0, max(bin_sizes))
+        xlim_tag <- sprintf("xlim=%g-%g", xlim[1], xlim[2])
+        gg <- gg + xlim(xlim[1], xlim[2])
+        
         ylim_tag <- NULL
         if (signal_label %in% names(length_signals)) {
           gg <- gg + ylab("domain length (bps)")
@@ -246,6 +255,7 @@ overlap_score_summary_vs_bin_size <- function(dataset, chromosomes, bin_sizes, r
 
         signal <- gsub("`50%`", "median", signal)
         tags <- sprintf("%s,chr=%s,%s,avg_score-vs-bin_size,test=%.5f,reference=%.5f,window_size=%d,nsamples=%d,signal=%s,weights=%s", dataset, chromosome, "cells_by_half", rho, reference_rho, window_size, nsamples, signal, weights)
+        if (!is.null(xlim_tag)) tags <- paste(c(tags, xlim_tag), collapse=",")
         if (!is.null(ylim_tag)) tags <- paste(c(tags, ylim_tag), collapse=",")
         filename <- sprintf("%s.%s", paste(c(tags, domain_length_tag), collapse = ","), fig_format)
         if (verbose) suppressMessages <- identity
