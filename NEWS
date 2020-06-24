@@ -13,6 +13,8 @@ NEW FEATURES:
    strings.  Previously, they were coerced to factors due to the default
    behavior of base::data.frame(), which changed in R 4.0.0.
 
+ * save_rds() reports on file size and timestamp whenever there is an error.
+   
  * Using the progressr package for all progress updates.
  
 
