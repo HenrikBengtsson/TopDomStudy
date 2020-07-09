@@ -6,7 +6,7 @@
 This [R] package depends on several R packages.  Most of them are available on [CRAN] but not all.  Currently, the following packages are available only on GitHub:
 
 * **[TopDom]** - An efficient and Deterministic Method for identifying Topological Domains in Genomes
-* **[ramani]** - Access Ramani et al. Hi-C Data
+* **[GSE84920.parser]** - Parsers for the GSE84920 Hi-C Data Sets of Ramani et al. (2017)
 
 However, you do _not_ need to install those manually as long as you follow the installation instruction below; they will be install automatically.
 
@@ -67,6 +67,6 @@ Contributing to this package is easy.  Just send a [pull request](https://help.g
 [CRAN]: https://cran.r-project.org
 [Bioconductor]: https://www.bioconductor.org
 [TopDom]: https://github.com/HenrikBengtsson/TopDom
-[ramani]: https://github.com/HenrikBengtsson/ramani
+[GSE84920.parser]: https://github.com/HenrikBengtsson/GSE84920.parser
 [progressr]: https://github.com/HenrikBengtsson/progressr
 
