@@ -11,3 +11,7 @@ install:
 
 check:
 	(cd ..; R CMD check "$(PKGNAME)"_*.tar.gz)
+
+spelling:
+	Rscript -e "spelling::spell_check_files('NEWS', ignore=readLines('inst/WORDLIST'))"
+	Rscript -e "spelling::spell_check_package()"
