@@ -37,7 +37,7 @@ or in other ways render, progress information, wrap the call inside a
 
 This function supports processing of (celltype):s in parallel via the
 \pkg{future} framework.
-For example, setting \code{future::plan("multiprocess")} will parallelize
+For example, setting \code{future::plan("multisession")} will parallelize
 on the local machine.
 }
 

@@ -1,5 +1,11 @@
 source("incl/start.R")
 
+## NOTE:
+## These tests consumes a large amount of RAM (> 20 GiB) and
+## takes ~ 8 minutes to complete on a 16 GiB RAM Linux machine
+## using the default two cores.
+## /HB 2021-05-09
+
 library(future)
 plan(list(
   chr_bin_rho = multisession, ## overlap_score_summary_grid()

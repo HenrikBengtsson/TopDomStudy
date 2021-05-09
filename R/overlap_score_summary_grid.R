@@ -39,13 +39,13 @@
 #'  plan(list(
 #'    chr_bin_rho = sequential,   ## across (chr, bin_size, rho)
 #'    mono_chr    = sequential,   ## always a single chromosome
-#'    samples     = multiprocess  ## across 1:nsamples
+#'    samples     = multisession  ## across 1:nsamples
 #'  ))
 #' ```
 #' Another is,
 #' ```r
 #'  plan(list(
-#'    chr_bin_rho = multiprocess, ## across (chr, bin_size, rho)
+#'    chr_bin_rho = multisession, ## across (chr, bin_size, rho)
 #'    mono_chr    = sequential,   ## always a single chromosome
 #'    samples     = sequential    ## across 1:nsamples
 #'  ))
@@ -57,7 +57,7 @@
 #'  plan(list(
 #'    chr_bin_rho = hpc_scheduler,
 #'    mono_chr    = sequential,
-#'    samples     = multiprocess
+#'    samples     = multisession
 #'  ))
 #' ```
 #'

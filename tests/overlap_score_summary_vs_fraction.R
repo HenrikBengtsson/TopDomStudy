@@ -1,8 +1,12 @@
 source("incl/start.R")
 
+## NOTE:
+## These tests consumes a large amount of RAM (> 20 GiB)
+## /HB 2021-05-09
+
 library(future)
 plan(list(
-  chr_bin_rho = multiprocess, ## overlap_score_summary_grid()
+  chr_bin_rho = multisession, ## overlap_score_summary_grid()
   mono_chr    = sequential,   ## +-- overlap_scores_partitions()
   samples     = sequential    ##     - " -
 ))

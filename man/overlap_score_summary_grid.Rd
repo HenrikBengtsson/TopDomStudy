@@ -64,12 +64,12 @@ An example of a \code{\link[future:plan]{future::plan()}} setup for parallelizat
 local machine is:\if{html}{\out{<div class="r">}}\preformatted{ plan(list(
    chr_bin_rho = sequential,   ## across (chr, bin_size, rho)
    mono_chr    = sequential,   ## always a single chromosome
-   samples     = multiprocess  ## across 1:nsamples
+   samples     = multisession  ## across 1:nsamples
  ))
 }\if{html}{\out{</div>}}
 
 Another is,\if{html}{\out{<div class="r">}}\preformatted{ plan(list(
-   chr_bin_rho = multiprocess, ## across (chr, bin_size, rho)
+   chr_bin_rho = multisession, ## across (chr, bin_size, rho)
    mono_chr    = sequential,   ## always a single chromosome
    samples     = sequential    ## across 1:nsamples
  ))
@@ -80,7 +80,7 @@ For parallelization on a HPC cluster via a scheduler,\if{html}{\out{<div class="
  plan(list(
    chr_bin_rho = hpc_scheduler,
    mono_chr    = sequential,
-   samples     = multiprocess
+   samples     = multisession
  ))
 }\if{html}{\out{</div>}}
 }

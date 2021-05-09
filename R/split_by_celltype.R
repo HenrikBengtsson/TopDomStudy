@@ -31,7 +31,7 @@
 #' @section Parallel processing:
 #' This function supports processing of (celltype):s in parallel via the
 #' \pkg{future} framework.
-#' For example, setting `future::plan("multiprocess")` will parallelize
+#' For example, setting `future::plan("multisession")` will parallelize
 #' on the local machine.
 #'
 #' @importFrom utils file_test
